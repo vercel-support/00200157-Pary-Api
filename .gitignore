@@ -1,0 +1,9 @@
+node_modules/
+prisma/migrations/
+prisma/dev.db
+npm-debug.*
+
+# macOS
+.DS_Store
+
+# Temporary files created by Metro to check the health of the file watcher
