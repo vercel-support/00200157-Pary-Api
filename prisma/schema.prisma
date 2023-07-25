@@ -18,4 +18,7 @@ model User {
   name String
   lastName String
   signedIn Boolean @default(false)
+  profilePicture String
+  accessToken String?
+  refreshToken String?
 }
