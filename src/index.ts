@@ -31,22 +31,22 @@ app.post('/login', async (req, res) => {
 
     const user = await prisma.user.upsert({
         where: {
-            assignedGoogleID: googleUser.id,
+            assignedGoogleID: googleUser.user.id,
         },
         create: {
             username: "",
-            name: googleUser.name,
-            email: googleUser.email,
-            lastName: googleUser.family_name,
-            assignedGoogleID: googleUser.id,
-            profilePicture: googleUser.picture,
+            name: googleUser.user.givenName,
+            email: googleUser.user.email,
+            lastName: googleUser.user.familyName,
+            assignedGoogleID: googleUser.user.id,
+            profilePicture: googleUser.user.photo,
         },
         update: {
         },
     });
 
-    const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1d' });
+    const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '8weeks' });
 
     await prisma.user.update({
         where: { id: user.id },
@@ -91,21 +91,28 @@ app.get('/users', async (req, res) => {
     }
 });
 
-app.post('/refresh-token', (req, res) => {
-    const { refreshToken } = req.body;
+app.post('/refresh-token', async (req, res) => {
+    const { refreshToken: token } = req.body;
 
-    if (!refreshToken) {
+    if (!token) {
         return res.status(403).json({ error: 'No refresh token provided.' });
     }
-    const token = extractToken(refreshToken);
 
     try {
         const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
 
         if (typeof decoded === 'object' && 'id' in decoded) {
-            const accessToken = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: '15m' });
+            const accessToken = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: '1d' });
+            const refreshToken = jwt.sign({ id: decoded.id }, JWT_REFRESH_SECRET, { expiresIn: '8weeks' });
+            await prisma.user.update({
+                where: { id: decoded.id },
+                data: {
+                    accessToken,
+                    refreshToken
+                }
+            });
 
-            return res.json({ accessToken });
+            return res.json({ accessToken, refreshToken });
         } else {
             return res.status(500).json({ error: 'Invalid refresh token.' });
         }
@@ -155,6 +162,27 @@ app.post("/test-token", async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
+
+        if (typeof decoded === 'object' && 'id' in decoded) {
+            return res.json({ message: 'Access token is valid.' });
+        } else {
+            return res.status(500).json({ error: 'Invalid access token.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to authenticate token.' });
+    }
+})
+app.post("/test-refresh-token", async (req, res) => {
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
+    }
+
+    const token = extractToken(bearerToken);
+
+    try {
+        const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
 
         if (typeof decoded === 'object' && 'id' in decoded) {
             return res.json({ message: 'Access token is valid.' });

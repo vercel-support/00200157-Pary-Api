@@ -15,10 +15,10 @@ model User {
   assignedGoogleID String @unique
   username String @unique
   email String @unique
-  name String
-  lastName String
+  name String?
+  lastName String?
   signedIn Boolean @default(false)
-  profilePicture String
+  profilePicture String?
   accessToken String?
   refreshToken String?
 }
