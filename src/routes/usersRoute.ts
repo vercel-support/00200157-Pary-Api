@@ -18,14 +18,11 @@ const router = express.Router();
 // check in db if the username provided exists or not also check its token
 
 router.get('/check-username', async (req, res) => {
-    const { username } = req.body;
+    const { username, authorization: bearerToken } = req.headers;
 
-    if (!username) {
+    if (!username || typeof username !== 'string') {
         return res.status(400).json({ error: 'No username provided.' });
     }
-
-    const bearerToken = req.headers['authorization'];
-
     if (!bearerToken) {
         return res.status(403).json({ error: 'No token provided.' });
     }
