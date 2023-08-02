@@ -6,19 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
 }
 
 model User {
-  id String @id @default(uuid())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   assignedGoogleID String @unique
   username String @unique
   email String @unique
-  name String?
-  lastName String?
+  name String @default("")
+  lastName String @default("")
   signedIn Boolean @default(false)
-  profilePicture String?
-  accessToken String?
-  refreshToken String?
+  profilePictures String[] @default([])
+  accessToken String @default("")
+  refreshToken String @default("")
+  gender Gender? 
+}
+
+type Gender {
+  masculino String
+  femenino String
+  otro String
 }
