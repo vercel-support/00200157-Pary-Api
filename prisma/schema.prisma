@@ -11,21 +11,29 @@ datasource db {
 }
 
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID String @unique
-  username String @unique
-  email String @unique
-  name String @default("")
-  lastName String @default("")
-  signedIn Boolean @default(false)
-  profilePictures String[] @default([])
-  accessToken String @default("")
-  refreshToken String @default("")
-  gender Gender? 
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID String     @unique
+  username         String     @unique
+  email            String     @unique
+  name             String     @default("")
+  lastName         String     @default("")
+  signedIn         Boolean    @default(false)
+  profilePictures  String[]   @default([])
+  accessToken      String     @default("")
+  refreshToken     String     @default("")
+  gender           Gender     @default(masculino)
+  interests        Interest[]
+  birthDate        String     @default("")
 }
 
-type Gender {
-  masculino String
-  femenino String
-  otro String
+type Interest {
+  id       String
+  category String
+  options  String[]
+}
+
+enum Gender {
+  masculino
+  femenino
+  otro
 }

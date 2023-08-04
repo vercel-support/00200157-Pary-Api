@@ -46,6 +46,28 @@ app.post("/test-token", async (req, res) => {
     }
 });
 
+app.post("/test-refresh-token", async (req, res) => {
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
+    }
+
+    const token = extractToken(bearerToken);
+
+    try {
+        const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
+
+        if (typeof decoded === 'object' && 'id' in decoded) {
+            return res.json({ message: 'Access token is valid.' });
+        } else {
+            return res.status(500).json({ error: 'Invalid access token.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to authenticate token.' });
+    }
+});
+
 
 
 app.listen(3000, () => {

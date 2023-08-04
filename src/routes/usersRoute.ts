@@ -72,5 +72,51 @@ router.get('/users', async (req, res) => {
     }
 });
 
+router.post('/update', async (req, res) => {
+    const { username, name, lastName, profilePictures, gender, signedIn, interests } = req.body;
+
+
+    if (!username || !name || !gender || !lastName || !profilePictures || signedIn === undefined) {
+        return res.status(400).json({ error: 'Missing required fields.' });
+    }
+
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
+    }
+
+    const token = extractToken(bearerToken);
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (typeof decoded === 'object' && 'id' in decoded) {
+            const updatedUser = await prisma.user.update({
+                where: { id: decoded.id },
+                data: {
+                    username,
+                    name,
+                    lastName,
+                    profilePictures,
+                    gender,
+                    signedIn: true,
+                    interests
+                },
+            });
+
+            if (!updatedUser) {
+                return res.status(404).json({ error: 'User not found.' });
+            }
+
+            return res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
+        } else {
+            return res.status(500).json({ error: 'Invalid access token.' });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to authenticate token.' });
+    }
+});
+
 
 export default router;
