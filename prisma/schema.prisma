@@ -11,25 +11,24 @@ datasource db {
 }
 
 model User {
-  id               String     @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID String     @unique
-  username         String     @unique
-  email            String     @unique
-  name             String     @default("")
-  lastName         String     @default("")
-  signedIn         Boolean    @default(false)
-  profilePictures  String[]   @default([])
-  accessToken      String     @default("")
-  refreshToken     String     @default("")
-  gender           Gender     @default(masculino)
-  interests        Interest[]
-  birthDate        String     @default("")
-}
-
-type Interest {
-  id       String
-  category String
-  options  String[]
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID      String   @unique
+  username              String   @unique
+  email                 String   @unique
+  name                  String   @default("")
+  lastName              String   @default("")
+  signedIn              Boolean  @default(false)
+  profilePictures       String[] @default([])
+  accessToken           String   @default("")
+  refreshToken          String   @default("")
+  gender                Gender   @default(masculino)
+  description           String   @default("")
+  birthDate             String   @default("")
+  musicInterest         String[] @default([])
+  deportsInterest       String[] @default([])
+  artAndCultureInterest String[] @default([])
+  techInterest          String[] @default([])
+  hobbiesInterest       String[] @default([])
 }
 
 enum Gender {

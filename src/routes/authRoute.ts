@@ -147,7 +147,7 @@ router.post('/update-user', async (req, res) => {
                     name,
                     lastName,
                     profilePictures,
-                    gender
+                    gender: gender.toLowerCase(),
                 },
             });
 
