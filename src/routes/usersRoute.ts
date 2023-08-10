@@ -24,6 +24,7 @@ const respondWithError = (res: Response, status: number, error: any) => {
 
 router.get('/check-username', (req, res) => {
     const { username, authorization: bearerToken } = req.headers;
+    console.log(username, bearerToken);
 
     if (!username || typeof username !== 'string') {
         return respondWithError(res, 400, 'No se proporcionó un nombre de usuario.');
