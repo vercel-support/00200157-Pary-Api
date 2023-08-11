@@ -1,0 +1,16 @@
+{
+  "resourceName": "s386b50392",
+  "policyUUID": "86b50392",
+  "bucketName": "mereketengueapi89438e654d0b4f89b3888cf9da2e6dab",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

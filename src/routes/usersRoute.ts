@@ -144,5 +144,37 @@ router.post('/update', (req, res) => {
     });
 });
 
+router.get("/:id", (req, res) => {
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
+    }
+
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err || !(typeof decoded === 'object' && 'id' in decoded)) {
+            return respondWithError(res, 500, 'Invalid access token.');
+        }
+
+        if (decoded.id !== req.params.id) {
+            return respondWithError(res, 403, 'Access Denied: Token does not match user ID.');
+        }
+
+        prisma.user.findUnique({ where: { id: decoded.id } })
+            .then(user => {
+                if (!user) {
+                    return res.status(404).json({ error: 'User not found.' });
+                }
+                return res.status(200).json(user);
+            })
+            .catch(error => {
+                console.error(error);
+                return respondWithError(res, 500, 'Error fetching user data.');
+            });
+    });
+});
+
+
 
 export default router;

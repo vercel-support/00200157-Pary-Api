@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import authRoute from "./routes/authRoute";
 import usersRoute from "./routes/usersRoute";
 import { extractToken } from './utils/Utils';
+import fileUpload from 'express-fileupload';
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -19,6 +20,7 @@ export const prisma = new PrismaClient();
 
 const app = express();
 app.use(express.json());
+app.use(fileUpload())
 
 app.use('/auth', authRoute);
 app.use('/user', usersRoute);
