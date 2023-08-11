@@ -181,60 +181,76 @@ router.get("/:id", (req, res) => {
 
 router.post('/upload-profile-picture', async (req, res) => {
     const bearerToken = req.headers['authorization'];
-    const imageBase64 = req.body.image;
 
-    if (!imageBase64) {
-        return respondWithError(res, 400, 'No image provided.');
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
     }
 
-    const { index } = req.query;
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err || !(typeof decoded === 'object' && 'id' in decoded)) {
+            return respondWithError(res, 500, 'Token de acceso inválido.');
+        }
 
-    if (typeof index !== 'string' || isNaN(Number(index))) {
-        return respondWithError(res, 400, 'Invalid index provided.');
-    }
+        const imageBase64 = req.body.image;
 
-    // Convertir base64 a Buffer
-    const imageBuffer = Buffer.from(imageBase64.split(",")[1], 'base64');
-    const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+        if (!imageBase64) {
+            return respondWithError(res, 400, 'No image provided.');
+        }
 
-    console.log("Uploading...");
+        const { index, profilePictures: rawProfilePictures } = req.query;
 
-    const numericIndex = Number(index);
 
-    Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
-        contentType: 'image/' + fileType,
-        level: 'public',
-        progressCallback: progress => console.log(`Uploaded: ${progress.loaded}/${progress.total}`)
-    }).then(result => {
-        console.log("Uploaded: " + JSON.stringify(result, null, 4));
-        // @ts-ignore
-        Storage.get(result.key).then(result => {
-            console.log("Result Image:", result);
-            return res.status(200).json({ result });
+        if (typeof index !== 'string' || isNaN(Number(index))) {
+            return respondWithError(res, 400, 'Invalid index provided.');
+        }
+        if (!Array.isArray(rawProfilePictures)) {
+            return respondWithError(res, 400, "Invalid profilePictures provided");
+        }
+
+        const imageBuffer = Buffer.from(imageBase64.split(",")[1], 'base64');
+        const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+
+        const numericIndex = Number(index);
+
+        Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
+            contentType: 'image/' + fileType,
+            level: 'public',
+            progressCallback: progress => console.log(`Uploaded: ${progress.loaded}/${progress.total}`)
+        }).then(result => {
+            Storage.get(result.key).then(imageUrl => {
+                const profilePictures = [...rawProfilePictures];
+                if (numericIndex >= 0 && numericIndex < profilePictures.length) {
+                    profilePictures[numericIndex] = imageUrl;
+                } else {
+                    return respondWithError(res, 400, 'Invalid index provided.');
+                }
+
+                prisma.user.update({
+                    where: { id: decoded.id },
+                    data: {
+                        profilePictures: profilePictures as string[]
+                    }
+                }).catch(error => {
+                    console.error(error);
+                    return respondWithError(res, 500, 'Error updating user.');
+                }).then((user) => {
+                    return res.status(200).json({ user });
+                });
+
+
+            }).catch(error => {
+                console.error(error);
+                return respondWithError(res, 500, 'Error uploading image.');
+            });
+
+
+
         }).catch(error => {
-            console.error(error);
+            console.log(error);
             return respondWithError(res, 500, 'Error uploading image.');
         });
-
-
-        /* prisma.user.update({
-            where: { id: decoded.id },
-            data: {
-                profilePictures: {
-                    set: { [numericIndex]: imageUrl }
-                }
-            }
-        }).catch(error => {
-            console.error(error);
-            return respondWithError(res, 500, 'Error updating user.');
-        }).then(() => {
-            res.status(200).json({ imageUrl });
-        }); */
-    }).catch(error => {
-        console.log(error);
-        return respondWithError(res, 500, 'Error uploading image.');
     });
-
 
 });
 
