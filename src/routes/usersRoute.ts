@@ -1,9 +1,12 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Storage } from "aws-amplify";
+import { randomUUID } from 'crypto';
 import express, { Response } from 'express';
+import fileUpload from 'express-fileupload';
 import jwt from 'jsonwebtoken';
 import { prisma } from '..';
-
 import { extractToken } from '../utils/Utils';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -16,6 +19,8 @@ if (!JWT_REFRESH_SECRET) {
 
 const router = express.Router();
 
+router.use(fileUpload());
+
 const respondWithError = (res: Response, status: number, error: any) => {
     return res.status(status).json({ error });
 };
@@ -24,7 +29,6 @@ const respondWithError = (res: Response, status: number, error: any) => {
 
 router.get('/check-username', (req, res) => {
     const { username, authorization: bearerToken } = req.headers;
-    console.log(username, bearerToken);
 
     if (!username || typeof username !== 'string') {
         return respondWithError(res, 400, 'No se proporcionó un nombre de usuario.');
@@ -173,6 +177,65 @@ router.get("/:id", (req, res) => {
                 return respondWithError(res, 500, 'Error fetching user data.');
             });
     });
+});
+
+router.post('/upload-profile-picture', async (req, res) => {
+    const bearerToken = req.headers['authorization'];
+    const imageBase64 = req.body.image;
+
+    if (!imageBase64) {
+        return respondWithError(res, 400, 'No image provided.');
+    }
+
+    const { index } = req.query;
+
+    if (typeof index !== 'string' || isNaN(Number(index))) {
+        return respondWithError(res, 400, 'Invalid index provided.');
+    }
+
+    // Convertir base64 a Buffer
+    const imageBuffer = Buffer.from(imageBase64.split(",")[1], 'base64');
+    const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+
+    console.log("Uploading...");
+
+    const numericIndex = Number(index);
+
+    Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
+        contentType: 'image/' + fileType,
+        level: 'public',
+        progressCallback: progress => console.log(`Uploaded: ${progress.loaded}/${progress.total}`)
+    }).then(result => {
+        console.log("Uploaded: " + JSON.stringify(result, null, 4));
+        // @ts-ignore
+        Storage.get(result.key).then(result => {
+            console.log("Result Image:", result);
+            return res.status(200).json({ result });
+        }).catch(error => {
+            console.error(error);
+            return respondWithError(res, 500, 'Error uploading image.');
+        });
+
+
+        /* prisma.user.update({
+            where: { id: decoded.id },
+            data: {
+                profilePictures: {
+                    set: { [numericIndex]: imageUrl }
+                }
+            }
+        }).catch(error => {
+            console.error(error);
+            return respondWithError(res, 500, 'Error updating user.');
+        }).then(() => {
+            res.status(200).json({ imageUrl });
+        }); */
+    }).catch(error => {
+        console.log(error);
+        return respondWithError(res, 500, 'Error uploading image.');
+    });
+
+
 });
 
 
