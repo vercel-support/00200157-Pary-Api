@@ -220,16 +220,22 @@ router.post('/upload-profile-picture', async (req, res) => {
         }).then(result => {
             Storage.get(result.key).then(imageUrl => {
                 const profilePictures = [...rawProfilePictures];
+
+                const profilePicture = {
+                    url: imageUrl,
+                    amazonID: result.key
+                };
                 if (numericIndex >= 0 && numericIndex < profilePictures.length) {
-                    profilePictures[numericIndex] = imageUrl;
+                    profilePictures[numericIndex] = profilePicture;
                 } else {
                     return respondWithError(res, 400, 'Invalid index provided.');
                 }
-
                 prisma.user.update({
                     where: { id: decoded.id },
                     data: {
-                        profilePictures: profilePictures as string[]
+                        profilePictures: {
+                            set: profilePictures as []
+                        }
                     }
                 }).catch(error => {
                     console.error(error);

@@ -38,7 +38,7 @@ router.post('/signIn', async (req, res) => {
                 email: googleUser.user.email,
                 lastName: googleUser.user.familyName ?? "",
                 assignedGoogleID: googleUser.user.id,
-                profilePictures: googleUser.user.photo ? [...googleUser.user.photo] : [],
+                profilePictures: {}
             }
         });
     }

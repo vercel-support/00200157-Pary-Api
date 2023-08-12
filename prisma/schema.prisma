@@ -11,28 +11,36 @@ datasource db {
 }
 
 model User {
-  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID      String   @unique
-  username              String   @unique
-  email                 String   @unique
-  name                  String   @default("")
-  lastName              String   @default("")
-  signedIn              Boolean  @default(false)
-  profilePictures       String[] @default([])
-  accessToken           String   @default("")
-  refreshToken          String   @default("")
-  gender                Gender   @default(masculino)
-  description           String   @default("")
-  birthDate             String   @default("")
-  musicInterest         String[] @default([])
-  deportsInterest       String[] @default([])
-  artAndCultureInterest String[] @default([])
-  techInterest          String[] @default([])
-  hobbiesInterest       String[] @default([])
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID      String           @unique
+  username              String           @unique
+  email                 String           @unique
+  name                  String           @default("")
+  lastName              String           @default("")
+  signedIn              Boolean          @default(false)
+  profilePictures       ProfilePicture[]
+  accessToken           String           @default("")
+  refreshToken          String           @default("")
+  gender                Gender           @default(masculino)
+  description           String           @default("")
+  birthDate             String           @default("")
+  musicInterest         String[]         @default([])
+  deportsInterest       String[]         @default([])
+  artAndCultureInterest String[]         @default([])
+  techInterest          String[]         @default([])
+  hobbiesInterest       String[]         @default([])
 }
 
 enum Gender {
   masculino
   femenino
   otro
+}
+
+model ProfilePicture {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  url      String
+  amazonId String
+  userId   String @db.ObjectId
+  user     User   @relation(fields: [userId], references: [id])
 }
