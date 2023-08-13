@@ -6,9 +6,12 @@ import fileUpload from 'express-fileupload';
 import jwt from 'jsonwebtoken';
 import { prisma } from '..';
 import { extractToken } from '../utils/Utils';
+import { ProfilePicture } from '@prisma/client';
 
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
+
+const MAX_PROFILE_PICTURES = 3;
 
 if (!JWT_SECRET) {
     throw new Error('No se encontró la variable de entorno JWT_SECRET.');
@@ -44,7 +47,11 @@ router.get('/check-username', (req, res) => {
             return respondWithError(res, 500, 'Token de acceso inválido.');
         }
 
-        prisma.user.findUnique({ where: { username } })
+        prisma.user.findUnique({
+            where: { username }, include: {
+                profilePictures: true
+            }
+        })
             .then(user => {
                 if (!user) {
                     return res.status(200).json({ exists: false, message: 'El nombre de usuario no existe.' });
@@ -70,7 +77,11 @@ router.get('/users', async (req, res) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         if (typeof decoded === 'object' && 'id' in decoded) {
-            const users = await prisma.user.findFirst();
+            const users = await prisma.user.findFirst({
+                include: {
+                    profilePictures: true
+                }
+            });
             return res.json(users);
         } else {
             return res.status(500).json({ error: 'Invalid access token.' });
@@ -85,7 +96,7 @@ router.post('/update', (req, res) => {
     const { username, name, lastName, profilePictures, gender, description, birthDate, musicInterest, deportsInterest, artAndCultureInterest, techInterest, hobbiesInterest } = req.body;
 
 
-    if (!username || !name || !gender || !lastName || !profilePictures) {
+    if (!username || !name || !gender || !lastName) {
         return res.status(400).json({ error: 'Missing required fields.' });
     }
     if (!Array.isArray(musicInterest)) {
@@ -122,7 +133,6 @@ router.post('/update', (req, res) => {
                 username,
                 name,
                 lastName,
-                profilePictures,
                 gender: gender,
                 signedIn: true,
                 musicInterest,
@@ -133,6 +143,9 @@ router.post('/update', (req, res) => {
                 description,
                 birthDate
             },
+            include: {
+                profilePictures: true
+            }
         })
             .then(updatedUser => {
                 return res.status(200).json({ message: 'Usuario actualizado con éxito.', user: updatedUser });
@@ -165,7 +178,11 @@ router.get("/:id", (req, res) => {
             return respondWithError(res, 403, 'Access Denied: Token does not match user ID.');
         }
 
-        prisma.user.findUnique({ where: { id: decoded.id } })
+        prisma.user.findUnique({
+            where: { id: decoded.id }, include: {
+                profilePictures: true
+            }
+        })
             .then(user => {
                 if (!user) {
                     return res.status(404).json({ error: 'User not found.' });
@@ -204,9 +221,6 @@ router.post('/upload-profile-picture', async (req, res) => {
         if (typeof index !== 'string' || isNaN(Number(index))) {
             return respondWithError(res, 400, 'Invalid index provided.');
         }
-        if (!Array.isArray(rawProfilePictures)) {
-            return respondWithError(res, 400, "Invalid profilePictures provided");
-        }
 
         const imageBuffer = Buffer.from(imageBase64.split(",")[1], 'base64');
         const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
@@ -215,42 +229,69 @@ router.post('/upload-profile-picture', async (req, res) => {
 
         Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
             contentType: 'image/' + fileType,
-            level: 'public',
-            progressCallback: progress => console.log(`Uploaded: ${progress.loaded}/${progress.total}`)
+            level: 'public'
         }).then(result => {
             Storage.get(result.key).then(imageUrl => {
-                const profilePictures = [...rawProfilePictures];
-
-                const profilePicture = {
-                    url: imageUrl,
-                    amazonID: result.key
-                };
-                if (numericIndex >= 0 && numericIndex < profilePictures.length) {
-                    profilePictures[numericIndex] = profilePicture;
-                } else {
-                    return respondWithError(res, 400, 'Invalid index provided.');
-                }
-                prisma.user.update({
-                    where: { id: decoded.id },
+                prisma.profilePicture.create({
                     data: {
-                        profilePictures: {
-                            set: profilePictures as []
-                        }
+                        url: imageUrl,
+                        user: {
+                            connect: {
+                                id: decoded.id
+                            }
+                        },
+                        amazonId: result.key
                     }
                 }).catch(error => {
-                    console.error(error);
+                    console.error("Error al agregar la imagen al usuario", error);
                     return respondWithError(res, 500, 'Error updating user.');
-                }).then((user) => {
-                    return res.status(200).json({ user });
+                }).then(async (profilePicture) => {
+                    if ('id' in profilePicture && 'url' in profilePicture && 'amazonId' in profilePicture && 'userId' in profilePicture) {
+
+                        // Retrieve the current user's profile pictures
+                        const user = await prisma.user.findUnique({
+                            where: { id: decoded.id },
+                            select: { profilePictures: true }
+                        });
+
+                        if (user && user.profilePictures) {
+                            const profilePictures = [...user.profilePictures];
+
+                            // Insert new picture at specified index or append at the end
+                            if (numericIndex >= 0 && numericIndex < profilePictures.length) {
+                                profilePictures.splice(numericIndex, 0, profilePicture);
+                            } else {
+                                profilePictures.push(profilePicture);
+                            }
+
+                            prisma.user.update({
+                                where: { id: decoded.id },
+                                data: {
+                                    profilePictures: {
+                                        set: profilePictures
+                                    }
+                                },
+                                include: {
+                                    profilePictures: true
+                                }
+                            }).catch(error => {
+                                console.error("Error al agregar la imagen al usuario", error);
+                                return respondWithError(res, 500, 'Error updating user.');
+                            }).then(async (updatedUser) => {
+                                if ('id' in updatedUser) {
+                                    return res.status(200).json({ user: updatedUser });
+                                }
+                            });
+                        }
+                    } else {
+                        console.error("Profile picture is not in the expected format:", profilePicture);
+                        return respondWithError(res, 500, 'Unexpected data format.');
+                    }
                 });
-
-
             }).catch(error => {
-                console.error(error);
+                console.error("Error al subir la imagen", error);
                 return respondWithError(res, 500, 'Error uploading image.');
             });
-
-
 
         }).catch(error => {
             console.log(error);
@@ -258,6 +299,61 @@ router.post('/upload-profile-picture', async (req, res) => {
         });
     });
 
+});
+
+
+router.delete('/delete-profile-picture', async (req, res) => {
+    const amazonId = typeof req.query.amazonId === 'string' ? req.query.amazonId : undefined;
+    const id = typeof req.query.id === 'string' ? req.query.id : undefined;
+
+    if (!amazonId) {
+        return respondWithError(res, 400, 'No se proporcionó amazonId.');
+    }
+
+    if (!id) {
+        return respondWithError(res, 400, 'No se proporcionó id.');
+    }
+
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return respondWithError(res, 403, 'No se proporcionó un token.');
+    }
+
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err || !(typeof decoded === 'object' && 'id' in decoded)) {
+            return respondWithError(res, 500, 'Token de acceso inválido.');
+        }
+
+        try {
+            await Storage.remove(amazonId, { level: 'public' });
+        } catch (error) {
+            console.error("Error al eliminar la imagen de S3:", error);
+            return respondWithError(res, 500, 'Error al eliminar la imagen de S3.');
+        }
+
+        try {
+            await prisma.profilePicture.delete({
+                where: {
+                    id
+                }
+            });
+
+            const updatedUser = await prisma.user.findUnique({
+                where: { id: decoded.id },
+                include: {
+                    profilePictures: true
+                }
+            });
+
+            return res.status(200).json({ message: 'Imagen eliminada con éxito', user: updatedUser });
+
+        } catch (error) {
+            console.error("Error al eliminar la imagen de la base de datos:", error);
+            return respondWithError(res, 500, 'Error al eliminar la imagen de la base de datos.');
+        }
+    });
 });
 
 

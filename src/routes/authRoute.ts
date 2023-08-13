@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { prisma } from '..';
-import { GoogleUser } from '../../types';
+import { GoogleUser, ProfilePicture } from '../../types';
 import { extractToken } from '../utils/Utils';
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
@@ -38,7 +38,9 @@ router.post('/signIn', async (req, res) => {
                 email: googleUser.user.email,
                 lastName: googleUser.user.familyName ?? "",
                 assignedGoogleID: googleUser.user.id,
-                profilePictures: {}
+            },
+            include: {
+                profilePictures: true
             }
         });
     }
@@ -46,11 +48,14 @@ router.post('/signIn', async (req, res) => {
     const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1d' });
     const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '8weeks' });
 
-    await prisma.user.update({
+    user = await prisma.user.update({
         where: { id: user.id },
         data: {
             accessToken,
             refreshToken
+        },
+        include: {
+            profilePictures: true
         }
     });
 
@@ -148,7 +153,9 @@ router.post('/update-user', async (req, res) => {
                     lastName,
                     profilePictures,
                     gender: gender.toLowerCase(),
-                },
+                }, include: {
+                    profilePictures: true
+                }
             });
 
             if (!updatedUser) {

@@ -15,3 +15,35 @@ export interface GoogleUser {
      */
     serverAuthCode: string | null;
 }
+
+type Gender = "mujer" | "hombre" | "otro";
+type Interest = string[];
+
+export interface User extends BasicUserData {
+    id: string;
+    email: string;
+    signedIn: boolean;
+    accessToken: string;
+    refreshToken: string;
+}
+// Represents the basic information of a user.
+export interface BasicUserData {
+    username: string;
+    name: string;
+    lastName: string;
+    profilePictures: ProfilePicture[];  // Consider using an array of ProfilePicture interface if applicable
+    description: string;
+    birthDate: string;  // Consider using a Date type if possible
+    gender: Gender;
+    musicInterest: Interest;
+    deportsInterest: Interest;
+    artAndCultureInterest: Interest;
+    techInterest: Interest;
+    hobbiesInterest: Interest;
+}
+
+export interface ProfilePicture {
+    id?: string;
+    url: string;
+    amazonId: string;
+}
