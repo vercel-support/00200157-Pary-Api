@@ -196,6 +196,51 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.get("/basic-user-info/:username", (req, res) => {
+    const bearerToken = req.headers['authorization'];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: 'No token provided.' });
+    }
+
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err || !(typeof decoded === 'object' && 'id' in decoded)) {
+            return respondWithError(res, 500, 'Invalid access token.');
+        }
+
+        const { username } = req.params;
+
+        prisma.user.findUnique({
+            where: { username: username },
+            select: {
+                username: true,
+                name: true,
+                lastName: true,
+                profilePictures: true,
+                description: true,
+                birthDate: true,
+                gender: true,
+                musicInterest: true,
+                deportsInterest: true,
+                artAndCultureInterest: true,
+                techInterest: true,
+                hobbiesInterest: true,
+            }
+        })
+            .then(user => {
+                if (!user) {
+                    return res.status(404).json({ error: 'User not found.' });
+                }
+                return res.status(200).json(user);
+            })
+            .catch(error => {
+                console.error(error);
+                return respondWithError(res, 500, 'Error fetching user data.');
+            });
+    });
+});
+
 router.post('/upload-profile-picture', async (req, res) => {
     const bearerToken = req.headers['authorization'];
 

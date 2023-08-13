@@ -29,6 +29,8 @@ model User {
   artAndCultureInterest String[]         @default([])
   techInterest          String[]         @default([])
   hobbiesInterest       String[]         @default([])
+
+  @@index([username, email])
 }
 
 enum Gender {
