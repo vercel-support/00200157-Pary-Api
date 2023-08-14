@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Amplify } from "aws-amplify";
 import express from "express";
-import fileUpload from "express-fileupload";
 import jwt from "jsonwebtoken";
 import authRoute from "./routes/authRoute";
 import usersRoute from "./routes/usersRoute";
@@ -77,6 +76,6 @@ app.post("/test-refresh-token", async (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log(`Server ready at: http://localhost:3000`);
+app.listen(80, () => {
+    console.log(`Server ready at: http://localhost`);
 });
