@@ -30,6 +30,7 @@ model User {
   techInterest          String[]         @default([])
   hobbiesInterest       String[]         @default([])
   verified              Boolean          @default(false)
+  phoneNumber           String           @default("")
 
   @@index([username, email])
 }

@@ -6,12 +6,8 @@ import fileUpload from 'express-fileupload';
 import jwt from 'jsonwebtoken';
 import { prisma } from '..';
 import { extractToken } from '../utils/Utils';
-import { ProfilePicture } from '@prisma/client';
-
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
-
-const MAX_PROFILE_PICTURES = 3;
 
 if (!JWT_SECRET) {
     throw new Error('No se encontró la variable de entorno JWT_SECRET.');
@@ -93,7 +89,7 @@ router.get('/users', async (req, res) => {
 
 router.post('/update', (req, res) => {
 
-    const { username, name, lastName, profilePictures, gender, description, birthDate, musicInterest, deportsInterest, artAndCultureInterest, techInterest, hobbiesInterest } = req.body;
+    const { username, name, lastName, phoneNumber, gender, description, birthDate, musicInterest, deportsInterest, artAndCultureInterest, techInterest, hobbiesInterest } = req.body;
 
 
     if (!username || !name || !gender || !lastName) {
@@ -141,7 +137,7 @@ router.post('/update', (req, res) => {
                 techInterest,
                 hobbiesInterest,
                 description,
-                birthDate
+                birthDate, phoneNumber
             },
             include: {
                 profilePictures: true
