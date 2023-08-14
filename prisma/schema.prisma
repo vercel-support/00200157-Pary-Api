@@ -29,6 +29,7 @@ model User {
   artAndCultureInterest String[]         @default([])
   techInterest          String[]         @default([])
   hobbiesInterest       String[]         @default([])
+  verified              Boolean          @default(false)
 
   @@index([username, email])
 }

@@ -40,6 +40,7 @@ export interface BasicUserData {
     artAndCultureInterest: Interest;
     techInterest: Interest;
     hobbiesInterest: Interest;
+    verified: boolean;
 }
 
 export interface ProfilePicture {

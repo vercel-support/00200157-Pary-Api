@@ -226,6 +226,7 @@ router.get("/basic-user-info/:username", (req, res) => {
                 artAndCultureInterest: true,
                 techInterest: true,
                 hobbiesInterest: true,
+                verified: true,
             }
         })
             .then(user => {
