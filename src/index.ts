@@ -74,6 +74,10 @@ app.post("/test-refresh-token", async (req, res) => {
     }
 });
 
+app.get("/test-users", async (req, res) => {
+    const users = await prisma.user.findMany();
+    return res.json(users);
+});
 
 
 app.listen(80, () => {
