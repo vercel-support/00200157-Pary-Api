@@ -31,6 +31,12 @@ model User {
   hobbiesInterest       String[]         @default([])
   verified              Boolean          @default(false)
   phoneNumber           String           @default("")
+  locationName          String           @default("")
+  locationLatitude      Int              @default(0)
+  locationLongitude     Int              @default(0)
+  locationTimestamp     Int              @default(0)
+  createdAt             DateTime         @default(now())
+  lastLogin             DateTime         @default(now())
 
   @@index([username, email])
 }
