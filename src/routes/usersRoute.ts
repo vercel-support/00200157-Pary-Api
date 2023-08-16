@@ -6,6 +6,7 @@ import fileUpload from "express-fileupload";
 import jwt from "jsonwebtoken";
 import { prisma } from "..";
 import { extractToken, respondWithError } from "../utils/Utils";
+import axios from "axios";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -441,13 +442,21 @@ router.get("/get-image-url/:amazonId", async (req, res) => {
 
     Storage.get(amazonId)
         .then(imageUrl => {
-            return res.status(200).json({ imageUrl });
+            // Realizar una solicitud al imageUrl para obtener la imagen
+            return axios.get(imageUrl, { responseType: 'arraybuffer' });
+        })
+        .then(response => {
+            // Establecer el tipo de contenido en la respuesta y enviar la imagen
+            const contentType = response.headers['content-type'];
+            res.setHeader('Content-Type', contentType);
+            return res.status(200).send(response.data);
         })
         .catch(error => {
             Amplify.Auth.currentAuthenticatedUser();
             console.error("Error al obtener la imagen", error);
-            return respondWithError(res, 500, "Error uploading image.");
+            return respondWithError(res, 500, "Error obteniendo imagen.");
         });
 });
+
 
 export default router;
