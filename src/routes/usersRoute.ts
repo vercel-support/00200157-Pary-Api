@@ -433,7 +433,7 @@ router.delete("/delete-profile-picture", async (req, res) => {
 });
 
 router.get("/get-image-url/:amazonId", async (req, res) => {
-    const amazonId = typeof req.query.amazonId === "string" ? req.query.amazonId : undefined;
+    const amazonId = typeof req.params.amazonId === "string" ? req.params.amazonId : undefined;
 
     if (!amazonId) {
         return respondWithError(res, 400, "No se proporcionó amazonId.");
