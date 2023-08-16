@@ -48,3 +48,13 @@ export interface ProfilePicture {
     url: string;
     amazonId: string;
 }
+
+export interface Party {
+    id: string;
+    location: string;
+    name: string;
+    description: string;
+    image: string; // url
+    creatorUsername: string;
+    tags: string[];
+}

@@ -7,6 +7,7 @@ import usersRoute from "./routes/usersRoute";
 import { extractToken } from "./utils/Utils";
 
 import awsconfig from "./aws-exports";
+import feedRoute from "./routes/feedRoute";
 
 Amplify.configure(awsconfig);
 
@@ -28,6 +29,7 @@ app.use(express.json({ limit: "50mb" }));
 
 app.use("/auth", authRoute);
 app.use("/user", usersRoute);
+app.use("/feed", feedRoute);
 
 
 app.post("/test-token", async (req, res) => {

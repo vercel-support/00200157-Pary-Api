@@ -5,7 +5,7 @@ import express, { Response } from "express";
 import fileUpload from "express-fileupload";
 import jwt from "jsonwebtoken";
 import { prisma } from "..";
-import { extractToken } from "../utils/Utils";
+import { extractToken, respondWithError } from "../utils/Utils";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -20,9 +20,6 @@ const router = express.Router();
 
 router.use(fileUpload());
 
-const respondWithError = (res: Response, status: number, error: any) => {
-    return res.status(status).json({ error });
-};
 
 // check in db if the username provided exists or not also check its token
 
