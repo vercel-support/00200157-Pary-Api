@@ -55,15 +55,17 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
         ["luna", "máscaras", "playa"],
         ["estrellas", "verano", "invierno"]
     ];
+    const randomOffset = Math.floor(Math.random() * 101); // Un número aleatorio entre 0 y 100
 
-    for (let i = 0; i < 150; i++) {
-        const loc = locations[i % locations.length];
-        const name = names[i % names.length];
-        const desc = descriptions[i % descriptions.length].replace('{location}', loc);
-        const imgNumber = (i % 17) + 1;
+    for (let i = 0; i < 50; i++) {
+        const index = (randomOffset + i) % 150; // Usamos el módulo para evitar desbordamiento
+        const loc = locations[index % locations.length];
+        const name = names[index % names.length];
+        const desc = descriptions[index % descriptions.length].replace('{location}', loc);
+        const imgNumber = (index % 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
-        const tag = tags[i % tags.length];
-        const creatorUsername = users[i % userCount].username;
+        const tag = tags[index % tags.length];
+        const creatorUsername = users[index % userCount].username;
 
         parties.push({
             id: randomUUID(),
