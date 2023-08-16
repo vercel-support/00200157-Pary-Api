@@ -42,6 +42,7 @@ router.post("/signIn", async (req, res) => {
                 assignedGoogleID: googleUser.user.id,
                 lastLogin: new Date(),
                 createdAt: new Date(),
+                birthDate: new Date(),
             },
             include: {
                 profilePictures: true,

@@ -23,7 +23,7 @@ model User {
   refreshToken          String           @default("")
   gender                Gender           @default(masculino)
   description           String           @default("")
-  birthDate             String           @default("")
+  birthDate             DateTime
   musicInterest         String[]         @default([])
   deportsInterest       String[]         @default([])
   artAndCultureInterest String[]         @default([])
