@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "mereketengueapi97724297_identitypool_97724297",
+    "identityPoolName": "mereketengueapiecb25302_identitypool_ecb25302",
     "allowUnauthenticatedIdentities": true,
-    "resourceNameTruncated": "mereke97724297",
-    "userPoolName": "mereketengueapi97724297_userpool_97724297",
+    "resourceNameTruncated": "merekeecb25302",
+    "userPoolName": "mereketengueapiecb25302_userpool_ecb25302",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,15 +31,12 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "mereke97724297_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "merekeecb25302_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "97724297",
-    "resourceName": "mereketengueapi97724297",
+    "sharedId": "ecb25302",
+    "resourceName": "mereketengueapiecb25302",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
-    "usernameAttributes": [
-      "email"
-    ],
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,

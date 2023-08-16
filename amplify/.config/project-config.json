@@ -1,12 +1,12 @@
 {
-  "projectName": "Mereketengueapi",
+  "projectName": "MereketengueApi",
   "version": "3.1",
   "frontend": "javascript",
   "javascript": {
     "framework": "none",
     "config": {
       "SourceDir": "src",
-      "DistributionDir": "src",
+      "DistributionDir": "dist",
       "BuildCommand": "npm.cmd run-script build",
       "StartCommand": "npm.cmd run-script start"
     }

@@ -1,22 +1,22 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-mereketengueapi-dev-33816-authRole",
-      "UnauthRoleArn": "arn:aws:iam::218749734164:role/amplify-mereketengueapi-dev-33816-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::218749734164:role/amplify-mereketengueapi-dev-33816-authRole",
+      "AuthRoleName": "amplify-mereketengueapi-dev-203608-authRole",
+      "UnauthRoleArn": "arn:aws:iam::218749734164:role/amplify-mereketengueapi-dev-203608-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::218749734164:role/amplify-mereketengueapi-dev-203608-authRole",
       "Region": "sa-east-1",
-      "DeploymentBucketName": "amplify-mereketengueapi-dev-33816-deployment",
-      "UnauthRoleName": "amplify-mereketengueapi-dev-33816-unauthRole",
-      "StackName": "amplify-mereketengueapi-dev-33816",
-      "StackId": "arn:aws:cloudformation:sa-east-1:218749734164:stack/amplify-mereketengueapi-dev-33816/09c22e50-381a-11ee-b489-0a1b9ac49468",
-      "AmplifyAppId": "d2in8g8lymbzfn"
+      "DeploymentBucketName": "amplify-mereketengueapi-dev-203608-deployment",
+      "UnauthRoleName": "amplify-mereketengueapi-dev-203608-unauthRole",
+      "StackName": "amplify-mereketengueapi-dev-203608",
+      "StackId": "arn:aws:cloudformation:sa-east-1:218749734164:stack/amplify-mereketengueapi-dev-203608/e47b7f50-3bcc-11ee-95c5-0a3f93e89b74",
+      "AmplifyAppId": "d245sywan5qgga"
     },
     "categories": {
       "auth": {
-        "mereketengueapi97724297": {}
+        "mereketengueapiecb25302": {}
       },
       "storage": {
-        "s35582cf5b": {}
+        "mereketengueimages": {}
       }
     }
   }

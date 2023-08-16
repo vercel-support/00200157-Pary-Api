@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "auth": {
-    "mereketengueapi97724297": {
+    "mereketengueapiecb25302": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -11,7 +11,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "s35582cf5b": {
+    "mereketengueimages": {
       "BucketName": "string",
       "Region": "string"
     }

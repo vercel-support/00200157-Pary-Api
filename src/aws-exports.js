@@ -3,14 +3,12 @@
 
 const awsmobile = {
     "aws_project_region": "sa-east-1",
-    "aws_cognito_identity_pool_id": "sa-east-1:449f7d8b-cb6c-419f-baf8-888d11448f4e",
+    "aws_cognito_identity_pool_id": "sa-east-1:4dfd77bc-eec1-4874-b901-611e5a640cf8",
     "aws_cognito_region": "sa-east-1",
-    "aws_user_pools_id": "sa-east-1_rxzWIgxWQ",
-    "aws_user_pools_web_client_id": "176hrr7u07p38jniuldsdpc0r2",
+    "aws_user_pools_id": "sa-east-1_hxUiWNvqo",
+    "aws_user_pools_web_client_id": "6me59sienqvm30i9rsu5nrm0im",
     "oauth": {},
-    "aws_cognito_username_attributes": [
-        "EMAIL"
-    ],
+    "aws_cognito_username_attributes": [],
     "aws_cognito_social_providers": [],
     "aws_cognito_signup_attributes": [
         "EMAIL"
@@ -26,7 +24,7 @@ const awsmobile = {
     "aws_cognito_verification_mechanisms": [
         "EMAIL"
     ],
-    "aws_user_files_s3_bucket": "mereketengueapi644b276dcd0049e5ac545f25f450cfdb33816-dev",
+    "aws_user_files_s3_bucket": "mereketengue-images203608-dev",
     "aws_user_files_s3_bucket_region": "sa-east-1"
 };
 
