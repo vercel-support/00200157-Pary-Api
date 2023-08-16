@@ -281,16 +281,9 @@ router.post("/upload-profile-picture", async (req, res) => {
             return respondWithError(res, 400, "No image provided.");
         }
 
-        const { index, profilePictures: rawProfilePictures } = req.query;
-
-        if (typeof index !== "string" || isNaN(Number(index))) {
-            return respondWithError(res, 400, "Invalid index provided.");
-        }
-
         const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
         const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
 
-        const numericIndex = Number(index);
 
         Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
             contentType: "image/" + fileType,
@@ -326,18 +319,16 @@ router.post("/upload-profile-picture", async (req, res) => {
                                     const user = await prisma.user.findUnique({
                                         where: { id: decoded.id },
                                         select: { profilePictures: true },
-                                    });
+                                    }).catch(error => {
+                                        console.error("Error al obtener las imágenes del usuario", error);
+                                        return respondWithError(res, 500, "Error updating user.");
+                                    }).then(user => user);
 
-                                    if (user && user.profilePictures) {
+
+                                    if (user && "profilePictures" in user && user.profilePictures) {
                                         const profilePictures = [...user.profilePictures];
 
-                                        // Insert new picture at specified index or append at the end
-                                        if (numericIndex >= 0 && numericIndex < profilePictures.length) {
-                                            profilePictures.splice(numericIndex, 0, profilePicture);
-                                        } else {
-                                            profilePictures.push(profilePicture);
-                                        }
-
+                                        profilePictures.push(profilePicture);
                                         prisma.user
                                             .update({
                                                 where: { id: decoded.id },
@@ -356,9 +347,12 @@ router.post("/upload-profile-picture", async (req, res) => {
                                             })
                                             .then(async updatedUser => {
                                                 if ("id" in updatedUser) {
-                                                    return res.status(200).json({ user: updatedUser });
+                                                    return res.status(200).json({ profilePicture });
                                                 }
                                             });
+                                    } else {
+                                        console.error("Error al obtener las imágenes del usuario 2");
+                                        return respondWithError(res, 500, "Error updating user.");
                                     }
                                 } else {
                                     console.error("Profile picture is not in the expected format:", profilePicture);
@@ -368,12 +362,13 @@ router.post("/upload-profile-picture", async (req, res) => {
                     })
                     .catch(error => {
                         Amplify.Auth.currentAuthenticatedUser();
-                        console.error("Error al subir la imagen", error);
+                        console.error("Error al obtener el link de la imagen subida", error);
                         return respondWithError(res, 500, "Error uploading image.");
                     });
             })
             .catch(error => {
                 Amplify.Auth.currentAuthenticatedUser();
+                console.log("Error al subir la imagen", error);
                 return respondWithError(res, 500, "Error uploading image.");
             });
     });
