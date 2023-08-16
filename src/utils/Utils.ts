@@ -61,7 +61,7 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
         const name = names[i % names.length];
         const desc = descriptions[i % descriptions.length].replace('{location}', loc);
         const imgNumber = (i % 17) + 1;
-        const image = `../images/parties/disco${imgNumber}.jpg`;
+        const image = `/images/parties/disco${imgNumber}.jpg`;
         const tag = tags[i % tags.length];
         const creatorUsername = users[i % userCount].username;
 
