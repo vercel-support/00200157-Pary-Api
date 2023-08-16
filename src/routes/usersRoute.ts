@@ -1,5 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Storage } from "aws-amplify";
+import { Amplify, Storage } from "aws-amplify";
 import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import fileUpload from "express-fileupload";
@@ -366,12 +366,13 @@ router.post("/upload-profile-picture", async (req, res) => {
                             });
                     })
                     .catch(error => {
+                        Amplify.Auth.currentAuthenticatedUser();
                         console.error("Error al subir la imagen", error);
                         return respondWithError(res, 500, "Error uploading image.");
                     });
             })
             .catch(error => {
-                console.log(error);
+                Amplify.Auth.currentAuthenticatedUser();
                 return respondWithError(res, 500, "Error uploading image.");
             });
     });
@@ -404,6 +405,7 @@ router.delete("/delete-profile-picture", async (req, res) => {
         try {
             await Storage.remove(amazonId, { level: "public" });
         } catch (error) {
+            Amplify.Auth.currentAuthenticatedUser();
             console.error("Error al eliminar la imagen de S3:", error);
             return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
         }
@@ -428,6 +430,24 @@ router.delete("/delete-profile-picture", async (req, res) => {
             return respondWithError(res, 500, "Error al eliminar la imagen de la base de datos.");
         }
     });
+});
+
+router.get("/get-image-url/:amazonId", async (req, res) => {
+    const amazonId = typeof req.query.amazonId === "string" ? req.query.amazonId : undefined;
+
+    if (!amazonId) {
+        return respondWithError(res, 400, "No se proporcionó amazonId.");
+    }
+
+    Storage.get(amazonId)
+        .then(imageUrl => {
+            return res.status(200).json({ imageUrl });
+        })
+        .catch(error => {
+            Amplify.Auth.currentAuthenticatedUser();
+            console.error("Error al obtener la imagen", error);
+            return respondWithError(res, 500, "Error uploading image.");
+        });
 });
 
 export default router;
