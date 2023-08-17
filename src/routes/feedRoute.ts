@@ -17,7 +17,11 @@ const router = express.Router();
 
 router.get("/generate-parties", async (req, res) => {
     try {
-        const users = await prisma.user.findMany();
+        const users = await prisma.user.findMany({
+            where: {
+                signedIn: true
+            }
+        });
         const parties = await generatePartiesForUsers(users);
 
         // Ahora puedes decidir si quieres guardar estas fiestas en la base de datos 
