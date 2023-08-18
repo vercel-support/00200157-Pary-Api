@@ -57,4 +57,7 @@ export interface Party {
     image: string; // url
     creatorUsername: string;
     tags: string[];
+    type: PartyType;
 }
+
+type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";

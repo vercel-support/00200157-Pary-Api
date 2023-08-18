@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Party } from "../../types";
+import { Party, PartyType } from "../../types";
 import express, { Response } from "express";
 
 export function extractToken(bearerToken: string): string {
@@ -55,6 +55,7 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
         ["luna", "máscaras", "playa"],
         ["estrellas", "verano", "invierno"]
     ];
+    const types: PartyType[] = ["carrete", "junta", "evento", "previa", "otro"];
     const randomOffset = Math.floor(Math.random() * 101); // Un número aleatorio entre 0 y 100
 
     for (let i = 0; i < 50; i++) {
@@ -66,6 +67,7 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const tag = tags[index % tags.length];
         const creatorUsername = users[index % userCount].username;
+        const type = types[index % types.length];
 
         parties.push({
             id: randomUUID(),
@@ -74,7 +76,8 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
             description: desc,
             image: image,
             creatorUsername: creatorUsername,
-            tags: tag
+            tags: tag,
+            type: type
         });
     }
 
