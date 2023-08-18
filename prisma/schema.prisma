@@ -37,14 +37,29 @@ model User {
   locationTimestamp     Int              @default(0)
   createdAt             DateTime         @default(now())
   lastLogin             DateTime         @default(now())
+  isCompany             Boolean          @default(false)
+  following             UserFollows[]    @relation("FollowingToFollower") // The users that this user follows
+  followers             UserFollows[]    @relation("FollowerToFollowing") // The users that follow this user
 
-  @@index([username, email])
+  @@index([username, email, assignedGoogleID])
 }
 
 enum Gender {
   masculino
   femenino
   otro
+}
+
+model UserFollows {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  followerId       String @map("followerId") @db.ObjectId
+  followingId      String @map("followingId") @db.ObjectId
+  followerUsername String // The username of the followed user
+
+  follower  User @relation("FollowingToFollower", fields: [followerId], references: [id])
+  following User @relation("FollowerToFollowing", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
 }
 
 model ProfilePicture {

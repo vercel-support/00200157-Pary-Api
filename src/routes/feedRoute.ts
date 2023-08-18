@@ -20,6 +20,9 @@ router.get("/generate-parties", async (req, res) => {
         const users = await prisma.user.findMany({
             where: {
                 signedIn: true
+            },
+            select: {
+                username: true
             }
         });
         const parties = await generatePartiesForUsers(users);

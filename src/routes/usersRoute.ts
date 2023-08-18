@@ -73,6 +73,8 @@ router.get("/users", async (req, res) => {
             const users = await prisma.user.findFirst({
                 include: {
                     profilePictures: true,
+                    followers: true,
+                    following: true,
                 },
             });
             return res.json(users);
@@ -101,7 +103,9 @@ router.post("/update", (req, res) => {
         locationName,
         locationLatitude,
         locationLongitude,
-        locationTimestamp
+        locationTimestamp,
+        isCompany,
+
     } = req.body;
 
     if (!username || !name || !gender || !lastName) {
@@ -155,10 +159,13 @@ router.post("/update", (req, res) => {
                     locationName,
                     locationLatitude,
                     locationLongitude,
-                    locationTimestamp
+                    locationTimestamp,
+                    isCompany,
                 },
                 include: {
                     profilePictures: true,
+                    followers: true,
+                    following: true,
                 },
             })
             .then(updatedUser => {
@@ -197,6 +204,8 @@ router.get("/:id", (req, res) => {
                 where: { id: decoded.id },
                 include: {
                     profilePictures: true,
+                    followers: true,
+                    following: true,
                 },
             })
             .then(user => {
@@ -247,7 +256,10 @@ router.get("/basic-user-info/:username", (req, res) => {
                     locationName: true,
                     createdAt: true,
                     lastLogin: true,
-                },
+                    isCompany: true,
+                    followers: true,
+                    following: true,
+                }
             })
             .then(user => {
                 if (!user) {
@@ -290,7 +302,10 @@ router.post("/upload-profile-picture", async (req, res) => {
             level: "public",
         })
             .then(result => {
-                Storage.get(result.key)
+                console.log("Resultado: ", result);
+                Storage.get(result.key, {
+                    level: "public",
+                })
                     .then(imageUrl => {
                         prisma.profilePicture
                             .create({
@@ -315,10 +330,14 @@ router.post("/upload-profile-picture", async (req, res) => {
                                     "amazonId" in profilePicture &&
                                     "userId" in profilePicture
                                 ) {
-                                    // Retrieve the current user's profile pictures
+                                    console.log("Imagen agregada al usuario");
                                     const user = await prisma.user.findUnique({
                                         where: { id: decoded.id },
-                                        select: { profilePictures: true },
+                                        select: {
+                                            profilePictures: true,
+                                            followers: true,
+                                            following: true,
+                                        },
                                     }).catch(error => {
                                         console.error("Error al obtener las imágenes del usuario", error);
                                         return respondWithError(res, 500, "Error updating user.");
@@ -417,6 +436,8 @@ router.delete("/delete-profile-picture", async (req, res) => {
                 where: { id: decoded.id },
                 include: {
                     profilePictures: true,
+                    followers: true,
+                    following: true,
                 },
             });
 
@@ -451,6 +472,120 @@ router.get("/get-image-url/:amazonId", async (req, res) => {
             console.error("Error al obtener la imagen", error);
             return respondWithError(res, 500, "Error obteniendo imagen.");
         });
+});
+
+router.post("/follow/:username", async (req, res) => {
+    const followedUsername = req.params.username;
+    const bearerToken = req.headers["authorization"];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: "No token provided." });
+    }
+
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err || !(typeof decoded === "object" && "id" in decoded)) {
+            return respondWithError(res, 500, "Token de acceso inválido.");
+        }
+
+        const followerId = decoded.id;
+
+        // Busca el usuario por su nombre de usuario
+        const followedUser = await prisma.user.findUnique({
+            where: { username: followedUsername }
+        });
+
+        if (!followedUser) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        const followedId = followedUser.id;
+
+        // Comprobar si el usuario ya sigue al otro usuario
+        const existingRelation = await prisma.userFollows.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: followedId,
+                    followingId: followerId
+                }
+            }
+        });
+
+        if (existingRelation) {
+            return res.status(400).json({ error: "You are already following this user." });
+        }
+
+        try {
+            await prisma.userFollows.create({
+                data: {
+                    followerId: followedId,
+                    followingId: followerId,
+                    followerUsername: followedUsername,
+                },
+            });
+            res.status(200).json({ message: "Now following." });
+        } catch (error) {
+            console.error(error);
+            return respondWithError(res, 500, "Error while trying to follow.");
+        }
+    });
+});
+
+router.delete("/unfollow/:username", async (req, res) => {
+    const unfollowedUsername = req.params.username;
+    const bearerToken = req.headers["authorization"];
+
+    if (!bearerToken) {
+        return res.status(403).json({ error: "No token provided." });
+    }
+
+    const token = extractToken(bearerToken);
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err || !(typeof decoded === "object" && "id" in decoded)) {
+            return respondWithError(res, 500, "Token de acceso inválido.");
+        }
+
+        const followingId = decoded.id;
+
+        // Busca el usuario por su nombre de usuario
+        const unfollowedUser = await prisma.user.findUnique({
+            where: { username: unfollowedUsername }
+        });
+
+        if (!unfollowedUser) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        const followerId = unfollowedUser.id;
+
+        const existingRelation = await prisma.userFollows.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId,
+                    followingId
+                }
+            }
+        });
+
+        if (!existingRelation) {
+            return res.status(400).json({ error: "You are not following this user." });
+        }
+
+        try {
+            await prisma.userFollows.delete({
+                where: {
+                    followerId_followingId: {
+                        followerId: followerId,
+                        followingId: followingId
+                    }
+                }
+            });
+            res.status(200).json({ message: "Unfollowed successfully." });
+        } catch (error) {
+            console.error(error);
+            return respondWithError(res, 500, "Error while trying to unfollow.");
+        }
+    });
 });
 
 
