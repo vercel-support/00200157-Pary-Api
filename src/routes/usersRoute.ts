@@ -21,6 +21,9 @@ const router = express.Router();
 
 router.use(fileUpload());
 
+const imageCache = new Map<string, { url: string; expiry: number; }>();
+
+const CACHE_DURATION = 6 * 24 * 60 * 60 * 1000; // 6 días en milisegundos
 
 async function getFreshImageUrl(amazonId: string): Promise<string> {
     try {
@@ -35,6 +38,25 @@ async function getFreshImageUrl(amazonId: string): Promise<string> {
     }
 }
 
+
+async function getCachedImageUrl(amazonId: string): Promise<string> {
+    // Comprobar si la URL ya está en el caché y aún es válida
+    const cached = imageCache.get(amazonId);
+    if (cached && cached.expiry > Date.now()) {
+        return cached.url;
+    }
+
+    // Si no está en el caché o ha expirado, obtener una nueva URL
+    const newUrl = await getFreshImageUrl(amazonId);
+
+    // Almacenar la nueva URL en el caché con una fecha de caducidad
+    imageCache.set(amazonId, {
+        url: newUrl,
+        expiry: Date.now() + CACHE_DURATION
+    });
+
+    return newUrl;
+}
 
 // check in db if the username provided exists or not also check its token
 
@@ -229,7 +251,7 @@ router.get("/:id", (req, res) => {
 
                 // Renovar URLs de las imágenes
                 for (const pic of user.profilePictures) {
-                    pic.url = await getFreshImageUrl(pic.amazonId);
+                    pic.url = await getCachedImageUrl(pic.amazonId);
                 }
 
                 return res.status(200).json(user);
@@ -288,7 +310,7 @@ router.get("/basic-user-info/:username", (req, res) => {
 
                 // Renovar URLs de las imágenes
                 for (const pic of user.profilePictures) {
-                    pic.url = await getFreshImageUrl(pic.amazonId);
+                    pic.url = await getCachedImageUrl(pic.amazonId);
                 }
 
                 return res.status(200).json(user);
@@ -326,13 +348,10 @@ router.post("/upload-profile-picture", async (req, res) => {
         Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
             contentType: "image/" + fileType,
             level: "public",
-            expires: new Date(Date.now() + 86400),
         })
             .then(result => {
                 console.log("Resultado: ", result);
-                Storage.get(result.key, {
-                    level: "public",
-                })
+                getCachedImageUrl(result.key)
                     .then(imageUrl => {
                         prisma.profilePicture
                             .create({
