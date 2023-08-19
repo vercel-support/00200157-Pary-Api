@@ -38,8 +38,8 @@ model User {
   createdAt             DateTime         @default(now())
   lastLogin             DateTime         @default(now())
   isCompany             Boolean          @default(false)
-  following             UserFollows[]    @relation("FollowingToFollower") // The users that this user follows
-  followers             UserFollows[]    @relation("FollowerToFollowing") // The users that follow this user
+  followingUserList     UserFollows[]    @relation("FollowerToFollowed") // The users that this user follows
+  followerUserList      UserFollows[]    @relation("FollowedToFollower") // The users that follow this user
 
   @@index([username, email, assignedGoogleID])
 }
@@ -52,14 +52,14 @@ enum Gender {
 
 model UserFollows {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
-  followerId       String @map("followerId") @db.ObjectId
-  followingId      String @map("followingId") @db.ObjectId
+  followerUserId   String @map("followerUserId") @db.ObjectId
+  followedUserId   String @map("followedUserId") @db.ObjectId
   followerUsername String // The username of the followed user
 
-  follower  User @relation("FollowingToFollower", fields: [followerId], references: [id])
-  following User @relation("FollowerToFollowing", fields: [followingId], references: [id])
+  follower User @relation("FollowerToFollowed", fields: [followerUserId], references: [id])
+  followed User @relation("FollowedToFollower", fields: [followedUserId], references: [id])
 
-  @@unique([followerId, followingId])
+  @@unique([followerUserId, followedUserId])
 }
 
 model ProfilePicture {

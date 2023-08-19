@@ -73,8 +73,8 @@ router.get("/users", async (req, res) => {
             const users = await prisma.user.findFirst({
                 include: {
                     profilePictures: true,
-                    followers: true,
-                    following: true,
+                    followingUserList: true,
+                    followerUserList: true,
                 },
             });
             return res.json(users);
@@ -164,8 +164,8 @@ router.post("/update", (req, res) => {
                 },
                 include: {
                     profilePictures: true,
-                    followers: true,
-                    following: true,
+                    followingUserList: true,
+                    followerUserList: true,
                 },
             })
             .then(updatedUser => {
@@ -204,8 +204,8 @@ router.get("/:id", (req, res) => {
                 where: { id: decoded.id },
                 include: {
                     profilePictures: true,
-                    followers: true,
-                    following: true,
+                    followingUserList: true,
+                    followerUserList: true,
                 },
             })
             .then(user => {
@@ -257,8 +257,8 @@ router.get("/basic-user-info/:username", (req, res) => {
                     createdAt: true,
                     lastLogin: true,
                     isCompany: true,
-                    followers: true,
-                    following: true,
+                    followingUserList: true,
+                    followerUserList: true,
                 }
             })
             .then(user => {
@@ -335,8 +335,8 @@ router.post("/upload-profile-picture", async (req, res) => {
                                         where: { id: decoded.id },
                                         select: {
                                             profilePictures: true,
-                                            followers: true,
-                                            following: true,
+                                            followingUserList: true,
+                                            followerUserList: true,
                                         },
                                     }).catch(error => {
                                         console.error("Error al obtener las imágenes del usuario", error);
@@ -436,8 +436,8 @@ router.delete("/delete-profile-picture", async (req, res) => {
                 where: { id: decoded.id },
                 include: {
                     profilePictures: true,
-                    followers: true,
-                    following: true,
+                    followingUserList: true,
+                    followerUserList: true,
                 },
             });
 
@@ -488,9 +488,8 @@ router.post("/follow/:username", async (req, res) => {
             return respondWithError(res, 500, "Token de acceso inválido.");
         }
 
-        const followerId = decoded.id;
+        const followerUserId = decoded.id; // usuario que sigue
 
-        // Busca el usuario por su nombre de usuario
         const followedUser = await prisma.user.findUnique({
             where: { username: followedUsername }
         });
@@ -498,15 +497,13 @@ router.post("/follow/:username", async (req, res) => {
         if (!followedUser) {
             return res.status(404).json({ error: "User not found." });
         }
+        const followedUserId = followedUser.id; // usuario que es seguido
 
-        const followedId = followedUser.id;
-
-        // Comprobar si el usuario ya sigue al otro usuario
         const existingRelation = await prisma.userFollows.findUnique({
             where: {
-                followerId_followingId: {
-                    followerId: followedId,
-                    followingId: followerId
+                followerUserId_followedUserId: {
+                    followerUserId,
+                    followedUserId
                 }
             }
         });
@@ -518,8 +515,8 @@ router.post("/follow/:username", async (req, res) => {
         try {
             await prisma.userFollows.create({
                 data: {
-                    followerId: followerId,
-                    followingId: followedId,
+                    followerUserId,
+                    followedUserId,
                     followerUsername: followedUsername,
                 },
             });
@@ -545,27 +542,26 @@ router.delete("/unfollow/:username", async (req, res) => {
             return respondWithError(res, 500, "Token de acceso inválido.");
         }
 
-        const followingId = decoded.id;
+        const followerUserId = decoded.id;
 
-        // Busca el usuario por su nombre de usuario
         const unfollowedUser = await prisma.user.findUnique({
             where: { username: unfollowedUsername }
         });
-
         if (!unfollowedUser) {
             return res.status(404).json({ error: "User not found." });
         }
 
-        const followerId = unfollowedUser.id;
+        const followedUserId = unfollowedUser.id;
 
         const existingRelation = await prisma.userFollows.findUnique({
             where: {
-                followerId_followingId: {
-                    followerId,
-                    followingId
+                followerUserId_followedUserId: {
+                    followerUserId,
+                    followedUserId
                 }
             }
         });
+
 
         if (!existingRelation) {
             return res.status(400).json({ error: "You are not following this user." });
@@ -574,9 +570,9 @@ router.delete("/unfollow/:username", async (req, res) => {
         try {
             await prisma.userFollows.delete({
                 where: {
-                    followerId_followingId: {
-                        followerId: followerId,
-                        followingId: followingId
+                    followerUserId_followedUserId: {
+                        followerUserId,
+                        followedUserId
                     }
                 }
             });
