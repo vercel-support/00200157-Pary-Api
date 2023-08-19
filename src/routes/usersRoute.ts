@@ -22,6 +22,20 @@ const router = express.Router();
 router.use(fileUpload());
 
 
+async function getFreshImageUrl(amazonId: string): Promise<string> {
+    try {
+        const imageUrl = await Storage.get(amazonId, {
+            level: "public",
+            expires: 86400
+        });
+        return imageUrl as string;
+    } catch (error) {
+        console.error("Error al obtener la imagen fresca", error);
+        throw error;
+    }
+}
+
+
 // check in db if the username provided exists or not also check its token
 
 router.get("/check-username", (req, res) => {
@@ -208,10 +222,16 @@ router.get("/:id", (req, res) => {
                     followerUserList: true,
                 },
             })
-            .then(user => {
+            .then(async user => {
                 if (!user) {
                     return res.status(404).json({ error: "User not found." });
                 }
+
+                // Renovar URLs de las imágenes
+                for (const pic of user.profilePictures) {
+                    pic.url = await getFreshImageUrl(pic.amazonId);
+                }
+
                 return res.status(200).json(user);
             })
             .catch(error => {
@@ -261,10 +281,16 @@ router.get("/basic-user-info/:username", (req, res) => {
                     followerUserList: true,
                 }
             })
-            .then(user => {
+            .then(async user => {
                 if (!user) {
                     return res.status(404).json({ error: "User not found." });
                 }
+
+                // Renovar URLs de las imágenes
+                for (const pic of user.profilePictures) {
+                    pic.url = await getFreshImageUrl(pic.amazonId);
+                }
+
                 return res.status(200).json(user);
             })
             .catch(error => {
@@ -300,6 +326,7 @@ router.post("/upload-profile-picture", async (req, res) => {
         Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
             contentType: "image/" + fileType,
             level: "public",
+            expires: new Date(Date.now() + 86400),
         })
             .then(result => {
                 console.log("Resultado: ", result);
