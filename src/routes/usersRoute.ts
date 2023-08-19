@@ -518,8 +518,8 @@ router.post("/follow/:username", async (req, res) => {
         try {
             await prisma.userFollows.create({
                 data: {
-                    followerId: followedId,
-                    followingId: followerId,
+                    followerId: followerId,
+                    followingId: followedId,
                     followerUsername: followedUsername,
                 },
             });
