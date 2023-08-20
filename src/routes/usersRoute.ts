@@ -23,13 +23,13 @@ router.use(fileUpload());
 
 const imageCache = new Map<string, { url: string; expiry: number; }>();
 
-const CACHE_DURATION = 6 * 24 * 60 * 60 * 1000; // 6 días en milisegundos
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 día en milisegundos
 
 async function getFreshImageUrl(amazonId: string): Promise<string> {
     try {
         const imageUrl = await Storage.get(amazonId, {
             level: "public",
-            expires: 86400
+            expires: CACHE_DURATION * 2
         });
         return imageUrl as string;
     } catch (error) {
@@ -350,7 +350,6 @@ router.post("/upload-profile-picture", async (req, res) => {
             level: "public",
         })
             .then(result => {
-                console.log("Resultado: ", result);
                 getCachedImageUrl(result.key)
                     .then(imageUrl => {
                         prisma.profilePicture
