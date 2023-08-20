@@ -26,7 +26,7 @@ const imageCache = new Map<string, { url: string; expiry: number; }>();
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 día en milisegundos
 
-async function getFreshImageUrl(amazonId: string): Promise<string> {
+export async function getFreshImageUrl(amazonId: string): Promise<string> {
     try {
         const imageUrl = await Storage.get(amazonId, {
             level: "public",
@@ -40,7 +40,7 @@ async function getFreshImageUrl(amazonId: string): Promise<string> {
 }
 
 
-async function getCachedImageUrl(amazonId: string): Promise<string> {
+export async function getCachedImageUrl(amazonId: string): Promise<string> {
     // Comprobar si la URL ya está en el caché y aún es válida
     const cached = imageCache.get(amazonId);
     if (cached && cached.expiry > Date.now()) {
