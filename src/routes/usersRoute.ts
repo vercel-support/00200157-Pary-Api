@@ -29,7 +29,7 @@ async function getFreshImageUrl(amazonId: string): Promise<string> {
     try {
         const imageUrl = await Storage.get(amazonId, {
             level: "public",
-            expires: CACHE_DURATION * 2
+            expires: 604800
         });
         return imageUrl as string;
     } catch (error) {
@@ -375,7 +375,6 @@ router.post("/upload-profile-picture", async (req, res) => {
                                     "amazonId" in profilePicture &&
                                     "userId" in profilePicture
                                 ) {
-                                    console.log("Imagen agregada al usuario");
                                     const user = await prisma.user.findUnique({
                                         where: { id: decoded.id },
                                         select: {
@@ -432,7 +431,6 @@ router.post("/upload-profile-picture", async (req, res) => {
             })
             .catch(error => {
                 Amplify.Auth.currentAuthenticatedUser();
-                console.log("Error al subir la imagen", error);
                 return respondWithError(res, 500, "Error uploading image.");
             });
     });
