@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
 export interface GoogleUser {
     user: {
         id: string;
@@ -58,6 +60,18 @@ export interface Party {
     creatorUsername: string;
     tags: string[];
     type: PartyType;
+    creationDate: Date;
+    date: Date;
+    private: boolean;
+    advertisement: boolean;
+    participants: string[]; // usernames
+    moderators: string[];
+    active: boolean;
 }
 
-type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";
+export type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";
+
+
+export interface AuthenticatedRequest extends Request {
+    decoded?: JwtPayload;
+}

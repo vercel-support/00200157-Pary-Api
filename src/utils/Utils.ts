@@ -1,6 +1,40 @@
 import { randomUUID } from "crypto";
 import { Party, PartyType } from "../../types";
-import express, { Response } from "express";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
+import { AuthenticatedRequest } from "../../types";
+import express, { Request, Response, NextFunction } from "express";
+
+
+const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
+
+if (!JWT_SECRET) {
+    throw new Error("No se encontró la variable de entorno JWT_SECRET.");
+}
+if (!JWT_REFRESH_SECRET) {
+    throw new Error("No se encontró la variable de entorno JWT_REFRESH_SECRET.");
+}
+
+
+// Middleware para verificar el token JWT
+export function authenticateTokenMiddleware(req: Request, res: Response, next: NextFunction): void {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        respondWithError(res, 401, "No se ha proporcionado un token.");
+        return;
+    }
+
+    jwt.verify(token, JWT_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
+        if (err || !decoded || typeof decoded === "string") {
+            respondWithError(res, 403, "Token inválido.");
+            return;
+        }
+
+        (req as AuthenticatedRequest).decoded = decoded;
+        next();
+    });
+}
 
 export function extractToken(bearerToken: string): string {
     return bearerToken.split(' ')[1];
@@ -10,6 +44,23 @@ export function extractToken(bearerToken: string): string {
 export const respondWithError = (res: Response, status: number, error: any) => {
     return res.status(status).json({ error });
 };
+
+// Genera una fecha aleatoria entre ahora y una semana a partir de ahora
+function randomDateWithinAWeek(): Date {
+    const now = new Date();
+    const weekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+    return new Date(now.getTime() + Math.random() * weekInMilliseconds);
+}
+
+// Genera una hora aleatoria entre las 8 PM y las 2 AM
+function randomTimeBetween8PMand2AM(date: Date): Date {
+    const hour = Math.floor(Math.random() * 7); // De 0 a 6
+    date.setHours(20 + hour); // Sumar 20 porque queremos que comience a las 8 PM
+    date.setMinutes(Math.floor(Math.random() * 60));
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+}
 
 export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> => {
     const parties: Party[] = [];
@@ -68,6 +119,11 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
         const tag = tags[index % tags.length];
         const creatorUsername = users[index % userCount].username;
         const type = types[index % types.length];
+        const creationDate = randomDateWithinAWeek();
+        const date = randomTimeBetween8PMand2AM(new Date(creationDate));
+        const privateParty = Math.random() < 0.5;
+        const advertisement = Math.random() < 0.5;
+
 
         parties.push({
             id: randomUUID(),
@@ -77,7 +133,14 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
             image: image,
             creatorUsername: creatorUsername,
             tags: tag,
-            type: type
+            type: type,
+            creationDate,
+            date,
+            private: privateParty,
+            active: true,
+            participants: [],
+            advertisement,
+            moderators: [],
         });
     }
 

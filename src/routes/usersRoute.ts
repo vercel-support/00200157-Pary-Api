@@ -5,8 +5,9 @@ import express, { Response } from "express";
 import fileUpload from "express-fileupload";
 import jwt from "jsonwebtoken";
 import { prisma } from "..";
-import { extractToken, respondWithError } from "../utils/Utils";
+import { authenticateTokenMiddleware, extractToken, respondWithError } from "../utils/Utils";
 import axios from "axios";
+import { AuthenticatedRequest } from "../../types";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -60,69 +61,49 @@ async function getCachedImageUrl(amazonId: string): Promise<string> {
 
 // check in db if the username provided exists or not also check its token
 
-router.get("/check-username", (req, res) => {
-    const { username, authorization: bearerToken } = req.headers;
+router.get("/check-username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+    const { username } = req.headers;
 
     if (!username || typeof username !== "string") {
         return respondWithError(res, 400, "No se proporcionó un nombre de usuario.");
     }
-    if (!bearerToken) {
-        return respondWithError(res, 403, "No se proporcionó un token.");
+
+    prisma.user
+        .findUnique({
+            where: { username },
+        })
+        .then(user => {
+            if (!user) {
+                return res.status(200).json(false);
+            }
+            return res.status(200).json(true);
+        })
+        .catch(() => {
+            return respondWithError(res, 500, "Error al consultar el nombre de usuario.");
+        });
+});
+
+router.get("/users", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
     }
-
-    const token = extractToken(bearerToken);
-
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
-        }
-
-        prisma.user
-            .findUnique({
-                where: { username },
-            })
-            .then(user => {
-                if (!user) {
-                    return res.status(200).json(false);
-                }
-                return res.status(200).json(true);
-            })
-            .catch(error => {
-                console.error(error);
-                return respondWithError(res, 500, "Error al consultar el nombre de usuario.");
-            });
+    const users = await prisma.user.findFirst({
+        include: {
+            profilePictures: true,
+            followingUserList: true,
+            followerUserList: true,
+        },
     });
+    return res.json(users);
 });
 
-router.get("/users", async (req, res) => {
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
-    }
-
-    const token = extractToken(bearerToken);
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        if (typeof decoded === "object" && "id" in decoded) {
-            const users = await prisma.user.findFirst({
-                include: {
-                    profilePictures: true,
-                    followingUserList: true,
-                    followerUserList: true,
-                },
-            });
-            return res.json(users);
-        } else {
-            return res.status(500).json({ error: "Invalid access token." });
-        }
-    } catch (error) {
-        return res.status(500).json({ error: "Failed to authenticate token." });
-    }
-});
-
-router.post("/update", (req, res) => {
+router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const {
         username,
         name,
@@ -163,280 +144,251 @@ router.post("/update", (req, res) => {
         return res.status(400).json({ error: "hobbiesInterest should be a string." });
     }
 
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
     }
 
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
-        }
-
-        prisma.user
-            .update({
-                where: { id: decoded.id },
-                data: {
-                    username,
-                    name,
-                    lastName,
-                    gender: gender,
-                    signedIn: true,
-                    musicInterest,
-                    deportsInterest,
-                    artAndCultureInterest,
-                    techInterest,
-                    hobbiesInterest,
-                    description,
-                    birthDate,
-                    phoneNumber,
-                    locationName,
-                    locationLatitude,
-                    locationLongitude,
-                    locationTimestamp,
-                    isCompany,
-                },
-                include: {
-                    profilePictures: true,
-                    followingUserList: true,
-                    followerUserList: true,
-                },
-            })
-            .then(updatedUser => {
-                return res.status(200).json({ message: "Usuario actualizado con éxito.", user: updatedUser });
-            })
-            .catch(error => {
-                if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
-                    return respondWithError(res, 400, "El nombre de usuario ya está en uso.");
-                } else {
-                    console.error(error);
-                    return respondWithError(res, 500, "Error al actualizar el usuario.");
-                }
-            });
-    });
-});
-
-router.get("/:id", (req, res) => {
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
-    }
-
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Invalid access token.");
-        }
-
-        if (decoded.id !== req.params.id) {
-            return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
-        }
-
-        prisma.user
-            .findUnique({
-                where: { id: decoded.id },
-                include: {
-                    profilePictures: true,
-                    followingUserList: true,
-                    followerUserList: true,
-                },
-            })
-            .then(async user => {
-                if (!user) {
-                    return res.status(404).json({ error: "User not found." });
-                }
-
-                // Renovar URLs de las imágenes
-                for (const pic of user.profilePictures) {
-                    pic.url = await getCachedImageUrl(pic.amazonId);
-                }
-
-                return res.status(200).json(user);
-            })
-            .catch(error => {
-                console.error(error);
-                return respondWithError(res, 500, "Error fetching user data.");
-            });
-    });
-});
-
-router.get("/basic-user-info/:username", (req, res) => {
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
-    }
-
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Invalid access token.");
-        }
-
-        const { username } = req.params;
-
-        prisma.user
-            .findUnique({
-                where: { username: username },
-                select: {
-                    username: true,
-                    name: true,
-                    lastName: true,
-                    profilePictures: true,
-                    description: true,
-                    birthDate: true,
-                    gender: true,
-                    musicInterest: true,
-                    deportsInterest: true,
-                    artAndCultureInterest: true,
-                    techInterest: true,
-                    hobbiesInterest: true,
-                    verified: true,
-                    locationName: true,
-                    createdAt: true,
-                    lastLogin: true,
-                    isCompany: true,
-                    followingUserList: true,
-                    followerUserList: true,
-                }
-            })
-            .then(async user => {
-                if (!user) {
-                    return res.status(404).json({ error: "User not found." });
-                }
-
-                // Renovar URLs de las imágenes
-                for (const pic of user.profilePictures) {
-                    pic.url = await getCachedImageUrl(pic.amazonId);
-                }
-
-                return res.status(200).json(user);
-            })
-            .catch(error => {
-                console.error(error);
-                return respondWithError(res, 500, "Error fetching user data.");
-            });
-    });
-});
-
-router.post("/upload-profile-picture", async (req, res) => {
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
-    }
-
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
-        }
-
-        const imageBase64 = req.body.image;
-
-        if (!imageBase64) {
-            return respondWithError(res, 400, "No image provided.");
-        }
-
-        const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
-        const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
-
-
-        Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
-            contentType: "image/" + fileType,
-            level: "public",
+    prisma.user
+        .update({
+            where: { id: decoded.id },
+            data: {
+                username,
+                name,
+                lastName,
+                gender: gender,
+                signedIn: true,
+                musicInterest,
+                deportsInterest,
+                artAndCultureInterest,
+                techInterest,
+                hobbiesInterest,
+                description,
+                birthDate,
+                phoneNumber,
+                locationName,
+                locationLatitude,
+                locationLongitude,
+                locationTimestamp,
+                isCompany,
+            },
+            include: {
+                profilePictures: true,
+                followingUserList: true,
+                followerUserList: true,
+            },
         })
-            .then(result => {
-                getCachedImageUrl(result.key)
-                    .then(imageUrl => {
-                        prisma.profilePicture
-                            .create({
-                                data: {
-                                    url: imageUrl,
-                                    user: {
-                                        connect: {
-                                            id: decoded.id,
-                                        },
-                                    },
-                                    amazonId: result.key,
-                                },
-                            })
-                            .catch(error => {
-                                console.error("Error al agregar la imagen al usuario", error);
-                                return respondWithError(res, 500, "Error updating user.");
-                            })
-                            .then(async profilePicture => {
-                                if (
-                                    "id" in profilePicture &&
-                                    "url" in profilePicture &&
-                                    "amazonId" in profilePicture &&
-                                    "userId" in profilePicture
-                                ) {
-                                    const user = await prisma.user.findUnique({
-                                        where: { id: decoded.id },
-                                        select: {
-                                            profilePictures: true,
-                                            followingUserList: true,
-                                            followerUserList: true,
-                                        },
-                                    }).catch(error => {
-                                        console.error("Error al obtener las imágenes del usuario", error);
-                                        return respondWithError(res, 500, "Error updating user.");
-                                    }).then(user => user);
-
-
-                                    if (user && "profilePictures" in user && user.profilePictures) {
-                                        const profilePictures = [...user.profilePictures];
-
-                                        profilePictures.push(profilePicture);
-                                        prisma.user
-                                            .update({
-                                                where: { id: decoded.id },
-                                                data: {
-                                                    profilePictures: {
-                                                        set: profilePictures,
-                                                    },
-                                                },
-                                                include: {
-                                                    profilePictures: true,
-                                                },
-                                            })
-                                            .catch(error => {
-                                                console.error("Error al agregar la imagen al usuario", error);
-                                                return respondWithError(res, 500, "Error updating user.");
-                                            })
-                                            .then(async updatedUser => {
-                                                if ("id" in updatedUser) {
-                                                    return res.status(200).json({ profilePicture });
-                                                }
-                                            });
-                                    } else {
-                                        console.error("Error al obtener las imágenes del usuario 2");
-                                        return respondWithError(res, 500, "Error updating user.");
-                                    }
-                                } else {
-                                    console.error("Profile picture is not in the expected format:", profilePicture);
-                                    return respondWithError(res, 500, "Unexpected data format.");
-                                }
-                            });
-                    })
-                    .catch(error => {
-                        Amplify.Auth.currentAuthenticatedUser();
-                        console.error("Error al obtener el link de la imagen subida", error);
-                        return respondWithError(res, 500, "Error uploading image.");
-                    });
-            })
-            .catch(error => {
-                Amplify.Auth.currentAuthenticatedUser();
-                return respondWithError(res, 500, "Error uploading image.");
-            });
-    });
+        .then(updatedUser => {
+            return res.status(200).json({ message: "Usuario actualizado con éxito.", user: updatedUser });
+        })
+        .catch(error => {
+            if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+                return respondWithError(res, 400, "El nombre de usuario ya está en uso.");
+            } else {
+                console.error(error);
+                return respondWithError(res, 500, "Error al actualizar el usuario.");
+            }
+        });
 });
 
-router.delete("/delete-profile-picture", async (req, res) => {
+router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+    if (decoded.id !== req.params.id) {
+        return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
+    }
+
+    prisma.user
+        .findUnique({
+            where: { id: decoded.id },
+            include: {
+                profilePictures: true,
+                followingUserList: true,
+                followerUserList: true,
+            },
+        })
+        .then(async user => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found." });
+            }
+
+            // Renovar URLs de las imágenes
+            for (const pic of user.profilePictures) {
+                pic.url = await getCachedImageUrl(pic.amazonId);
+            }
+
+            return res.status(200).json(user);
+        })
+        .catch(error => {
+            console.error(error);
+            return respondWithError(res, 500, "Error fetching user data.");
+        });
+});
+
+router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { username } = req.params;
+
+    prisma.user
+        .findUnique({
+            where: { username: username },
+            select: {
+                username: true,
+                name: true,
+                lastName: true,
+                profilePictures: true,
+                description: true,
+                birthDate: true,
+                gender: true,
+                musicInterest: true,
+                deportsInterest: true,
+                artAndCultureInterest: true,
+                techInterest: true,
+                hobbiesInterest: true,
+                verified: true,
+                locationName: true,
+                createdAt: true,
+                lastLogin: true,
+                isCompany: true,
+                followingUserList: true,
+                followerUserList: true,
+            }
+        })
+        .then(async user => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found." });
+            }
+
+            // Renovar URLs de las imágenes
+            for (const pic of user.profilePictures) {
+                pic.url = await getCachedImageUrl(pic.amazonId);
+            }
+
+            return res.status(200).json(user);
+        })
+        .catch(error => {
+            console.error(error);
+            return respondWithError(res, 500, "Error fetching user data.");
+        });
+});
+
+router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const imageBase64 = req.body.image;
+
+    if (!imageBase64) {
+        return respondWithError(res, 400, "No image provided.");
+    }
+
+    const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
+    const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+
+
+    Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
+        contentType: "image/" + fileType,
+        level: "public",
+    })
+        .then(result => {
+            getCachedImageUrl(result.key)
+                .then(imageUrl => {
+                    prisma.profilePicture
+                        .create({
+                            data: {
+                                url: imageUrl,
+                                user: {
+                                    connect: {
+                                        id: decoded.id,
+                                    },
+                                },
+                                amazonId: result.key,
+                            },
+                        })
+                        .catch(error => {
+                            console.error("Error al agregar la imagen al usuario", error);
+                            return respondWithError(res, 500, "Error updating user.");
+                        })
+                        .then(async profilePicture => {
+                            if (
+                                "id" in profilePicture &&
+                                "url" in profilePicture &&
+                                "amazonId" in profilePicture &&
+                                "userId" in profilePicture
+                            ) {
+                                const user = await prisma.user.findUnique({
+                                    where: { id: decoded.id },
+                                    select: {
+                                        profilePictures: true,
+                                        followingUserList: true,
+                                        followerUserList: true,
+                                    },
+                                }).catch(error => {
+                                    console.error("Error al obtener las imágenes del usuario", error);
+                                    return respondWithError(res, 500, "Error updating user.");
+                                }).then(user => user);
+
+
+                                if (user && "profilePictures" in user && user.profilePictures) {
+                                    const profilePictures = [...user.profilePictures];
+
+                                    profilePictures.push(profilePicture);
+                                    prisma.user
+                                        .update({
+                                            where: { id: decoded.id },
+                                            data: {
+                                                profilePictures: {
+                                                    set: profilePictures,
+                                                },
+                                            },
+                                            include: {
+                                                profilePictures: true,
+                                            },
+                                        })
+                                        .catch(error => {
+                                            console.error("Error al agregar la imagen al usuario", error);
+                                            return respondWithError(res, 500, "Error updating user.");
+                                        })
+                                        .then(async updatedUser => {
+                                            if ("id" in updatedUser) {
+                                                return res.status(200).json({ profilePicture });
+                                            }
+                                        });
+                                } else {
+                                    console.error("Error al obtener las imágenes del usuario 2");
+                                    return respondWithError(res, 500, "Error updating user.");
+                                }
+                            } else {
+                                console.error("Profile picture is not in the expected format:", profilePicture);
+                                return respondWithError(res, 500, "Unexpected data format.");
+                            }
+                        });
+                })
+                .catch(error => {
+                    Amplify.Auth.currentAuthenticatedUser();
+                    console.error("Error al obtener el link de la imagen subida", error);
+                    return respondWithError(res, 500, "Error uploading image.");
+                });
+        })
+        .catch(error => {
+            Amplify.Auth.currentAuthenticatedUser();
+            return respondWithError(res, 500, "Error uploading image.");
+        });
+});
+
+router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
     const amazonId = typeof req.query.amazonId === "string" ? req.query.amazonId : undefined;
     const id = typeof req.query.id === "string" ? req.query.id : undefined;
 
@@ -448,50 +400,37 @@ router.delete("/delete-profile-picture", async (req, res) => {
         return respondWithError(res, 400, "No se proporcionó id.");
     }
 
-    const bearerToken = req.headers["authorization"];
-
-    if (!bearerToken) {
-        return respondWithError(res, 403, "No se proporcionó un token.");
+    try {
+        await Storage.remove(amazonId, { level: "public" });
+    } catch (error) {
+        Amplify.Auth.currentAuthenticatedUser();
+        console.error("Error al eliminar la imagen de S3:", error);
+        return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
     }
 
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
-        }
+    try {
+        await prisma.profilePicture.delete({
+            where: {
+                id,
+            },
+        });
 
-        try {
-            await Storage.remove(amazonId, { level: "public" });
-        } catch (error) {
-            Amplify.Auth.currentAuthenticatedUser();
-            console.error("Error al eliminar la imagen de S3:", error);
-            return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
-        }
+        const updatedUser = await prisma.user.findUnique({
+            where: { id: decoded.id },
+            include: {
+                profilePictures: true,
+                followingUserList: true,
+                followerUserList: true,
+            },
+        });
 
-        try {
-            await prisma.profilePicture.delete({
-                where: {
-                    id,
-                },
-            });
-
-            const updatedUser = await prisma.user.findUnique({
-                where: { id: decoded.id },
-                include: {
-                    profilePictures: true,
-                    followingUserList: true,
-                    followerUserList: true,
-                },
-            });
-
-            return res.status(200).json({ message: "Imagen eliminada con éxito", user: updatedUser });
-        } catch (error) {
-            console.error("Error al eliminar la imagen de la base de datos:", error);
-            return respondWithError(res, 500, "Error al eliminar la imagen de la base de datos.");
-        }
-    });
+        return res.status(200).json({ message: "Imagen eliminada con éxito", user: updatedUser });
+    } catch (error) {
+        console.error("Error al eliminar la imagen de la base de datos:", error);
+        return respondWithError(res, 500, "Error al eliminar la imagen de la base de datos.");
+    }
 });
-
+/* 
 router.get("/get-image-url/:amazonId", async (req, res) => {
     const amazonId = typeof req.params.amazonId === "string" ? req.params.amazonId : undefined;
 
@@ -515,88 +454,88 @@ router.get("/get-image-url/:amazonId", async (req, res) => {
             console.error("Error al obtener la imagen", error);
             return respondWithError(res, 500, "Error obteniendo imagen.");
         });
-});
+}); */
 
-router.post("/follow/:username", async (req, res) => {
+router.post("/follow/:username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
     const followedUsername = req.params.username;
-    const bearerToken = req.headers["authorization"];
 
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
+    const followerUserId = decoded.id; // usuario que sigue
+
+    const followedUser = await prisma.user.findUnique({
+        where: { username: followedUsername }
+    });
+
+    if (!followedUser) {
+        return res.status(404).json({ error: "User not found." });
     }
+    const followedUserId = followedUser.id; // usuario que es seguido
 
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
-        }
-
-        const followerUserId = decoded.id; // usuario que sigue
-
-        const followedUser = await prisma.user.findUnique({
-            where: { username: followedUsername }
-        });
-
-        if (!followedUser) {
-            return res.status(404).json({ error: "User not found." });
-        }
-        const followedUserId = followedUser.id; // usuario que es seguido
-
-        const existingRelation = await prisma.userFollows.findUnique({
-            where: {
-                followerUserId_followedUserId: {
-                    followerUserId,
-                    followedUserId
-                }
+    const existingRelation = await prisma.userFollows.findUnique({
+        where: {
+            followerUserId_followedUserId: {
+                followerUserId,
+                followedUserId
             }
-        });
-
-        if (existingRelation) {
-            return res.status(400).json({ error: "You are already following this user." });
-        }
-
-        try {
-            await prisma.userFollows.create({
-                data: {
-                    followerUserId,
-                    followedUserId,
-                    followerUsername: followedUsername,
-                },
-            });
-            res.status(200).json({ message: "Now following." });
-        } catch (error) {
-            console.error(error);
-            return respondWithError(res, 500, "Error while trying to follow.");
         }
     });
+
+    if (existingRelation) {
+        return res.status(400).json({ error: "You are already following this user." });
+    }
+
+    try {
+        await prisma.userFollows.create({
+            data: {
+                followerUserId,
+                followedUserId,
+                followerUsername: followedUsername,
+            },
+        });
+        res.status(200).json({ message: "Now following." });
+    } catch (error) {
+        console.error(error);
+        return respondWithError(res, 500, "Error while trying to follow.");
+    }
 });
 
-router.delete("/unfollow/:username", async (req, res) => {
+router.delete("/unfollow/:username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
     const unfollowedUsername = req.params.username;
-    const bearerToken = req.headers["authorization"];
 
-    if (!bearerToken) {
-        return res.status(403).json({ error: "No token provided." });
+    const followerUserId = decoded.id;
+
+    const unfollowedUser = await prisma.user.findUnique({
+        where: { username: unfollowedUsername }
+    });
+    if (!unfollowedUser) {
+        return res.status(404).json({ error: "User not found." });
     }
 
-    const token = extractToken(bearerToken);
-    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
-        if (err || !(typeof decoded === "object" && "id" in decoded)) {
-            return respondWithError(res, 500, "Token de acceso inválido.");
+    const followedUserId = unfollowedUser.id;
+
+    const existingRelation = await prisma.userFollows.findUnique({
+        where: {
+            followerUserId_followedUserId: {
+                followerUserId,
+                followedUserId
+            }
         }
+    });
 
-        const followerUserId = decoded.id;
 
-        const unfollowedUser = await prisma.user.findUnique({
-            where: { username: unfollowedUsername }
-        });
-        if (!unfollowedUser) {
-            return res.status(404).json({ error: "User not found." });
-        }
+    if (!existingRelation) {
+        return res.status(400).json({ error: "You are not following this user." });
+    }
 
-        const followedUserId = unfollowedUser.id;
-
-        const existingRelation = await prisma.userFollows.findUnique({
+    try {
+        await prisma.userFollows.delete({
             where: {
                 followerUserId_followedUserId: {
                     followerUserId,
@@ -604,27 +543,11 @@ router.delete("/unfollow/:username", async (req, res) => {
                 }
             }
         });
-
-
-        if (!existingRelation) {
-            return res.status(400).json({ error: "You are not following this user." });
-        }
-
-        try {
-            await prisma.userFollows.delete({
-                where: {
-                    followerUserId_followedUserId: {
-                        followerUserId,
-                        followedUserId
-                    }
-                }
-            });
-            res.status(200).json({ message: "Unfollowed successfully." });
-        } catch (error) {
-            console.error(error);
-            return respondWithError(res, 500, "Error while trying to unfollow.");
-        }
-    });
+        res.status(200).json({ message: "Unfollowed successfully." });
+    } catch (error) {
+        console.error(error);
+        return respondWithError(res, 500, "Error while trying to unfollow.");
+    }
 });
 
 

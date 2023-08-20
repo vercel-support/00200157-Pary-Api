@@ -11,35 +11,37 @@ datasource db {
 }
 
 model User {
-  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID      String           @unique
-  username              String           @unique
-  email                 String           @unique
-  name                  String           @default("")
-  lastName              String           @default("")
-  signedIn              Boolean          @default(false)
+  id                    String                 @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID      String                 @unique
+  username              String                 @unique
+  email                 String                 @unique
+  name                  String                 @default("")
+  lastName              String                 @default("")
+  signedIn              Boolean                @default(false)
   profilePictures       ProfilePicture[]
-  accessToken           String           @default("")
-  refreshToken          String           @default("")
-  gender                Gender           @default(masculino)
-  description           String           @default("")
+  accessToken           String                 @default("")
+  refreshToken          String                 @default("")
+  gender                Gender                 @default(masculino)
+  description           String                 @default("")
   birthDate             DateTime
-  musicInterest         String[]         @default([])
-  deportsInterest       String[]         @default([])
-  artAndCultureInterest String[]         @default([])
-  techInterest          String[]         @default([])
-  hobbiesInterest       String[]         @default([])
-  verified              Boolean          @default(false)
-  phoneNumber           String           @default("")
-  locationName          String           @default("")
-  locationLatitude      Int              @default(0)
-  locationLongitude     Int              @default(0)
-  locationTimestamp     Int              @default(0)
-  createdAt             DateTime         @default(now())
-  lastLogin             DateTime         @default(now())
-  isCompany             Boolean          @default(false)
-  followingUserList     UserFollows[]    @relation("FollowerToFollowed") // The users that this user follows
-  followerUserList      UserFollows[]    @relation("FollowedToFollower") // The users that follow this user
+  musicInterest         String[]               @default([])
+  deportsInterest       String[]               @default([])
+  artAndCultureInterest String[]               @default([])
+  techInterest          String[]               @default([])
+  hobbiesInterest       String[]               @default([])
+  verified              Boolean                @default(false)
+  phoneNumber           String                 @default("")
+  locationName          String                 @default("")
+  locationLatitude      Int                    @default(0)
+  locationLongitude     Int                    @default(0)
+  locationTimestamp     Int                    @default(0)
+  createdAt             DateTime               @default(now())
+  lastLogin             DateTime               @default(now())
+  isCompany             Boolean                @default(false)
+  followingUserList     UserFollows[]          @relation("FollowerToFollowed") // The users that this user follows
+  followerUserList      UserFollows[]          @relation("FollowedToFollower") // The users that follow this user
+  partiesParticipating  UserPartyParticipant[] @relation("UserToPartyParticipant")
+  partiesModerating     UserPartyModerator[]   @relation("UserToPartyModerator")
 
   @@index([username, email, assignedGoogleID])
 }
@@ -68,4 +70,48 @@ model ProfilePicture {
   amazonId String @unique
   userId   String @db.ObjectId
   user     User   @relation(fields: [userId], references: [id])
+}
+
+model Party {
+  id              String                 @id @default(auto()) @map("_id") @db.ObjectId
+  location        String
+  name            String
+  description     String
+  image           String
+  creatorUsername String
+  tags            String[]
+  type            PartyType
+  creationDate    DateTime
+  date            DateTime
+  private         Boolean
+  advertisement   Boolean
+  participants    UserPartyParticipant[]
+  moderators      UserPartyModerator[]
+  active          Boolean
+}
+
+enum PartyType {
+  carrete
+  junta
+  evento
+  previa
+  otro
+}
+
+model UserPartyParticipant {
+  partyId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @map("userId") @db.ObjectId
+  user    User   @relation("UserToPartyParticipant", fields: [userId], references: [id])
+  party   Party  @relation(fields: [partyId], references: [id])
+
+  @@unique([userId, partyId])
+}
+
+model UserPartyModerator {
+  partyId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @map("userId") @db.ObjectId
+  user    User   @relation("UserToPartyModerator", fields: [userId], references: [id])
+  party   Party  @relation(fields: [partyId], references: [id])
+
+  @@unique([userId, partyId])
 }
