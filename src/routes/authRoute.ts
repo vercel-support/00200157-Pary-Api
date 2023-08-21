@@ -33,9 +33,11 @@ router.post("/signIn", async (req, res) => {
     });
 
     if (!user) {
+        const generatedUsername = `${googleUser.user.givenName ?? ""}${googleUser.user.familyName ?? ""}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)
+            }`;
         user = await prisma.user.create({
             data: {
-                username: "",
+                username: generatedUsername,
                 name: googleUser.user.givenName ?? "",
                 email: googleUser.user.email,
                 lastName: googleUser.user.familyName ?? "",
