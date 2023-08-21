@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Party, PartyType } from "../../types";
+import { Party, PartyType, User } from "../../types";
 import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import { AuthenticatedRequest } from "../../types";
 import express, { Request, Response, NextFunction } from "express";
@@ -321,9 +321,12 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
     return parties;
 };
 
+function getUsersToConnect(users: any[], probability: number): { userId: string; }[] {
+    return users.filter(() => Math.random() < probability).map(user => ({ userId: user.id }));
+}
+
 
 export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
-
     const userCount = users.length;
     const savedParties = [];
 
@@ -341,6 +344,10 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
         const date = randomTimeBetween8PMand2AM(new Date(creationDate));
         const privateParty = Math.random() < 0.5;
         const advertisement = Math.random() < 0.5;
+
+        const moderatorsToConnect = getUsersToConnect(users, 0.05);
+        const participantsToConnect = getUsersToConnect(users, 0.2);
+
         const savedParty = await prisma.party.create({
             data: {
                 location: loc,
@@ -357,9 +364,22 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
                 active: true,
             }
         });
+        if (moderatorsToConnect.length) {
+            await prisma.userPartyModerator.createMany({
+                data: moderatorsToConnect.map(m => ({ userId: m.userId, partyId: savedParty.id }))
+            });
+        }
+
+        if (participantsToConnect.length) {
+            await prisma.userPartyParticipant.createMany({
+                data: participantsToConnect.map(p => ({ userId: p.userId, partyId: savedParty.id }))
+            });
+        }
+
         savedParties.push(savedParty);
 
     }
+
     return savedParties as Party[];
 };
 
