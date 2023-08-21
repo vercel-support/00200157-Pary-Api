@@ -51,6 +51,10 @@ export interface ProfilePicture {
     amazonId: string;
 }
 
+export interface FetchedParty extends Party {
+    distance: number;
+}
+
 export interface Party {
     id: string;
     location: string;

@@ -327,7 +327,7 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
     const userCount = users.length;
     const savedParties = [];
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 200; i++) {
         const index = (i * 37) % userCount;
         const loc = locations[i % locations.length];
         const name = names[i % names.length];
