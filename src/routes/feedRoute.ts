@@ -125,7 +125,8 @@ router.get("/create-parties", authenticateTokenMiddleware, async (req: Request, 
                 signedIn: true
             },
             select: {
-                username: true
+                username: true,
+                id: true
             }
         });
         const parties = await createPartiesForUsers(users);

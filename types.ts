@@ -71,6 +71,7 @@ export interface Party {
     participants: string[]; // usernames
     moderators: string[];
     active: boolean;
+    ownerId: string;
 }
 
 export type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";

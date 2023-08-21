@@ -98,6 +98,9 @@ router.get("/users", authenticateTokenMiddleware, async (req: AuthenticatedReque
             profilePictures: true,
             followingUserList: true,
             followerUserList: true,
+            partiesModerating: true,
+            partiesParticipating: true,
+            ownedParties: true,
         },
     });
     return res.json(users);
@@ -176,6 +179,9 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 profilePictures: true,
                 followingUserList: true,
                 followerUserList: true,
+                partiesModerating: true,
+                partiesParticipating: true,
+                ownedParties: true,
             },
         })
         .then(updatedUser => {
@@ -207,6 +213,9 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                 profilePictures: true,
                 followingUserList: true,
                 followerUserList: true,
+                partiesModerating: true,
+                partiesParticipating: true,
+                ownedParties: true,
             },
         })
         .then(async user => {
@@ -258,6 +267,9 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 isCompany: true,
                 followingUserList: true,
                 followerUserList: true,
+                partiesModerating: true,
+                partiesParticipating: true,
+                ownedParties: true,
             }
         })
         .then(async user => {
@@ -330,6 +342,9 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
                                         profilePictures: true,
                                         followingUserList: true,
                                         followerUserList: true,
+                                        partiesModerating: true,
+                                        partiesParticipating: true,
+                                        ownedParties: true,
                                     },
                                 }).catch(error => {
                                     console.error("Error al obtener las imágenes del usuario", error);
@@ -421,6 +436,9 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                 profilePictures: true,
                 followingUserList: true,
                 followerUserList: true,
+                partiesModerating: true,
+                partiesParticipating: true,
+                ownedParties: true,
             },
         });
 

@@ -287,12 +287,13 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
     for (let i = 0; i < 50; i++) {
         const index = (randomOffset + i) % 150;
         const loc = locations[index % locations.length];
-        const name = names[index % names.length];
+        const selectedIndex = index % names.length;
+        const name = names[selectedIndex];
         const desc = descriptions[index % descriptions.length].replace('{location}', loc);
         const imgNumber = (index % 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const selectedTags = Array.from({ length: 3 }, () => tags[Math.floor(Math.random() * tags.length)]);
-        const creatorUsername = users[index % userCount].username;
+        const { username: creatorUsername, id } = users[index % userCount];
         const type = types[index % types.length];
         const creationDate = randomDateWithinAWeek();
         const date = randomTimeBetween8PMand2AM(new Date(creationDate));
@@ -315,6 +316,7 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
             participants: [],
             advertisement,
             moderators: [],
+            ownerId: id
         });
     }
 
@@ -322,12 +324,16 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
 };
 
 function getUsersToConnect(users: any[], probability: number): { userId: string; }[] {
-    return users.filter(() => Math.random() < probability).map(user => ({ userId: user.id }));
+    return users.filter(() => Math.random() < probability).map(user => {
+        console.log(user);
+        return { userId: user.id };
+    });
 }
 
 
 export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
     const userCount = users.length;
+    console.log(users);
     const savedParties = [];
 
     for (let i = 0; i < 200; i++) {
@@ -338,15 +344,12 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
         const imgNumber = (i % 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const selectedTags = Array.from({ length: 3 }, () => tags[Math.floor(Math.random() * tags.length)]);
-        const creatorUsername = users[index % userCount].username;
+        const creator = users[index % userCount];
         const type = types[i % types.length];
         const creationDate = randomDateWithinAWeek();
         const date = randomTimeBetween8PMand2AM(new Date(creationDate));
         const privateParty = Math.random() < 0.5;
         const advertisement = Math.random() < 0.5;
-
-        const moderatorsToConnect = getUsersToConnect(users, 0.05);
-        const participantsToConnect = getUsersToConnect(users, 0.2);
 
         const savedParty = await prisma.party.create({
             data: {
@@ -354,7 +357,8 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
                 name: name,
                 description: desc,
                 image: image,
-                creatorUsername: creatorUsername,
+                creatorUsername: creator.username,
+                ownerId: creator.id,  // Set the owner ID
                 tags: selectedTags,
                 type: type,
                 creationDate,
@@ -364,20 +368,28 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
                 active: true,
             }
         });
-        if (moderatorsToConnect.length) {
-            await prisma.userPartyModerator.createMany({
-                data: moderatorsToConnect.map(m => ({ userId: m.userId, partyId: savedParty.id }))
-            });
+
+        /* const moderatorsToConnect = getUsersToConnect(users, 0.05);
+        const participantsToConnect = getUsersToConnect(users, 0.2);
+
+        const combinedUsers = [...moderatorsToConnect, ...participantsToConnect];
+
+        const uniqueUsers = Array.from(new Set(combinedUsers.map(p => p.userId)))
+            .map(userId => ({ userId, partyId: savedParty.id }));
+
+        if (uniqueUsers.length) {
+            await prisma.userPartyParticipant.createMany({ data: uniqueUsers });
         }
 
-        if (participantsToConnect.length) {
-            await prisma.userPartyParticipant.createMany({
-                data: participantsToConnect.map(p => ({ userId: p.userId, partyId: savedParty.id }))
-            });
-        }
+        const uniqueModerators = moderatorsToConnect.filter(moderator =>
+            uniqueUsers.some(user => user.userId === moderator.userId)
+        );
+
+        if (uniqueModerators.length) {
+            await prisma.userPartyModerator.createMany({ data: uniqueModerators });
+        } */
 
         savedParties.push(savedParty);
-
     }
 
     return savedParties as Party[];
