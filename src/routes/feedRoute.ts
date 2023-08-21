@@ -7,15 +7,7 @@ import { getCachedImageUrl } from "./usersRoute";
 
 
 const router = express.Router();
-const MAX_DISTANCE = 120; // En kilómetros
-
-interface Location {
-    comuna: string;
-    provincia: string;
-    region: string;
-    lat: number;
-    lon: number;
-}
+const MAX_DISTANCE = 999999; // En kilómetros
 
 function getCoordinatesFromComuna(comuna: string) {
     const found = comunasData.find(item => item.comuna.toLowerCase() === comuna.toLowerCase());
@@ -151,13 +143,15 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         return respondWithError(res, 500, "Error al decodificar el token.");
     }
     const page = Number(req.query.page) || 1;
+    const distanceLimit = Number(req.query.distanceLimit) || MAX_DISTANCE;
     const limit = Number(req.query.limit) || 15;
     const skip = (page - 1) * limit;
+    console.log("Page:", page, "Skip:", skip, "Distance limit:", distanceLimit, "km", "User:", decoded.id);
 
-    // 1. Obtener la ubicación del usuario actual
     const currentUser = await prisma.user.findUnique({
         where: { id: decoded.id },
         select: {
+            username: true,
             locationName: true,
             locationLatitude: true,
             locationLongitude: true,
@@ -172,35 +166,64 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
     if (!currentUser) {
         return respondWithError(res, 404, "Usuario no encontrado.");
     }
+    const currentDateTime = new Date();
 
-    // 2. Filtrar las fiestas basadas en la proximidad
-    const allParties = await prisma.party.findMany();
-    const closeParties = allParties.filter(party => {
-        const location = getCoordinatesFromComuna(party.location);
-        if (!location) {
-            return false;
+    const parties = await prisma.party.findMany({
+        skip: skip,
+        take: limit,
+        orderBy: { date: 'asc' },
+        where: {
+            active: true,
+            date: {
+                gte: currentDateTime // Solo considerar fiestas que no hayan expirado
+            },
+            OR: [
+                {
+                    private: false // Fiestas públicas
+                },
+                {
+                    private: true,
+                    creatorUsername: currentUser.username // El usuario es el creador
+                },
+                {
+                    private: true,
+                    moderators: {
+                        some: {
+                            userId: decoded.id // El usuario es un moderador
+                        }
+                    }
+                },
+                {
+                    private: true,
+                    participants: {
+                        some: {
+                            userId: decoded.id // El usuario es un participante
+                        }
+                    }
+                },
+                { tags: { hasSome: currentUser.musicInterest } },
+                { tags: { hasSome: currentUser.deportsInterest } },
+                { tags: { hasSome: currentUser.artAndCultureInterest } },
+                { tags: { hasSome: currentUser.techInterest } },
+                { tags: { hasSome: currentUser.hobbiesInterest } },
+            ],
+
         }
-        const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location?.lat, location.lon);
-        return distance <= MAX_DISTANCE;
     });
+    const filteredParties = parties
+        .map(party => {
+            const location = getCoordinatesFromComuna(party.location);
+            if (!location) {
+                return null;
+            }
+            const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+            return { ...party, distance };
+        })
+        .filter(party => party !== null && party.distance <= distanceLimit)
+        .sort((a, b) => a!.distance - b!.distance);
 
-    // 3. Dar preferencia a las fiestas que coincidan con los intereses del usuario
-    const interestParties = closeParties.filter(party => {
-        const commonTags = party.tags.filter(tag => currentUser.musicInterest.includes(tag) ||
-            currentUser.deportsInterest.includes(tag) ||
-            currentUser.artAndCultureInterest.includes(tag) ||
-            currentUser.techInterest.includes(tag) ||
-            currentUser.hobbiesInterest.includes(tag));
-        return commonTags.length > 0;
-    });
 
-    // 4. Si no hay fiestas que coincidan con los intereses, devuelve las fiestas cercanas
-    const finalParties = interestParties.length > 0 ? interestParties : closeParties;
-
-    // 5. Paginar los resultados
-    const paginatedParties = finalParties.slice(skip, skip + limit);
-
-    res.status(200).json({ parties: paginatedParties });
+    res.status(200).json({ parties: filteredParties });
 });
 
 
