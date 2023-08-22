@@ -175,7 +175,7 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 locationLongitude,
                 locationTimestamp,
                 isCompany,
-                expoPushToken: expoPushToken.data ?? "",
+                expoPushToken: expoPushToken ?? "",
             },
             include: {
                 profilePictures: true,
