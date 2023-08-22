@@ -520,6 +520,7 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
                 followerUserId,
                 followedUserId,
                 followerUsername: followedUsername,
+                followDate: new Date(),
             },
         });
 

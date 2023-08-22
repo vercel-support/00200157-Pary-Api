@@ -52,10 +52,11 @@ enum Gender {
 }
 
 model UserFollows {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  followerUserId   String @map("followerUserId") @db.ObjectId
-  followedUserId   String @map("followedUserId") @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  followerUserId   String   @map("followerUserId") @db.ObjectId
+  followedUserId   String   @map("followedUserId") @db.ObjectId
   followerUsername String
+  followDate       DateTime
 
   follower User @relation("FollowerToFollowed", fields: [followerUserId], references: [id])
   followed User @relation("FollowedToFollower", fields: [followedUserId], references: [id])
