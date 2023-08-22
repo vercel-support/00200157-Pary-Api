@@ -15,7 +15,7 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
         title: "Nuevo seguidor",
         body: `${follower!.name} te ha seguido.`,
         priority: "high",
-        data: { data: "goes here" },
+        data: { url: `/main/feed/${follower}` },
     };
     //TODO: Handle the response from expo
     // Links: 
