@@ -8,6 +8,8 @@ import { prisma } from "..";
 import { authenticateTokenMiddleware, extractToken, respondWithError } from "../utils/Utils";
 import axios from "axios";
 import { AuthenticatedRequest } from "../../types";
+import Expo from "expo-server-sdk";
+import { sendNewFollowerNotification } from "../utils/NotificationsUtils";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -486,13 +488,18 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
     const followerUserId = decoded.id; // usuario que sigue
 
     const followedUser = await prisma.user.findUnique({
-        where: { username: followedUsername }
+        where: { username: followedUsername },
+        select: {
+            id: true,
+            expoPushToken: true,
+        }
     });
 
     if (!followedUser) {
         return res.status(404).json({ error: "User not found." });
     }
     const followedUserId = followedUser.id; // usuario que es seguido
+    const expoPushToken = followedUser.expoPushToken;
 
     const existingRelation = await prisma.userFollows.findUnique({
         where: {
@@ -515,6 +522,9 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
                 followerUsername: followedUsername,
             },
         });
+
+        sendNewFollowerNotification(expoPushToken, followerUserId);
+
         res.status(200).json({ message: "Now following." });
     } catch (error) {
         console.error(error);
