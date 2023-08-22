@@ -176,9 +176,6 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
             active: true,
             OR: [
                 {
-                    private: false // Fiestas públicas
-                },
-                {
                     private: true,
                     creatorUsername: currentUser.username // El usuario es el creador
                 },
@@ -214,7 +211,10 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
     let step = page;  // To keep track of the number of attempts
     let reachedMaxItemsInDB = false;
     const maxSteps = Math.ceil(totalParties / limit) + 1;
-    const timeoutReached = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout exceeded")), 10000));
+    const timeoutReached = new Promise((_, reject) => setTimeout(() => {
+        reachedMaxItemsInDB = true;
+        return reject(new Error("Timeout exceeded"));
+    }, 5000));
     const fetchParties = async () => {
         while (filteredParties.length < limit && step <= maxSteps) {
             const parties = await prisma.party.findMany({
@@ -232,9 +232,6 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                         }
                     },
                     OR: [
-                        {
-                            private: false // Fiestas públicas
-                        },
                         {
                             private: true,
                             creatorUsername: currentUser.username // El usuario es el creador
@@ -263,7 +260,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                     ],
                 }
             });
-            // console.log("\nFound parties:", parties.length, "Step:", step, "Skip:", (step - 1) * limit, "Limit:", limit, "Distance limit:", distanceLimit, "km");
+            //console.log("\nFound parties:", parties.length, "Step:", step, "Skip:", (step - 1) * limit, "Limit:", limit, "Distance limit:", distanceLimit, "km");
             const currentFilteredParties = parties
                 .map(party => {
                     const location = getCoordinatesFromComuna(party.location);

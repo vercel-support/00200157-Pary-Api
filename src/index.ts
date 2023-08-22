@@ -8,11 +8,12 @@ import { extractToken } from "./utils/Utils";
 
 import awsconfig from "./aws-exports";
 import feedRoute from "./routes/feedRoute";
+import Expo from "expo-server-sdk";
 
 Amplify.configure(awsconfig);
 
 
-const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
+const { JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN } = process.env;
 
 if (JWT_SECRET === undefined) {
     throw new Error("No JWT_SECRET env variable found.");
@@ -22,7 +23,13 @@ if (JWT_REFRESH_SECRET === undefined) {
     throw new Error("No JWT_REFRESH_SECRET env variable found.");
 }
 
+if (EXPO_ACCESS_TOKEN === undefined) {
+    throw new Error("No EXPO_ACCESS_TOKEN env variable found.");
+}
+
 export const prisma = new PrismaClient();
+
+export const expo = new Expo({ accessToken: EXPO_ACCESS_TOKEN });
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));

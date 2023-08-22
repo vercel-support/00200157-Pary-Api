@@ -35,6 +35,7 @@ model User {
   createdAt             DateTime               @default(now())
   lastLogin             DateTime               @default(now())
   isCompany             Boolean                @default(false)
+  expoPushToken         String                 @default("")
   followingUserList     UserFollows[]          @relation("FollowerToFollowed")
   followerUserList      UserFollows[]          @relation("FollowedToFollower")
   partiesParticipating  UserPartyParticipant[] @relation("UserToPartyParticipant")
