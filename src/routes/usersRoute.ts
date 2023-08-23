@@ -1,10 +1,10 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Amplify, Storage } from "aws-amplify";
+import { Amplify, Auth, Storage } from "aws-amplify";
 import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import fileUpload from "express-fileupload";
 import jwt from "jsonwebtoken";
-import { prisma } from "..";
+import { configureAmazonCognito, prisma } from "..";
 import { authenticateTokenMiddleware, extractToken, respondWithError } from "../utils/Utils";
 import axios from "axios";
 import { AuthenticatedRequest } from "../../types";
@@ -28,7 +28,7 @@ const imageCache = new Map<string, { url: string; expiry: number; }>();
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 día en milisegundos
 
-export async function getFreshImageUrl(amazonId: string): Promise<string> {
+export async function getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
     try {
         const imageUrl = await Storage.get(amazonId, {
             level: "public",
@@ -37,7 +37,12 @@ export async function getFreshImageUrl(amazonId: string): Promise<string> {
         return imageUrl as string;
     } catch (error) {
         console.error("Error al obtener la imagen fresca", error);
-        throw error;
+        if (retry) {
+            console.log("Reconfigurando Amplify y reintentando...");
+            configureAmazonCognito();
+            return getFreshImageUrl(amazonId, false);
+        }
+        return "";
     }
 }
 
@@ -51,6 +56,10 @@ export async function getCachedImageUrl(amazonId: string): Promise<string> {
 
     // Si no está en el caché o ha expirado, obtener una nueva URL
     const newUrl = await getFreshImageUrl(amazonId);
+
+    if (newUrl === "") {
+        return "";
+    }
 
     // Almacenar la nueva URL en el caché con una fecha de caducidad
     imageCache.set(amazonId, {
@@ -310,96 +319,109 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
     const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
 
 
-    Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
-        contentType: "image/" + fileType,
-        level: "public",
-    })
-        .then(result => {
-            getCachedImageUrl(result.key)
-                .then(imageUrl => {
-                    prisma.profilePicture
-                        .create({
-                            data: {
-                                url: imageUrl,
-                                user: {
-                                    connect: {
-                                        id: decoded.id,
-                                    },
-                                },
-                                amazonId: result.key,
+    const uploadImageToS3 = async (retry = true) => {
+        try {
+            const result = await Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
+                contentType: "image/" + fileType,
+                level: "public",
+            });
+
+            // Resto de la lógica después de una carga exitosa
+            const imageUrl = await getCachedImageUrl(result.key);
+
+            if (imageUrl === "") {
+                return res.status(500).json({ error: "Error uploading image." });
+            }
+
+            prisma.profilePicture
+                .create({
+                    data: {
+                        url: imageUrl,
+                        user: {
+                            connect: {
+                                id: decoded.id,
                             },
-                        })
-                        .catch(error => {
-                            console.error("Error al agregar la imagen al usuario", error);
-                            return respondWithError(res, 500, "Error updating user.");
-                        })
-                        .then(async profilePicture => {
-                            if (
-                                "id" in profilePicture &&
-                                "url" in profilePicture &&
-                                "amazonId" in profilePicture &&
-                                "userId" in profilePicture
-                            ) {
-                                const user = await prisma.user.findUnique({
-                                    where: { id: decoded.id },
-                                    select: {
-                                        profilePictures: true,
-                                        followingUserList: true,
-                                        followerUserList: true,
-                                        partiesModerating: true,
-                                        partiesParticipating: true,
-                                        ownedParties: true,
-                                    },
-                                }).catch(error => {
-                                    console.error("Error al obtener las imágenes del usuario", error);
-                                    return respondWithError(res, 500, "Error updating user.");
-                                }).then(user => user);
-
-
-                                if (user && "profilePictures" in user && user.profilePictures) {
-                                    const profilePictures = [...user.profilePictures];
-
-                                    profilePictures.push(profilePicture);
-                                    prisma.user
-                                        .update({
-                                            where: { id: decoded.id },
-                                            data: {
-                                                profilePictures: {
-                                                    set: profilePictures,
-                                                },
-                                            },
-                                            include: {
-                                                profilePictures: true,
-                                            },
-                                        })
-                                        .catch(error => {
-                                            console.error("Error al agregar la imagen al usuario", error);
-                                            return respondWithError(res, 500, "Error updating user.");
-                                        })
-                                        .then(async updatedUser => {
-                                            if ("id" in updatedUser) {
-                                                return res.status(200).json({ profilePicture });
-                                            }
-                                        });
-                                } else {
-                                    console.error("Error al obtener las imágenes del usuario 2");
-                                    return respondWithError(res, 500, "Error updating user.");
-                                }
-                            } else {
-                                console.error("Profile picture is not in the expected format:", profilePicture);
-                                return respondWithError(res, 500, "Unexpected data format.");
-                            }
-                        });
+                        },
+                        amazonId: result.key,
+                    },
                 })
                 .catch(error => {
-                    console.error("Error al obtener el link de la imagen subida", error);
-                    return respondWithError(res, 500, "Error uploading image.");
+                    console.error("Error al agregar la imagen al usuario", error);
+                    return respondWithError(res, 500, "Error updating user.");
+                })
+                .then(async profilePicture => {
+                    if (
+                        "id" in profilePicture &&
+                        "url" in profilePicture &&
+                        "amazonId" in profilePicture &&
+                        "userId" in profilePicture
+                    ) {
+                        const user = await prisma.user.findUnique({
+                            where: { id: decoded.id },
+                            select: {
+                                profilePictures: true,
+                                followingUserList: true,
+                                followerUserList: true,
+                                partiesModerating: true,
+                                partiesParticipating: true,
+                                ownedParties: true,
+                            },
+                        }).catch(error => {
+                            console.error("Error al obtener las imágenes del usuario", error);
+                            return respondWithError(res, 500, "Error updating user.");
+                        }).then(user => user);
+
+
+                        if (user && "profilePictures" in user && user.profilePictures) {
+                            const profilePictures = [...user.profilePictures];
+
+                            profilePictures.push(profilePicture);
+                            prisma.user
+                                .update({
+                                    where: { id: decoded.id },
+                                    data: {
+                                        profilePictures: {
+                                            set: profilePictures,
+                                        },
+                                    },
+                                    include: {
+                                        profilePictures: true,
+                                    },
+                                })
+                                .catch(error => {
+                                    console.error("Error al agregar la imagen al usuario", error);
+                                    return respondWithError(res, 500, "Error updating user.");
+                                })
+                                .then(async updatedUser => {
+                                    if ("id" in updatedUser) {
+                                        return res.status(200).json({ profilePicture });
+                                    } else {
+                                        console.error("Error al obtener las imágenes del usuario 2");
+                                        return respondWithError(res, 500, "Error updating user.");
+                                    }
+                                });
+                        } else {
+                            console.error("Error al obtener las imágenes del usuario 2");
+                            return respondWithError(res, 500, "Error updating user.");
+                        }
+                    } else {
+                        console.error("Profile picture is not in the expected format:", profilePicture);
+                        return respondWithError(res, 500, "Unexpected data format.");
+                    }
                 });
-        })
-        .catch(error => {
+
+        } catch (error) {
             console.error("Error al subir la imagen a S3:", error);
-            return respondWithError(res, 500, "Error uploading image.");
-        });
+            if (retry) {
+                console.log("Reconfigurando Amplify y reintentando...");
+                configureAmazonCognito();
+                uploadImageToS3(false);
+            } else {
+                return respondWithError(res, 500, "Error uploading image.");
+            }
+        }
+    };
+    await uploadImageToS3();
 });
 
 router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {

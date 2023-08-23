@@ -97,6 +97,7 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
 
     users.forEach(async (user) => {
         const pic = user.profilePictures[0];
+        if (!pic || !pic.amazonId) return;
         pic.url = await getCachedImageUrl(pic.amazonId);
         user.profilePictures[0] = pic;
     });

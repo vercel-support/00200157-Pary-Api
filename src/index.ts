@@ -10,7 +10,9 @@ import feedRoute from "./routes/feedRoute";
 import Expo from "expo-server-sdk";
 import winston from "winston";
 
-Amplify.configure(awsconfig);
+export function configureAmazonCognito() {
+    Amplify.configure(awsconfig);
+}
 
 const { JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN } = process.env;
 
