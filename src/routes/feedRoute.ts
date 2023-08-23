@@ -55,6 +55,7 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
         skip: skip,
         take: limit,
         where: {
+            signedIn: true,
             OR: [
                 { username: { contains: query, mode: "insensitive" } },
                 { name: { contains: query, mode: "insensitive" } },
