@@ -392,13 +392,12 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
                         });
                 })
                 .catch(error => {
-                    Amplify.Auth.currentAuthenticatedUser();
                     console.error("Error al obtener el link de la imagen subida", error);
                     return respondWithError(res, 500, "Error uploading image.");
                 });
         })
         .catch(error => {
-            Amplify.Auth.currentAuthenticatedUser();
+            console.error("Error al subir la imagen a S3:", error);
             return respondWithError(res, 500, "Error uploading image.");
         });
 });

@@ -18,7 +18,7 @@ model User {
   profilePictures       ProfilePicture[]
   accessToken           String                 @default("")
   refreshToken          String                 @default("")
-  gender                Gender                 @default(masculino)
+  gender                Gender                 @default(Femenino)
   description           String                 @default("")
   birthDate             DateTime
   musicInterest         String[]               @default([])
@@ -46,9 +46,10 @@ model User {
 }
 
 enum Gender {
-  masculino
-  femenino
-  otro
+  Masculino
+  Femenino
+  No_Binario
+  Otro
 }
 
 model UserFollows {
