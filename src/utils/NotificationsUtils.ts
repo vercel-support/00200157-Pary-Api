@@ -5,7 +5,7 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
     if (!Expo.isExpoPushToken(pushToken)) {
         return;
     }
-    const follower = await prisma.user.findUnique({ where: { id: followerId }, select: { name: true } });
+    const follower = await prisma.user.findUnique({ where: { id: followerId }, select: { name: true, username: true } });
 
     if (follower === null) return;
 
@@ -13,11 +13,11 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
         to: pushToken,
         sound: "default",
         title: "Nuevo seguidor",
-        body: `${follower!.name} te ha seguido.`,
+        body: `@${follower!.username} te ha seguido.`,
         priority: "high",
         data: {
             url: `/main/feed/${follower.name}`, params: {
-                username: follower.name
+                username: follower.username
             }
         },
     };
