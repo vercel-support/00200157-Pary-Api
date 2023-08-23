@@ -150,8 +150,16 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
 
     const currentUser = await prisma.user.findUnique({
         where: { id: decoded.id },
-        include: {
-            followingUserList: true
+        select: {
+            username: true,
+            locationLatitude: true,
+            locationLongitude: true,
+            musicInterest: true,
+            followingUserList: {
+                select: {
+                    followedUserId: true
+                }
+            }
         }
     });
 
@@ -159,80 +167,60 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         return respondWithError(res, 404, "Usuario no encontrado.");
     }
 
-    const currentDateTime = new Date();
-
     const followedUsers = currentUser.followingUserList.map(follow => follow.followedUserId);
+    const currentDateTime = new Date();
 
     let queryFilters = {
         date: { gte: currentDateTime },
         active: true,
-        NOT: {
-            private: true,
-            AND: [
-                { creatorUsername: { not: currentUser.username } },
-                {
-                    moderators: {
-                        none: { userId: decoded.id }
-                    }
-                },
-                {
-                    participants: {
-                        none: { userId: decoded.id }
-                    }
-                }
-            ]
-        }
+        private: false,
     };
+
     const totalParties = await prisma.party.count({ where: queryFilters });
 
-    const fetchPartiesInRange = async (): Promise<any[]> => {
-        const parties = await prisma.party.findMany({
-            skip: (page - 1) * limit,
-            take: limit,
-            orderBy: { date: 'asc' },
-            where: queryFilters,
-            include: {
-                participants: {
-                    select: {
-                        userId: true
-                    }
-                },
-                owner: {
-                    select: {
-                        username: true
-                    }
+    const parties = await prisma.party.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [
+            { date: 'asc' },
+        ],
+        where: queryFilters,
+        select: {
+            id: true,
+            location: true,
+            name: true,
+            description: true,
+            image: true,
+            creatorUsername: true,
+            tags: true,
+            type: true,
+            creationDate: true,
+            date: true,
+            active: true,
+            ownerId: true,
+            participants: {
+                select: {
+                    userId: true
                 }
             }
-        });
+        }
+    });
 
-        return parties
-            .map(party => {
-                const location = getCoordinatesFromComuna(party.location);
-                if (!location || party.ownerId === null) return null;
+    const partiesToReturn = parties.map(party => {
+        const location = getCoordinatesFromComuna(party.location);
+        if (!location) return null;
 
-                const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
-                let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
+        const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+        let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
 
-                // Incrementar la relevancia si el dueño o un miembro del party es seguido por el usuario actual
-                if (followedUsers.includes(party.ownerId)) relevanceScore++;
-                if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
+        if (followedUsers.includes(party.ownerId!)) relevanceScore++;
+        if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
 
-                return { ...party, distance, relevanceScore };
-            })
-            .filter(party => party !== null && party.distance <= distanceLimit)
-            .sort((a, b) => {
-                if (!a || !b) return 0;
-                const distanceDifference = a.distance - b.distance;
-                const relevanceDifference = b.relevanceScore - a.relevanceScore;
-                return relevanceDifference || distanceDifference;
-            });
-    };
-
-    const partiesToReturn = await fetchPartiesInRange();
+        return { ...party, distance, relevanceScore };
+    }).filter(party => party !== null && party.distance <= distanceLimit);
 
     res.status(200).json({ parties: partiesToReturn, step: page + 1, reachedMaxItemsInDB: (page * limit >= totalParties) });
 });
-
 
 router.get("/personalized-parties2", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const decoded = req.decoded;
