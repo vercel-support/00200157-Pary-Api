@@ -33,8 +33,7 @@ router.post("/signIn", async (req, res) => {
     });
 
     if (!user) {
-        const generatedUsername = `${googleUser.user.givenName ?? ""}${googleUser.user.familyName ?? ""}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)
-            }`;
+        const generatedUsername = `${googleUser.user.givenName ?? ""}${googleUser.user.familyName ?? ""}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
         user = await prisma.user.create({
             data: {
                 username: generatedUsername,
@@ -48,6 +47,12 @@ router.post("/signIn", async (req, res) => {
             },
             include: {
                 profilePictures: true,
+                followingUserList: true,
+                followerUserList: true,
+                partiesModerating: true,
+                partiesParticipating: true,
+                ownedParties: true,
+
             },
         });
     }
@@ -64,6 +69,11 @@ router.post("/signIn", async (req, res) => {
         },
         include: {
             profilePictures: true,
+            followingUserList: true,
+            followerUserList: true,
+            partiesModerating: true,
+            partiesParticipating: true,
+            ownedParties: true,
         },
     });
 
