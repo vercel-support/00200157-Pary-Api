@@ -5,13 +5,12 @@ import jwt from "jsonwebtoken";
 import authRoute from "./routes/authRoute";
 import usersRoute from "./routes/usersRoute";
 import { extractToken } from "./utils/Utils";
-
 import awsconfig from "./aws-exports";
 import feedRoute from "./routes/feedRoute";
 import Expo from "expo-server-sdk";
+import winston from "winston";
 
 Amplify.configure(awsconfig);
-
 
 const { JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN } = process.env;
 
@@ -25,6 +24,32 @@ if (JWT_REFRESH_SECRET === undefined) {
 
 if (EXPO_ACCESS_TOKEN === undefined) {
     throw new Error("No EXPO_ACCESS_TOKEN env variable found.");
+}
+
+// Configuración de winston
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        winston.format.json()
+    ),
+    transports: [
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' }),
+    ],
+});
+
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.timestamp({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }),
+            winston.format.simple()
+        ),
+    }));
 }
 
 export const prisma = new PrismaClient();
@@ -90,5 +115,5 @@ app.get("/test-users", async (req, res) => {
 
 
 app.listen(80, () => {
-    console.log(`Server ready at: http://localhost`);
+    logger.info(`Server ready at: http://localhost`);
 });
