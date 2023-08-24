@@ -27,8 +27,35 @@ export function authenticateTokenMiddleware(req: Request, res: Response, next: N
     }
 
     jwt.verify(token, JWT_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
-        if (err || !decoded || typeof decoded === "string") {
+        if (err) {
+            console.warn(err);
             respondWithError(res, 403, "Token inválido.");
+            return;
+        }
+        if (typeof decoded === "string") {
+            console.log("decoded is string");
+            respondWithError(res, 403, "Token inválido.");
+            return;
+        }
+
+        (req as AuthenticatedRequest).decoded = decoded;
+        next();
+    });
+}
+
+// Middleware para verificar el token JWT
+export function authenticateRefreshTokenMiddleware(req: Request, res: Response, next: NextFunction): void {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        respondWithError(res, 401, "No se ha proporcionado un token.");
+        return;
+    }
+
+    jwt.verify(token, JWT_REFRESH_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
+        if (err || !decoded || typeof decoded === "string") {
+            respondWithError(res, 403, "Refresh Token inválido.");
             return;
         }
 

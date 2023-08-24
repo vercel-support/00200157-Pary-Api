@@ -13,7 +13,7 @@ import winston from "winston";
 export function configureAmazonCognito() {
     Amplify.configure(awsconfig);
 }
-
+configureAmazonCognito();
 const { JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN } = process.env;
 
 if (JWT_SECRET === undefined) {

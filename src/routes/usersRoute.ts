@@ -1,15 +1,12 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Amplify, Auth, Storage } from "aws-amplify";
+import { Amplify, Storage } from "aws-amplify";
 import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import fileUpload from "express-fileupload";
-import jwt from "jsonwebtoken";
 import { configureAmazonCognito, prisma } from "..";
-import { authenticateTokenMiddleware, extractToken, respondWithError } from "../utils/Utils";
-import axios from "axios";
 import { AuthenticatedRequest } from "../../types";
-import Expo from "expo-server-sdk";
 import { sendNewFollowerNotification } from "../utils/NotificationsUtils";
+import { authenticateTokenMiddleware, respondWithError } from "../utils/Utils";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -216,6 +213,7 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
         return respondWithError(res, 500, "Error al decodificar el token.");
     }
     if (decoded.id !== req.params.id) {
+        console.log("Token does not match user ID.");
         return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
     }
 
