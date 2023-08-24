@@ -236,6 +236,7 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
 
             // Renovar URLs de las imágenes
             for (const pic of user.profilePictures) {
+                if (!pic || !pic.amazonId) continue;
                 pic.url = await getCachedImageUrl(pic.amazonId);
             }
 
@@ -290,6 +291,7 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
 
             // Renovar URLs de las imágenes
             for (const pic of user.profilePictures) {
+                if (!pic || !pic.amazonId) continue;
                 pic.url = await getCachedImageUrl(pic.amazonId);
             }
 

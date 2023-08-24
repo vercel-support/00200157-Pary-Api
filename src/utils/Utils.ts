@@ -1,9 +1,8 @@
 import { randomUUID } from "crypto";
-import { Party, PartyType, User } from "../../types";
+import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
-import { AuthenticatedRequest } from "../../types";
-import express, { Request, Response, NextFunction } from "express";
 import { prisma } from "..";
+import { AuthenticatedRequest, Party, PartyType } from "../../types";
 
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
@@ -25,7 +24,8 @@ export function authenticateTokenMiddleware(req: Request, res: Response, next: N
         respondWithError(res, 401, "No se ha proporcionado un token.");
         return;
     }
-
+    console.log("Token:", token, "For Request:", req.url);
+    console.log("JWT_SECRET:", JWT_SECRET);
     jwt.verify(token, JWT_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
         if (err) {
             console.warn(err);

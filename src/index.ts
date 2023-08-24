@@ -1,14 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { Amplify } from "aws-amplify";
+import Expo from "expo-server-sdk";
 import express from "express";
 import jwt from "jsonwebtoken";
+import winston from "winston";
+import awsconfig from "./aws-exports";
 import authRoute from "./routes/authRoute";
+import feedRoute from "./routes/feedRoute";
+import partyRoute from "./routes/partyRoute";
 import usersRoute from "./routes/usersRoute";
 import { extractToken } from "./utils/Utils";
-import awsconfig from "./aws-exports";
-import feedRoute from "./routes/feedRoute";
-import Expo from "expo-server-sdk";
-import winston from "winston";
 
 export function configureAmazonCognito() {
     Amplify.configure(awsconfig);
@@ -64,6 +65,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use("/auth", authRoute);
 app.use("/user", usersRoute);
 app.use("/feed", feedRoute);
+app.use("/party", partyRoute);
 
 
 app.post("/test-token", async (req, res) => {

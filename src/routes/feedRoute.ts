@@ -9,7 +9,7 @@ import { getCachedImageUrl } from "./usersRoute";
 const router = express.Router();
 const MAX_DISTANCE = 999999; // En kilómetros
 
-function getCoordinatesFromComuna(comuna: string) {
+export function getCoordinatesFromComuna(comuna: string) {
     const found = comunasData.find(item => item.comuna.toLowerCase() === comuna.toLowerCase());
     if (found) {
         return { lat: found.lat, lon: found.lon };
@@ -222,7 +222,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
 
         return { ...party, distance, relevanceScore };
-    }).filter(party => party !== null && party.distance <= distanceLimit);
+    }).filter(party => party !== null && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore);
     console.log("Retrieved", partiesToReturn.length, "parties for user", decoded.id, "with distance limit", distanceLimit, "and page", page, "and limit", limit);
 
     res.status(200).json({ parties: partiesToReturn, step: page + 1, reachedMaxItemsInDB: (page * limit >= totalParties) });
