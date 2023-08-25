@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
-import { prisma } from "..";
+import { logger, prisma } from "..";
 import { AuthenticatedRequest, Party, PartyType } from "../../types";
 
 
@@ -24,20 +24,19 @@ export function authenticateTokenMiddleware(req: Request, res: Response, next: N
         respondWithError(res, 401, "No se ha proporcionado un token.");
         return;
     }
-    console.log("Token:", token, "For Request:", req.url);
-    console.log("JWT_SECRET:", JWT_SECRET);
     jwt.verify(token, JWT_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
         if (err) {
-            console.warn(err);
+            logger.warn(err);
             respondWithError(res, 403, "Token inválido.");
             return;
         }
-        if (typeof decoded === "string") {
-            console.log("decoded is string");
+        if (!decoded || typeof decoded === "string") {
+            logger.info(`Request failed to ${req.originalUrl} from ${req.ip} due to invalid token.`);
             respondWithError(res, 403, "Token inválido.");
             return;
         }
 
+        logger.info(`New request from ${req.ip} userId: ${decoded.id} type: ${req.method} to ${req.originalUrl} with params: ${JSON.stringify(req.params)}`);
         (req as AuthenticatedRequest).decoded = decoded;
         next();
     });
@@ -45,6 +44,7 @@ export function authenticateTokenMiddleware(req: Request, res: Response, next: N
 
 // Middleware para verificar el token JWT
 export function authenticateRefreshTokenMiddleware(req: Request, res: Response, next: NextFunction): void {
+
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -54,11 +54,17 @@ export function authenticateRefreshTokenMiddleware(req: Request, res: Response, 
     }
 
     jwt.verify(token, JWT_REFRESH_SECRET as string, (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => {
-        if (err || !decoded || typeof decoded === "string") {
-            respondWithError(res, 403, "Refresh Token inválido.");
+        if (err) {
+            logger.warn(err);
+            respondWithError(res, 403, "Token inválido.");
             return;
         }
-
+        if (!decoded || typeof decoded === "string") {
+            logger.info(`Request failed to ${req.originalUrl} from ${req.ip} due to invalid token.`);
+            respondWithError(res, 403, "Token inválido.");
+            return;
+        }
+        logger.info(`New request from ${req.ip} userId: ${decoded.id} type: ${req.method} to ${req.originalUrl} with params: ${JSON.stringify(req.params)}`);
         (req as AuthenticatedRequest).decoded = decoded;
         next();
     });
@@ -352,7 +358,7 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
 
 function getUsersToConnect(users: any[], probability: number): { userId: string; }[] {
     return users.filter(() => Math.random() < probability).map(user => {
-        console.log(user);
+        logger.info(user);
         return { userId: user.id };
     });
 }
@@ -360,8 +366,7 @@ function getUsersToConnect(users: any[], probability: number): { userId: string;
 
 export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
     const userCount = users.length;
-    console.log(users);
-    const savedParties = [];
+    const partiesToCreate = [];
 
     for (let i = 0; i < 200; i++) {
         const index = (i * 37) % userCount;
@@ -378,48 +383,32 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
         const privateParty = Math.random() < 0.5;
         const advertisement = Math.random() < 0.5;
 
-        const savedParty = await prisma.party.create({
-            data: {
-                location: loc,
-                name: name,
-                description: desc,
-                image: image,
-                creatorUsername: creator.username,
-                ownerId: creator.id,  // Set the owner ID
-                tags: selectedTags,
-                type: type,
-                creationDate,
-                date,
-                private: privateParty,
-                advertisement,
-                active: true,
-            }
+        partiesToCreate.push({
+            location: loc,
+            name: name,
+            description: desc,
+            image: image,
+            creatorUsername: creator.username,
+            ownerId: creator.id,
+            tags: selectedTags,
+            type: type,
+            creationDate,
+            date,
+            private: privateParty,
+            advertisement,
+            active: true,
         });
+    };
 
-        /* const moderatorsToConnect = getUsersToConnect(users, 0.05);
-        const participantsToConnect = getUsersToConnect(users, 0.2);
+    await prisma.party.createMany({
+        data: partiesToCreate
+    });
 
-        const combinedUsers = [...moderatorsToConnect, ...participantsToConnect];
 
-        const uniqueUsers = Array.from(new Set(combinedUsers.map(p => p.userId)))
-            .map(userId => ({ userId, partyId: savedParty.id }));
+    // Puedes necesitar realizar una consulta adicional para obtener todos los detalles de las partes creadas 
+    // si necesitas todas las propiedades de las partes en el resultado. 
 
-        if (uniqueUsers.length) {
-            await prisma.userPartyParticipant.createMany({ data: uniqueUsers });
-        }
-
-        const uniqueModerators = moderatorsToConnect.filter(moderator =>
-            uniqueUsers.some(user => user.userId === moderator.userId)
-        );
-
-        if (uniqueModerators.length) {
-            await prisma.userPartyModerator.createMany({ data: uniqueModerators });
-        } */
-
-        savedParties.push(savedParty);
-    }
-
-    return savedParties as Party[];
+    return [];
 };
 
 

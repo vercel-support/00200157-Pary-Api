@@ -33,9 +33,9 @@ export interface BasicUserData {
     username: string;
     name: string;
     lastName: string;
-    profilePictures: ProfilePicture[];  // Consider using an array of ProfilePicture interface if applicable
+    profilePictures: ProfilePicture[];
     description: string;
-    birthDate: string;  // Consider using a Date type if possible
+    birthDate: Date;
     gender: Gender;
     musicInterest: Interest;
     deportsInterest: Interest;
@@ -68,10 +68,11 @@ export interface Party {
     date: Date;
     private: boolean;
     advertisement: boolean;
-    participants: string[]; // usernames
-    moderators: string[];
+    participants?: string[]; // usernames, made it optional
+    moderators?: string[];  // made it optional
     active: boolean;
     ownerId: string;
+    groupIds?: string[];
 }
 
 export type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";

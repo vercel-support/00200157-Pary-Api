@@ -41,6 +41,10 @@ model User {
   partiesParticipating  UserPartyParticipant[] @relation("UserToPartyParticipant")
   partiesModerating     UserPartyModerator[]   @relation("UserToPartyModerator")
   ownedParties          Party[] // Relación para rastrear los parties que un usuario posee
+  groups                GroupMember[]          @relation("MembershipToUser")
+  ledGroups             Group[]                @relation("LeaderToGroup")
+  invitedGroups         GroupInvitation[]      @relation("InvitedToInviting")
+  invitingGroups        GroupInvitation[]      @relation("InvitingToInvited")
 
   @@index([username, email, assignedGoogleID])
 }
@@ -48,7 +52,7 @@ model User {
 enum Gender {
   Masculino
   Femenino
-  No_Binario
+  NoBinario
   Otro
 }
 
@@ -91,6 +95,7 @@ model Party {
   active          Boolean
   ownerId         String?                @map("ownerId") @db.ObjectId
   owner           User?                  @relation(fields: [ownerId], references: [id])
+  groups          PartyGroup[]           @relation("PartyToPartyGroup")
 }
 
 enum PartyType {
@@ -99,6 +104,17 @@ enum PartyType {
   evento
   previa
   otro
+}
+
+model PartyGroup {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  partyId String @map("partyId") @db.ObjectId
+  groupId String @map("groupId") @db.ObjectId
+
+  party Party @relation("PartyToPartyGroup", fields: [partyId], references: [id])
+  group Group @relation("GroupToPartyGroup", fields: [groupId], references: [id])
+
+  @@unique([partyId, groupId])
 }
 
 model UserPartyParticipant {
@@ -117,4 +133,47 @@ model UserPartyModerator {
   party   Party  @relation(fields: [partyId], references: [id])
 
   @@unique([userId, partyId])
+}
+
+model Group {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  description      String            @default("")
+  leader           User              @relation("LeaderToGroup", fields: [leaderId], references: [id])
+  leaderId         String            @map("leaderId") @db.ObjectId
+  groupMembers     GroupMember[]
+  groupInvitations GroupInvitation[]
+  parties          PartyGroup[]      @relation("GroupToPartyGroup")
+}
+
+model GroupMember {
+  groupId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @map("userId") @db.ObjectId
+  user    User   @relation("MembershipToUser", fields: [userId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+}
+
+model GroupInvitation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  invitingUser   User   @relation("InvitingToInvited", fields: [invitingUserId], references: [id])
+  invitingUserId String @map("invitingUserId") @db.ObjectId
+
+  invitedUser   User   @relation("InvitedToInviting", fields: [invitedUserId], references: [id])
+  invitedUserId String @map("invitedUserId") @db.ObjectId
+
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String @map("groupId") @db.ObjectId
+
+  status InvitationStatus @default(PENDING)
+
+  @@unique([groupId, invitedUserId])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }

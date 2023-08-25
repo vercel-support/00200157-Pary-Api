@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { prisma } from "..";
+import { logger, prisma } from "..";
 import { AuthenticatedRequest, FetchedParty, Party } from "../../types";
 import comunasData from "../assets/comunas.json";
 import { authenticateTokenMiddleware, createPartiesForUsers, generatePartiesForUsers, haversineDistance, respondWithError } from "../utils/Utils";
@@ -14,7 +14,7 @@ export function getCoordinatesFromComuna(comuna: string) {
     if (found) {
         return { lat: found.lat, lon: found.lon };
     } else {
-        console.error("Comuna not found in local database:", comuna);
+        logger.error("Comuna not found in local database:", comuna);
         return null;
     }
 }
@@ -32,7 +32,7 @@ router.get("/generate-parties", authenticateTokenMiddleware, async (req: Request
         const parties = await generatePartiesForUsers(users);
         return res.status(200).json(parties);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return respondWithError(res, 500, "Error generando fiestas.");
     }
 });
@@ -91,8 +91,6 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
             createdAt: true,
             lastLogin: true,
             isCompany: true,
-            followingUserList: true,
-            followerUserList: true,
         }
     });
 
@@ -135,7 +133,7 @@ router.get("/create-parties", authenticateTokenMiddleware, async (req: Request, 
         const parties = await createPartiesForUsers(users);
         return res.status(200).json(parties);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return respondWithError(res, 500, "Error generando y guardando fiestas.");
     }
 });
@@ -150,8 +148,6 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
     const page = Number(req.query.page) || 1;
     const distanceLimit = Number(req.query.distanceLimit) || MAX_DISTANCE;
     const limit = Number(req.query.limit) || 15;
-
-    console.log("Requesting personalized parties for user", decoded.id, "with distance limit", distanceLimit, "and page", page, "and limit", limit);
 
     const currentUser = await prisma.user.findUnique({
         where: { id: decoded.id },
@@ -223,7 +219,6 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
 
         return { ...party, distance, relevanceScore };
     }).filter(party => party !== null && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore);
-    console.log("Retrieved", partiesToReturn.length, "parties for user", decoded.id, "with distance limit", distanceLimit, "and page", page, "and limit", limit);
 
     res.status(200).json({ parties: partiesToReturn, step: page + 1, reachedMaxItemsInDB: (page * limit >= totalParties) });
 });
@@ -281,7 +276,7 @@ router.get("/followers/", authenticateTokenMiddleware, async (req: Authenticated
 
         return res.json(followerUsers);
     } catch (error) {
-        console.error("Error fetching users:", error);
+        logger.error("Error fetching users:", error);
         return respondWithError(res, 500, "Error fetching users.");
     }
 });
@@ -338,7 +333,7 @@ router.get("/following/", authenticateTokenMiddleware, async (req: Authenticated
 
         return res.json(followerUsers);
     } catch (error) {
-        console.error("Error fetching users:", error);
+        logger.error("Error fetching users:", error);
         return respondWithError(res, 500, "Error fetching users.");
     }
 });

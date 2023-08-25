@@ -7,6 +7,7 @@ import winston from "winston";
 import awsconfig from "./aws-exports";
 import authRoute from "./routes/authRoute";
 import feedRoute from "./routes/feedRoute";
+import groupRoute from "./routes/groupRoute";
 import partyRoute from "./routes/partyRoute";
 import usersRoute from "./routes/usersRoute";
 import { extractToken } from "./utils/Utils";
@@ -30,13 +31,11 @@ if (EXPO_ACCESS_TOKEN === undefined) {
 }
 
 // Configuración de winston
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
-        winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        }),
-        winston.format.json()
+        winston.format.timestamp(),
+        winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
     ),
     transports: [
         new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
@@ -47,11 +46,9 @@ const logger = winston.createLogger({
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
-            winston.format.timestamp({
-                format: 'YYYY-MM-DD HH:mm:ss'
-            }),
-            winston.format.simple()
-        ),
+            winston.format.timestamp(),
+            winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+        )
     }));
 }
 
@@ -66,6 +63,7 @@ app.use("/auth", authRoute);
 app.use("/user", usersRoute);
 app.use("/feed", feedRoute);
 app.use("/party", partyRoute);
+app.use("/group", groupRoute);
 
 
 app.post("/test-token", async (req, res) => {

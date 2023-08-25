@@ -47,11 +47,54 @@ router.post("/signIn", async (req, res) => {
             },
             include: {
                 profilePictures: true,
-                followingUserList: true,
                 followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
-                ownedParties: true,
+                followingUserList: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
             },
         });
     }
@@ -68,11 +111,54 @@ router.post("/signIn", async (req, res) => {
         },
         include: {
             profilePictures: true,
-            followingUserList: true,
             followerUserList: true,
-            partiesModerating: true,
-            partiesParticipating: true,
-            ownedParties: true,
+            followingUserList: true,
+            partiesParticipating: {
+                select: {
+                    partyId: true,
+                }
+            },
+            partiesModerating: {
+                select: {
+                    partyId: true,
+                }
+            },
+            groups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                        }
+                    }
+                }
+            },
+            invitedGroups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                        }
+                    }
+                }
+            },
+            invitingGroups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                        }
+                    }
+                }
+            },
         },
     });
 
@@ -84,28 +170,76 @@ router.post("/signIn", async (req, res) => {
 router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const decoded = req.decoded;
 
-    if (typeof decoded === "object" && "id" in decoded) {
-        const accessToken = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: "1d" });
-        const refreshToken = jwt.sign({ id: decoded.id }, JWT_REFRESH_SECRET, { expiresIn: "4weeks" });
-        const user = await prisma.user.update({
-            where: { id: decoded.id },
-            data: {
-                accessToken,
-                refreshToken,
-            },
-            include: {
-                profilePictures: true,
-                followingUserList: true,
-                followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
-                ownedParties: true,
-            },
-        });
+    try {
 
-        return res.json({ user });
-    } else {
-        return res.status(500).json({ error: "Invalid refresh token." });
+        if (typeof decoded === "object" && "id" in decoded) {
+            const accessToken = jwt.sign({ id: decoded.id }, JWT_SECRET, { expiresIn: "1d" });
+            const refreshToken = jwt.sign({ id: decoded.id }, JWT_REFRESH_SECRET, { expiresIn: "4weeks" });
+            const user = await prisma.user.update({
+                where: { id: decoded.id },
+                data: {
+                    accessToken,
+                    refreshToken,
+                },
+                include: {
+                    profilePictures: true,
+                    followerUserList: true,
+                    followingUserList: true,
+                    partiesParticipating: {
+                        select: {
+                            partyId: true,
+                        }
+                    },
+                    partiesModerating: {
+                        select: {
+                            partyId: true,
+                        }
+                    },
+                    groups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                }
+                            }
+                        }
+                    },
+                    invitedGroups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                }
+                            }
+                        }
+                    },
+                    invitingGroups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                }
+                            }
+                        }
+                    },
+                },
+            });
+
+            return res.json({ user });
+        } else {
+            return res.status(500).json({ error: "Invalid refresh token." });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to authenticate token." });
     }
 });
 

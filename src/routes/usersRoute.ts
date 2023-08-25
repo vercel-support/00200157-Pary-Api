@@ -3,7 +3,7 @@ import { Amplify, Storage } from "aws-amplify";
 import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import fileUpload from "express-fileupload";
-import { configureAmazonCognito, prisma } from "..";
+import { configureAmazonCognito, logger, prisma } from "..";
 import { AuthenticatedRequest } from "../../types";
 import { sendNewFollowerNotification } from "../utils/NotificationsUtils";
 import { authenticateTokenMiddleware, respondWithError } from "../utils/Utils";
@@ -33,9 +33,9 @@ export async function getFreshImageUrl(amazonId: string, retry: boolean = true):
         });
         return imageUrl as string;
     } catch (error) {
-        console.error("Error al obtener la imagen fresca", error);
+        logger.error("Error al obtener la imagen fresca", error);
         if (retry) {
-            console.log("Reconfigurando Amplify y reintentando...");
+            logger.info("Reconfigurando Amplify y reintentando...");
             configureAmazonCognito();
             return getFreshImageUrl(amazonId, false);
         }
@@ -83,6 +83,10 @@ router.get("/check-username", authenticateTokenMiddleware, async (req: Authentic
     prisma.user
         .findUnique({
             where: { username },
+            select: {
+                id: true,
+                username: true
+            }
         })
         .then(user => {
             if (!user) {
@@ -93,25 +97,6 @@ router.get("/check-username", authenticateTokenMiddleware, async (req: Authentic
         .catch(() => {
             return respondWithError(res, 500, "Error al consultar el nombre de usuario.");
         });
-});
-
-router.get("/users", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-
-    const decoded = req.decoded;
-    if (typeof decoded !== "object" || !("id" in decoded)) {
-        return respondWithError(res, 500, "Error al decodificar el token.");
-    }
-    const users = await prisma.user.findFirst({
-        include: {
-            profilePictures: true,
-            followingUserList: true,
-            followerUserList: true,
-            partiesModerating: true,
-            partiesParticipating: true,
-            ownedParties: true,
-        },
-    });
-    return res.json(users);
 });
 
 router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
@@ -187,21 +172,64 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
             },
             include: {
                 profilePictures: true,
-                followingUserList: true,
                 followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
-                ownedParties: true,
+                followingUserList: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
             },
         })
-        .then(updatedUser => {
-            return res.status(200).json({ message: "Usuario actualizado con éxito.", user: updatedUser });
+        .then(() => {
+            return res.status(200).json({ message: "Usuario actualizado con éxito." });
         })
         .catch(error => {
             if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
                 return respondWithError(res, 400, "El nombre de usuario ya está en uso.");
             } else {
-                console.error(error);
+                logger.error(error);
                 return respondWithError(res, 500, "Error al actualizar el usuario.");
             }
         });
@@ -213,7 +241,7 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
         return respondWithError(res, 500, "Error al decodificar el token.");
     }
     if (decoded.id !== req.params.id) {
-        console.log("Token does not match user ID.");
+        logger.info("Token does not match user ID.");
         return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
     }
 
@@ -222,11 +250,54 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
             where: { id: decoded.id },
             include: {
                 profilePictures: true,
-                followingUserList: true,
                 followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
-                ownedParties: true,
+                followingUserList: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
             },
         })
         .then(async user => {
@@ -243,7 +314,7 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
             return res.status(200).json(user);
         })
         .catch(error => {
-            console.error(error);
+            logger.error(error);
             return respondWithError(res, 500, "Error fetching user data.");
         });
 });
@@ -279,9 +350,53 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 isCompany: true,
                 followingUserList: true,
                 followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
                 ownedParties: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
             }
         })
         .then(async user => {
@@ -298,7 +413,7 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
             return res.status(200).json(user);
         })
         .catch(error => {
-            console.error(error);
+            logger.error(error);
             return respondWithError(res, 500, "Error fetching user data.");
         });
 });
@@ -346,7 +461,7 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
                     },
                 })
                 .catch(error => {
-                    console.error("Error al agregar la imagen al usuario", error);
+                    logger.error("Error al agregar la imagen al usuario", error);
                     return respondWithError(res, 500, "Error updating user.");
                 })
                 .then(async profilePicture => {
@@ -360,14 +475,9 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
                             where: { id: decoded.id },
                             select: {
                                 profilePictures: true,
-                                followingUserList: true,
-                                followerUserList: true,
-                                partiesModerating: true,
-                                partiesParticipating: true,
-                                ownedParties: true,
                             },
                         }).catch(error => {
-                            console.error("Error al obtener las imágenes del usuario", error);
+                            logger.error("Error al obtener las imágenes del usuario", error);
                             return respondWithError(res, 500, "Error updating user.");
                         }).then(user => user);
 
@@ -389,31 +499,31 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
                                     },
                                 })
                                 .catch(error => {
-                                    console.error("Error al agregar la imagen al usuario", error);
+                                    logger.error("Error al agregar la imagen al usuario", error);
                                     return respondWithError(res, 500, "Error updating user.");
                                 })
                                 .then(async updatedUser => {
                                     if ("id" in updatedUser) {
                                         return res.status(200).json({ profilePicture });
                                     } else {
-                                        console.error("Error al obtener las imágenes del usuario 2");
+                                        logger.error("Error al obtener las imágenes del usuario 2");
                                         return respondWithError(res, 500, "Error updating user.");
                                     }
                                 });
                         } else {
-                            console.error("Error al obtener las imágenes del usuario 2");
+                            logger.error("Error al obtener las imágenes del usuario 2");
                             return respondWithError(res, 500, "Error updating user.");
                         }
                     } else {
-                        console.error("Profile picture is not in the expected format:", profilePicture);
+                        logger.error("Profile picture is not in the expected format:", profilePicture);
                         return respondWithError(res, 500, "Unexpected data format.");
                     }
                 });
 
         } catch (error) {
-            console.error("Error al subir la imagen a S3:", error);
+            logger.error("Error al subir la imagen a S3:", error);
             if (retry) {
-                console.log("Reconfigurando Amplify y reintentando...");
+                logger.info("Reconfigurando Amplify y reintentando...");
                 configureAmazonCognito();
                 uploadImageToS3(false);
             } else {
@@ -444,7 +554,7 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
         await Storage.remove(amazonId, { level: "public" });
     } catch (error) {
         Amplify.Auth.currentAuthenticatedUser();
-        console.error("Error al eliminar la imagen de S3:", error);
+        logger.error("Error al eliminar la imagen de S3:", error);
         return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
     }
 
@@ -459,17 +569,60 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
             where: { id: decoded.id },
             include: {
                 profilePictures: true,
-                followingUserList: true,
                 followerUserList: true,
-                partiesModerating: true,
-                partiesParticipating: true,
-                ownedParties: true,
+                followingUserList: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
             },
         });
 
         return res.status(200).json({ message: "Imagen eliminada con éxito", user: updatedUser });
     } catch (error) {
-        console.error("Error al eliminar la imagen de la base de datos:", error);
+        logger.error("Error al eliminar la imagen de la base de datos:", error);
         return respondWithError(res, 500, "Error al eliminar la imagen de la base de datos.");
     }
 });
@@ -494,7 +647,7 @@ router.get("/get-image-url/:amazonId", async (req, res) => {
         })
         .catch(error => {
             Amplify.Auth.currentAuthenticatedUser();
-            console.error("Error al obtener la imagen", error);
+            logger.error("Error al obtener la imagen", error);
             return respondWithError(res, 500, "Error obteniendo imagen.");
         });
 }); */
@@ -549,7 +702,7 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
 
         res.status(200).json({ message: "Now following." });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return respondWithError(res, 500, "Error while trying to follow.");
     }
 });
@@ -597,7 +750,7 @@ router.delete("/unfollow/:username", authenticateTokenMiddleware, async (req: Au
         });
         res.status(200).json({ message: "Unfollowed successfully." });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return respondWithError(res, 500, "Error while trying to unfollow.");
     }
 });

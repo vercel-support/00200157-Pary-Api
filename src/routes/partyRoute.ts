@@ -1,6 +1,6 @@
 import express, { Response } from "express";
 import jwt from "jsonwebtoken";
-import { prisma } from "..";
+import { logger, prisma } from "..";
 import { AuthenticatedRequest, GoogleUser } from "../../types";
 import { authenticateRefreshTokenMiddleware, authenticateTokenMiddleware, extractToken, haversineDistance, respondWithError } from "../utils/Utils";
 import { getCoordinatesFromComuna } from "./feedRoute";
@@ -61,7 +61,7 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
         return res.status(200).json({ ...party, distance });
     })
         .catch(error => {
-            console.error(error);
+            logger.error(error);
             return respondWithError(res, 500, "Error fetching user data.");
         });
 
