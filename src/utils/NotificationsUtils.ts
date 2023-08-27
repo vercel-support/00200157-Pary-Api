@@ -16,7 +16,7 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
         body: `@${follower!.username} te ha seguido.`,
         priority: "high",
         data: {
-            url: `/main/feed/${follower.name}`, params: {
+            url: `/(tabs)/feed/${follower.username}`, params: {
                 username: follower.username
             }
         },
