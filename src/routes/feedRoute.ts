@@ -145,7 +145,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         return respondWithError(res, 500, "Error al decodificar el token.");
     }
 
-    const page = Number(req.query.page) || 1;
+    let page = Number(req.query.page) || 1;
     const distanceLimit = Number(req.query.distanceLimit) || MAX_DISTANCE;
     const limit = Number(req.query.limit) || 15;
 
@@ -179,48 +179,55 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
 
     const totalParties = await prisma.party.count({ where: queryFilters });
 
-    const parties = await prisma.party.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: [
-            { date: 'asc' },
-        ],
-        where: queryFilters,
-        select: {
-            id: true,
-            location: true,
-            name: true,
-            description: true,
-            image: true,
-            creatorUsername: true,
-            tags: true,
-            type: true,
-            creationDate: true,
-            date: true,
-            active: true,
-            ownerId: true,
-            participants: {
-                select: {
-                    userId: true
+    const foundedParties = [];
+
+    while (foundedParties.length < limit && !(page * limit >= totalParties)) {
+        const parties = await prisma.party.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: [
+                { date: 'asc' },
+            ],
+            where: queryFilters,
+            select: {
+                id: true,
+                location: true,
+                name: true,
+                description: true,
+                image: true,
+                creatorUsername: true,
+                tags: true,
+                type: true,
+                creationDate: true,
+                date: true,
+                active: true,
+                ownerId: true,
+                participants: {
+                    select: {
+                        userId: true
+                    }
                 }
             }
-        }
-    });
+        });
 
-    const partiesToReturn = parties.map(party => {
-        const location = getCoordinatesFromComuna(party.location);
-        if (!location) return null;
+        const partiesToReturn = parties.map(party => {
+            const location = getCoordinatesFromComuna(party.location);
+            if (!location) return null;
 
-        const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
-        let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
+            const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+            let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
 
-        if (followedUsers.includes(party.ownerId!)) relevanceScore++;
-        if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
+            if (followedUsers.includes(party.ownerId!)) relevanceScore++;
+            if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
 
-        return { ...party, distance, relevanceScore };
-    }).filter(party => party !== null && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore);
+            return { ...party, distance, relevanceScore };
+        }).filter(party => party !== null && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore);
+        foundedParties.push(...partiesToReturn);
+        page++;
 
-    res.status(200).json({ parties: partiesToReturn, step: page + 1, reachedMaxItemsInDB: (page * limit >= totalParties) });
+    }
+
+    res.status(200).json({ parties: foundedParties, step: page, reachedMaxItemsInDB: (page * limit >= totalParties) });
 });
 
 
