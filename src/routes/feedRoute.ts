@@ -116,6 +116,7 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
         orderBy: { advertisement: 'desc' }
     });
 
+
     res.status(200).json({ users, parties });
 });
 

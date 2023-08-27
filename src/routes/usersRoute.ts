@@ -666,6 +666,14 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
         select: {
             id: true,
             expoPushToken: true,
+            username: true,
+        }
+    });
+
+    const followerUsername = await prisma.user.findUnique({
+        where: { id: followerUserId },
+        select: {
+            username: true,
         }
     });
 
@@ -694,6 +702,7 @@ router.post("/follow/:username", authenticateTokenMiddleware, async (req: Authen
                 followerUserId,
                 followedUserId,
                 followerUsername: followedUsername,
+                followedUsername: followerUsername?.username || "",
                 followDate: new Date(),
             },
         });

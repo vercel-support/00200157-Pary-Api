@@ -61,6 +61,7 @@ model UserFollows {
   followerUserId   String   @map("followerUserId") @db.ObjectId
   followedUserId   String   @map("followedUserId") @db.ObjectId
   followerUsername String
+  followedUsername String
   followDate       DateTime
 
   follower User @relation("FollowerToFollowed", fields: [followerUserId], references: [id])
