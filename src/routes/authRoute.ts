@@ -1,8 +1,9 @@
 import express, { Response } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "..";
-import { AuthenticatedRequest, GoogleUser } from "../../types";
+import { AuthenticatedRequest, GoogleUser, User } from "../../types";
 import { authenticateRefreshTokenMiddleware, authenticateTokenMiddleware, extractToken } from "../utils/Utils";
+import { getCachedImageUrl } from "./usersRoute";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -30,7 +31,7 @@ router.post("/signIn", async (req, res) => {
         select: {
             id: true
         }
-    });
+    }) as User;
 
     if (!user) {
         const generatedUsername = `${googleUser.user.givenName ?? ""}${googleUser.user.familyName ?? ""}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
@@ -162,6 +163,11 @@ router.post("/signIn", async (req, res) => {
         },
     });
 
+    for (const pic of user.profilePictures) {
+        if (!pic || !pic.amazonId) continue;
+        pic.url = await getCachedImageUrl(pic.amazonId);
+    }
+
     return res.status(200).json({
         user
     });
@@ -233,6 +239,11 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                     },
                 },
             });
+            // Renovar URLs de las imágenes
+            for (const pic of user.profilePictures) {
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+            }
 
             return res.json({ user });
         } else {

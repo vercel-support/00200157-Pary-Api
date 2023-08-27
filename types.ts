@@ -18,7 +18,7 @@ export interface GoogleUser {
     serverAuthCode: string | null;
 }
 
-type Gender = "mujer" | "hombre" | "otro";
+type Gender = "Masculino" | "Femenino" | "NoBinario" | "Otro";
 type Interest = string[];
 
 export interface User extends BasicUserData {

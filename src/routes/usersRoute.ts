@@ -23,7 +23,7 @@ router.use(fileUpload());
 
 const imageCache = new Map<string, { url: string; expiry: number; }>();
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 1 día en milisegundos
+const CACHE_DURATION = 24 * 60 * 60 * 500; // 1 día en milisegundos
 
 export async function getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
     try {
