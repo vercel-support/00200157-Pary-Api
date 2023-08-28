@@ -50,6 +50,11 @@ router.post("/signIn", async (req, res) => {
                 profilePictures: true,
                 followerUserList: true,
                 followingUserList: true,
+                ownedParties: {
+                    select: {
+                        id: true,
+                    }
+                },
                 partiesParticipating: {
                     select: {
                         partyId: true,
@@ -117,6 +122,11 @@ router.post("/signIn", async (req, res) => {
             partiesParticipating: {
                 select: {
                     partyId: true,
+                }
+            },
+            ownedParties: {
+                select: {
+                    id: true,
                 }
             },
             partiesModerating: {
@@ -194,6 +204,11 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                     partiesParticipating: {
                         select: {
                             partyId: true,
+                        }
+                    },
+                    ownedParties: {
+                        select: {
+                            id: true,
                         }
                     },
                     partiesModerating: {

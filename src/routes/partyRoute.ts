@@ -17,6 +17,101 @@ if (JWT_REFRESH_SECRET === undefined) {
 
 const router = express.Router();
 
+router.get("/own-parties", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { id } = decoded;
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+
+    try {
+        const currentUser = await prisma.user.findUnique({
+            where: { id: decoded.id },
+            select: {
+                locationLatitude: true,
+                locationLongitude: true,
+
+            }
+        });
+
+        if (!currentUser) {
+            return respondWithError(res, 500, "Error fetching user data.");
+        }
+        const parties = await prisma.party.findMany({
+            where: {
+                OR: [
+                    { ownerId: id },
+                    {
+                        participants: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    }
+                ]
+            },
+            take: limit,
+            skip: skip,
+            orderBy: { date: 'asc' },
+        });
+
+        const totalParties = await prisma.party.count({
+            where: {
+                OR: [
+                    { ownerId: id },
+                    {
+                        participants: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        const partiesToReturn = parties.map(party => {
+            const location = getCoordinatesFromComuna(party.location);
+            if (!location) return null;
+
+            const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+
+
+            return { ...party, distance };
+        });
+
+        const hasNextPage = (page * limit) < totalParties;
+        const nextPage = hasNextPage ? page + 1 : null;
+
+        logger.info("Parties:", partiesToReturn, "Has next page:", hasNextPage, "Next page:", nextPage);
+        res.status(200).json({ parties: partiesToReturn, hasNextPage, nextPage });
+
+    } catch (error) {
+        logger.error("Error fetching parties:", error);
+        return respondWithError(res, 500, "Error al buscar las fiestas.");
+    }
+});
+
 router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const decoded = req.decoded;
     if (typeof decoded !== "object" || !("id" in decoded)) {
@@ -67,5 +162,6 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
 
 
 });
+
 
 export default router;

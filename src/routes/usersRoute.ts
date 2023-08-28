@@ -179,6 +179,11 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                         partyId: true,
                     }
                 },
+                ownedParties: {
+                    select: {
+                        id: true,
+                    }
+                },
                 partiesModerating: {
                     select: {
                         partyId: true,
@@ -255,6 +260,11 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                 partiesParticipating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                ownedParties: {
+                    select: {
+                        id: true,
                     }
                 },
                 partiesModerating: {
@@ -350,10 +360,14 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 isCompany: true,
                 followingUserList: true,
                 followerUserList: true,
-                ownedParties: true,
                 partiesParticipating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                ownedParties: {
+                    select: {
+                        id: true,
                     }
                 },
                 partiesModerating: {
@@ -571,6 +585,11 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                 profilePictures: true,
                 followerUserList: true,
                 followingUserList: true,
+                ownedParties: {
+                    select: {
+                        id: true,
+                    }
+                },
                 partiesParticipating: {
                     select: {
                         partyId: true,

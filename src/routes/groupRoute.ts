@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import { authenticateTokenMiddleware, respondWithError } from '../utils/Utils';
-import { prisma } from '..';
+import { logger, prisma } from '..';
 import { AuthenticatedRequest } from '../../types';
 
 // Middleware para detectar usuario
@@ -248,6 +248,63 @@ router.post('/groups/:groupId/cancel-invitation', async (req: AuthenticatedReque
         res.status(500).json({ error: "Failed to cancel group invitation." });
     }
 });
+
+router.get("/own-groups", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { id } = decoded;
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+    try {
+        const groups = await prisma.group.findMany({
+            where: {
+                OR: [
+                    { leaderId: id },
+                    {
+                        groupMembers: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    }
+                ]
+            },
+            take: limit,
+            skip: skip,
+            orderBy: { name: 'asc' },
+        });
+
+        const totalGroups = await prisma.group.count({
+            where: {
+                OR: [
+                    { leaderId: id },
+                    {
+                        groupMembers: {
+                            some: {
+                                userId: id
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        const hasNextPage = (page * limit) < totalGroups;
+        const nextPage = hasNextPage ? page + 1 : null;
+
+        res.status(200).json({ groups, hasNextPage, nextPage });
+
+    } catch (error) {
+        logger.error("Error fetching groups:", error);
+        return respondWithError(res, 500, "Error al buscar los grupos.");
+    }
+});
+
 
 
 export default router;
