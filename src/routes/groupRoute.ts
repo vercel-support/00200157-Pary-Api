@@ -8,7 +8,7 @@ import { AuthenticatedRequest } from '../../types';
 const router = express.Router();
 router.use(authenticateTokenMiddleware);
 
-router.post('/groups', async (req: Request, res: Response) => {
+router.post('/groups', authenticateTokenMiddleware, async (req: Request, res: Response) => {
     try {
         const group = await prisma.group.create({
             data: req.body
@@ -19,7 +19,7 @@ router.post('/groups', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/groups/:groupId', async (req: Request, res: Response) => {
+router.get('/groups/:groupId', authenticateTokenMiddleware, async (req: Request, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const group = await prisma.group.findUnique({
@@ -31,7 +31,7 @@ router.get('/groups/:groupId', async (req: Request, res: Response) => {
     }
 });
 
-router.put('/groups/:groupId', async (req: Request, res: Response) => {
+router.put('/groups/:groupId', authenticateTokenMiddleware, async (req: Request, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const updatedGroup = await prisma.group.update({
@@ -45,7 +45,7 @@ router.put('/groups/:groupId', async (req: Request, res: Response) => {
 });
 
 // Restricción para eliminar grupos solo por el dueño
-router.delete('/groups/:groupId', async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/groups/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -77,7 +77,7 @@ router.delete('/groups/:groupId', async (req: AuthenticatedRequest, res: Respons
     }
 });
 
-router.post('/groups/:groupId/addParty', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/groups/:groupId/addParty', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const partyId = req.body.partyId;
@@ -113,7 +113,7 @@ router.post('/groups/:groupId/addParty', async (req: AuthenticatedRequest, res: 
 });
 
 // Invitar a usuarios a un grupo
-router.post('/groups/:groupId/invite', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/groups/:groupId/invite', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const userIdToInvite = req.body.userId;
@@ -157,7 +157,7 @@ router.post('/groups/:groupId/invite', async (req: AuthenticatedRequest, res: Re
 });
 
 // Aceptar una invitación
-router.post('/groups/:groupId/accept-invitation', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/groups/:groupId/accept-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -194,7 +194,7 @@ router.post('/groups/:groupId/accept-invitation', async (req: AuthenticatedReque
 });
 
 // Declinar una invitación
-router.post('/groups/:groupId/decline-invitation', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/groups/:groupId/decline-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -224,7 +224,7 @@ router.post('/groups/:groupId/decline-invitation', async (req: AuthenticatedRequ
 });
 
 // Cancelar una invitación
-router.post('/groups/:groupId/cancel-invitation', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/groups/:groupId/cancel-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const userIdToCancel = req.body.userId;
