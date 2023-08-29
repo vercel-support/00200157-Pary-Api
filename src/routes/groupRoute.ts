@@ -2,24 +2,130 @@ import express, { Request, Response, Router } from 'express';
 import { authenticateTokenMiddleware, respondWithError } from '../utils/Utils';
 import { logger, prisma } from '..';
 import { AuthenticatedRequest } from '../../types';
+import { sendGroupInviteNotification } from '../utils/NotificationsUtils';
 
 // Middleware para detectar usuario
 
 const router = express.Router();
 router.use(authenticateTokenMiddleware);
 
-router.post('/groups', authenticateTokenMiddleware, async (req: Request, res: Response) => {
+router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { name, description, inviteUserNames } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: "Missing required field." });
+    }
+    const { id } = decoded;
+
+
+    const inviter = await prisma.user.findUnique({ where: { id }, select: { name: true, username: true, id: true } });
+
+    if (!inviter) {
+        return respondWithError(res, 500, "Error fetching user data.");
+    }
+
     try {
-        const group = await prisma.group.create({
-            data: req.body
+        const userGroupsSize = await prisma.group.count({
+            where: {
+                leaderId: id
+            }
         });
+
+        if (userGroupsSize >= 5) {
+            return res.status(400).json({ error: "You can only create up to 5 groups." });
+        }
+
+
+        const group = await prisma.group.create({
+            data: {
+                name,
+                description,
+                leaderId: id
+            }
+        });
+
+        if (inviteUserNames) {
+            const usersToInvite: string[] = JSON.parse(inviteUserNames);
+            const users = await prisma.user.findMany({
+                where: {
+                    username: {
+                        in: usersToInvite
+                    }
+                },
+                select: {
+                    id: true,
+                    username: true,
+                    expoPushToken: true
+                }
+            });
+
+            for (const user of users) {
+                const response = await prisma.groupInvitation.create({
+                    data: {
+                        groupId: group.id,
+                        invitedUserId: user.id,
+                        invitingUserId: id
+                    }
+                });
+                if (response) {
+                    sendGroupInviteNotification(user.expoPushToken, inviter, group.name);
+                }
+
+            }
+        }
+
         res.status(201).json(group);
     } catch (error) {
         res.status(500).json({ error: "Failed to create a new group." });
     }
 });
 
-router.get('/groups/:groupId', authenticateTokenMiddleware, async (req: Request, res: Response) => {
+router.get("/own-groups", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { id } = decoded;
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    const skip = (page - 1) * limit;
+
+    try {
+        const groups = await prisma.group.findMany({
+            where: {
+                leaderId: id
+            },
+            take: limit,
+            skip: skip,
+            orderBy: { name: 'asc' },
+        });
+
+        const totalGroups = await prisma.group.count({
+            where: {
+                leaderId: id
+            },
+        });
+
+        const hasNextPage = (page * limit) < totalGroups;
+        const nextPage = hasNextPage ? page + 1 : null;
+
+        res.status(200).json({ groups, hasNextPage, nextPage });
+
+    } catch (error) {
+        logger.error("Error fetching groups:", error);
+        return respondWithError(res, 500, "Error al buscar los grupos.");
+    }
+});
+
+
+
+router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const group = await prisma.group.findUnique({
@@ -31,7 +137,7 @@ router.get('/groups/:groupId', authenticateTokenMiddleware, async (req: Request,
     }
 });
 
-router.put('/groups/:groupId', authenticateTokenMiddleware, async (req: Request, res: Response) => {
+router.put('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const updatedGroup = await prisma.group.update({
@@ -45,7 +151,7 @@ router.put('/groups/:groupId', authenticateTokenMiddleware, async (req: Request,
 });
 
 // Restricción para eliminar grupos solo por el dueño
-router.delete('/groups/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -77,7 +183,7 @@ router.delete('/groups/:groupId', authenticateTokenMiddleware, async (req: Authe
     }
 });
 
-router.post('/groups/:groupId/addParty', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:groupId/addParty', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const partyId = req.body.partyId;
@@ -113,7 +219,7 @@ router.post('/groups/:groupId/addParty', authenticateTokenMiddleware, async (req
 });
 
 // Invitar a usuarios a un grupo
-router.post('/groups/:groupId/invite', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:groupId/invite', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const userIdToInvite = req.body.userId;
@@ -157,7 +263,7 @@ router.post('/groups/:groupId/invite', authenticateTokenMiddleware, async (req: 
 });
 
 // Aceptar una invitación
-router.post('/groups/:groupId/accept-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:groupId/accept-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -194,7 +300,7 @@ router.post('/groups/:groupId/accept-invitation', authenticateTokenMiddleware, a
 });
 
 // Declinar una invitación
-router.post('/groups/:groupId/decline-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:groupId/decline-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const decoded = req.decoded;
@@ -224,7 +330,7 @@ router.post('/groups/:groupId/decline-invitation', authenticateTokenMiddleware, 
 });
 
 // Cancelar una invitación
-router.post('/groups/:groupId/cancel-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/:groupId/cancel-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;
         const userIdToCancel = req.body.userId;
@@ -248,63 +354,5 @@ router.post('/groups/:groupId/cancel-invitation', authenticateTokenMiddleware, a
         res.status(500).json({ error: "Failed to cancel group invitation." });
     }
 });
-
-router.get("/own-groups", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-    const decoded = req.decoded;
-    if (typeof decoded !== "object" || !("id" in decoded)) {
-        return respondWithError(res, 500, "Error al decodificar el token.");
-    }
-
-    const { id } = decoded;
-    const limit = Number(req.query.limit) || 10;
-    const page = Number(req.query.page) || 1;
-    const skip = (page - 1) * limit;
-
-    try {
-        const groups = await prisma.group.findMany({
-            where: {
-                OR: [
-                    { leaderId: id },
-                    {
-                        groupMembers: {
-                            some: {
-                                userId: id
-                            }
-                        }
-                    }
-                ]
-            },
-            take: limit,
-            skip: skip,
-            orderBy: { name: 'asc' },
-        });
-
-        const totalGroups = await prisma.group.count({
-            where: {
-                OR: [
-                    { leaderId: id },
-                    {
-                        groupMembers: {
-                            some: {
-                                userId: id
-                            }
-                        }
-                    }
-                ]
-            }
-        });
-
-        const hasNextPage = (page * limit) < totalGroups;
-        const nextPage = hasNextPage ? page + 1 : null;
-
-        res.status(200).json({ groups, hasNextPage, nextPage });
-
-    } catch (error) {
-        logger.error("Error fetching groups:", error);
-        return respondWithError(res, 500, "Error al buscar los grupos.");
-    }
-});
-
-
 
 export default router;

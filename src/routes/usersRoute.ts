@@ -240,94 +240,6 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
         });
 });
 
-router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-    const decoded = req.decoded;
-    if (typeof decoded !== "object" || !("id" in decoded)) {
-        return respondWithError(res, 500, "Error al decodificar el token.");
-    }
-    if (decoded.id !== req.params.id) {
-        logger.info("Token does not match user ID.");
-        return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
-    }
-
-    prisma.user
-        .findUnique({
-            where: { id: decoded.id },
-            include: {
-                profilePictures: true,
-                followerUserList: true,
-                followingUserList: true,
-                partiesParticipating: {
-                    select: {
-                        partyId: true,
-                    }
-                },
-                ownedParties: {
-                    select: {
-                        id: true,
-                    }
-                },
-                partiesModerating: {
-                    select: {
-                        partyId: true,
-                    }
-                },
-                groups: {
-                    select: {
-                        groupId: true,
-                        group: {
-                            select: {
-                                name: true,
-                                description: true,
-                                leaderId: true,
-                            }
-                        }
-                    }
-                },
-                invitedGroups: {
-                    select: {
-                        groupId: true,
-                        group: {
-                            select: {
-                                name: true,
-                                description: true,
-                                leaderId: true,
-                            }
-                        }
-                    }
-                },
-                invitingGroups: {
-                    select: {
-                        groupId: true,
-                        group: {
-                            select: {
-                                name: true,
-                                description: true,
-                                leaderId: true,
-                            }
-                        }
-                    }
-                },
-            },
-        })
-        .then(async user => {
-            if (!user) {
-                return res.status(404).json({ error: "User not found." });
-            }
-
-            // Renovar URLs de las imágenes
-            for (const pic of user.profilePictures) {
-                if (!pic || !pic.amazonId) continue;
-                pic.url = await getCachedImageUrl(pic.amazonId);
-            }
-
-            return res.status(200).json(user);
-        })
-        .catch(error => {
-            logger.error(error);
-            return respondWithError(res, 500, "Error fetching user data.");
-        });
-});
 
 router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const decoded = req.decoded;
@@ -783,5 +695,200 @@ router.delete("/unfollow/:username", authenticateTokenMiddleware, async (req: Au
     }
 });
 
+
+router.get("/search-many", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const query = req.query.q;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+
+    if (!query) {
+        return respondWithError(res, 400, "No se ha proporcionado una consulta.");
+    }
+
+    if (typeof query !== "string") {
+        return respondWithError(res, 400, "La consulta debe ser de tipo string.");
+    }
+
+    const users = await prisma.user.findMany({
+        skip: skip,
+        take: limit,
+        where: {
+            signedIn: true,
+            OR: [
+                { username: { contains: query, mode: "insensitive" } },
+                { name: { contains: query, mode: "insensitive" } },
+                { lastName: { contains: query, mode: "insensitive" } },
+            ]
+        },
+        orderBy: [
+            { isCompany: 'desc' },
+            { verified: 'desc' },
+            { username: 'desc' }
+        ],
+        select: {
+            username: true,
+            name: true,
+            lastName: true,
+            profilePictures: { take: 1 },
+            description: true,
+            birthDate: true,
+            gender: true,
+            musicInterest: true,
+            deportsInterest: true,
+            artAndCultureInterest: true,
+            techInterest: true,
+            hobbiesInterest: true,
+            verified: true,
+            locationName: true,
+            createdAt: true,
+            lastLogin: true,
+            isCompany: true,
+        }
+    });
+
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i];
+        let pic = user.profilePictures[0];
+        if (!pic || !pic.amazonId) continue;
+        pic.url = await getCachedImageUrl(pic.amazonId);
+        user.profilePictures[0] = pic;
+    }
+
+
+    res.status(200).json({ users });
+});
+router.get("/follower-user-info/:username", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { username } = req.params;
+
+    const user = await prisma.user.findUnique({
+        where: {
+            signedIn: true,
+            username
+        },
+        select: {
+            username: true,
+            name: true,
+            lastName: true,
+            profilePictures: { take: 1 },
+            description: true,
+            birthDate: true,
+            gender: true,
+            musicInterest: true,
+            deportsInterest: true,
+            artAndCultureInterest: true,
+            techInterest: true,
+            hobbiesInterest: true,
+            verified: true,
+            locationName: true,
+            createdAt: true,
+            lastLogin: true,
+            isCompany: true,
+        }
+    });
+
+    if (user) {
+        let pic = user.profilePictures[0];
+        if (!pic || !pic.amazonId) return res.status(200).json(user);
+        pic.url = await getCachedImageUrl(pic.amazonId);
+        user.profilePictures[0] = pic;
+    }
+
+    res.status(200).json({ user });
+});
+
+router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+    if (decoded.id !== req.params.id) {
+        logger.info("Token does not match user ID.");
+        return respondWithError(res, 403, "Access Denied: Token does not match user ID.");
+    }
+
+    prisma.user
+        .findUnique({
+            where: { id: decoded.id },
+            include: {
+                profilePictures: true,
+                followerUserList: true,
+                followingUserList: true,
+                partiesParticipating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                ownedParties: {
+                    select: {
+                        id: true,
+                    }
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    }
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            }
+                        }
+                    }
+                },
+            },
+        })
+        .then(async user => {
+            if (!user) {
+                return res.status(404).json({ error: "User not found." });
+            }
+
+            // Renovar URLs de las imágenes
+            for (const pic of user.profilePictures) {
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+            }
+
+            return res.status(200).json(user);
+        })
+        .catch(error => {
+            logger.error(error);
+            return respondWithError(res, 500, "Error fetching user data.");
+        });
+});
 
 export default router;
