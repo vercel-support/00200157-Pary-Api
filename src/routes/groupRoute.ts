@@ -46,8 +46,15 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
             data: {
                 name,
                 description,
-                leaderId: id
-            }
+                leaderId: id,
+            },
+        });
+
+        await prisma.groupMember.create({
+            data: {
+                groupId: group.id,
+                userId: id,
+            },
         });
 
         if (inviteUserNames) {
@@ -66,6 +73,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
             });
 
             for (const user of users) {
+                if (user.id === id) continue;
                 const response = await prisma.groupInvitation.create({
                     data: {
                         groupId: group.id,
@@ -108,6 +116,28 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
             take: limit,
             skip: skip,
             orderBy: { name: 'asc' },
+            include: {
+                groupMembers: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                            }
+                        }
+                    }
+                },
+                leader: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: { take: 1 },
+                    }
+                }
+            }
         });
 
         const totalGroups = await prisma.group.count({
@@ -118,6 +148,23 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
                 ]
             },
         });
+
+
+        for (let i = 0; i < groups.length; i++) {
+            let group = groups[i];
+            if (group?.groupMembers) {
+                let pic = group.leader.profilePictures[0];
+                if (!pic || !pic.amazonId) return;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                group.leader.profilePictures[0] = pic;
+                for (let i = 0; i < group.groupMembers.length; i++) {
+                    let pic = group.groupMembers[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    group.groupMembers[i].user.profilePictures[0] = pic;
+                }
+            }
+        }
 
         const hasNextPage = (page * limit) < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
@@ -139,8 +186,6 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
     const { id } = decoded;
     const limit = Number(req.query.limit) || 10;
     const page = Number(req.query.page) || 1;
-    const skip = (page - 1) * limit;
-
     try {
 
 
