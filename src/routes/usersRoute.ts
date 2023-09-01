@@ -249,6 +249,9 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
 
     const { username } = req.params;
 
+    if (!username || typeof username !== "string") {
+        return respondWithError(res, 400, "No se proporcionó un nombre de usuario.");
+    }
     prisma.user
         .findUnique({
             where: { username: username },
@@ -339,7 +342,7 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
             return res.status(200).json(user);
         })
         .catch(error => {
-            logger.error(error);
+            logger.error("Error al obtener la información básica del usuario", error);
             return respondWithError(res, 500, "Error fetching user data.");
         });
 });
