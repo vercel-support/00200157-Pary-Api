@@ -194,10 +194,34 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
             select: {
                 invitedGroups: {
                     select: {
-                        group: true
+                        group: {
+                            include: {
+                                groupMembers: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: { take: 1 },
+                                            }
+                                        }
+                                    }
+                                },
+                                leader: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: { take: 1 },
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
+            },
+
         });
 
         const groups = invitedGroups.flatMap(user => user.invitedGroups.map(invitedGroup => invitedGroup.group));
@@ -206,6 +230,23 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
 
         const hasNextPage = (page * limit) < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
+
+
+        for (let i = 0; i < groups.length; i++) {
+            let group = groups[i];
+            if (group?.groupMembers) {
+                let pic = group.leader.profilePictures[0];
+                if (!pic || !pic.amazonId) return;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                group.leader.profilePictures[0] = pic;
+                for (let i = 0; i < group.groupMembers.length; i++) {
+                    let pic = group.groupMembers[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    group.groupMembers[i].user.profilePictures[0] = pic;
+                }
+            }
+        }
 
         res.status(200).json({ groups, hasNextPage, nextPage });
 
