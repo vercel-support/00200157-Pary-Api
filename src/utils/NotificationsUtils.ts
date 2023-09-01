@@ -1,6 +1,7 @@
 import Expo, { ExpoPushMessage } from "expo-server-sdk";
 import { expo, prisma } from "..";
 import { User } from "@prisma/client";
+export type NotificationType = "follow" | "like" | "comment" | "message" | "newParty" | "partyUpdate" | "partyDelete" | "groupInvite" | "group" | "groupNewMember";
 
 export async function sendNewFollowerNotification(pushToken: string, followerId: string) {
     if (!Expo.isExpoPushToken(pushToken)) {
@@ -17,9 +18,11 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
         body: `@${follower.username} te ha seguido.`,
         priority: "high",
         data: {
-            url: `/feed/${follower.username}`, params: {
+            url: `/feed/${follower.username}`,
+            params: {
                 username: follower.username
-            }
+            },
+            type: "follow"
         },
     };
     //TODO: Handle the response from expo
@@ -49,7 +52,8 @@ export async function sendGroupInviteNotification(pushToken: string, inviter: Pa
             url: `/news/group/${groupId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
             params: {
                 groupId: groupId
-            }
+            },
+            type: "groupInvite"
         },
     };
 
@@ -87,7 +91,8 @@ export async function sendNewMemberNotification(pushTokens: string[], newMemberI
             url: `/news/group/${groupId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
             params: {
                 groupId: groupId
-            }
+            },
+            type: "groupNewMember"
         },
     };
 
