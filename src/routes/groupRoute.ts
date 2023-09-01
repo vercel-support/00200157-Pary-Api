@@ -27,6 +27,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
     const inviter = await prisma.user.findUnique({ where: { id }, select: { name: true, username: true, id: true } });
 
     if (!inviter) {
+        console.log("Error fetching user data.");
         return respondWithError(res, 500, "Error fetching user data.");
     }
 
@@ -90,6 +91,8 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
 
         res.status(201).json(group);
     } catch (error) {
+
+        console.log("Error creating group:", error);
         res.status(500).json({ error: "Failed to create a new group." });
     }
 });
@@ -510,6 +513,7 @@ router.post('/:groupId/accept-invitation', authenticateTokenMiddleware, async (r
 
         res.status(200).json({ message: "Invitation accepted and user added to group." });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: "Failed to accept group invitation." });
     }
 });
@@ -635,8 +639,10 @@ router.post('/:groupId/leave', authenticateTokenMiddleware, async (req: Authenti
             // Remove the user from the group
             await prisma.groupMember.delete({
                 where: {
-                    groupId: groupId,
-                    userId: decoded.id
+                    userId_groupId: {
+                        groupId: groupId,
+                        userId: decoded.id
+                    }
                 }
             });
 

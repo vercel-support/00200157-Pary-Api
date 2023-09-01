@@ -148,7 +148,8 @@ model Group {
 }
 
 model GroupMember {
-  groupId String @id @default(auto()) @map("_id") @db.ObjectId
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  groupId String @map("groupId") @db.ObjectId
   userId  String @map("userId") @db.ObjectId
   user    User   @relation("MembershipToUser", fields: [userId], references: [id])
   group   Group  @relation(fields: [groupId], references: [id])
