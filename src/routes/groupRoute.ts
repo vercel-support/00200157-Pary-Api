@@ -1,8 +1,8 @@
-import express, { Request, Response, Router } from 'express';
-import { authenticateTokenMiddleware, respondWithError } from '../utils/Utils';
+import express, { Response } from 'express';
 import { logger, prisma } from '..';
 import { AuthenticatedRequest } from '../../types';
 import { sendGroupInviteNotification, sendNewMemberNotification } from '../utils/NotificationsUtils';
+import { authenticateTokenMiddleware, respondWithError } from '../utils/Utils';
 import { getCachedImageUrl } from './usersRoute';
 
 // Middleware para detectar usuario
@@ -282,7 +282,11 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
                         techInterest: true,
                         hobbiesInterest: true,
                         verified: true,
-                        locationName: true,
+                        location: {
+                            select: {
+                                name: true,
+                            }
+                        },
                         createdAt: true,
                         lastLogin: true,
                         isCompany: true,
@@ -305,7 +309,11 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
                                 techInterest: true,
                                 hobbiesInterest: true,
                                 verified: true,
-                                locationName: true,
+                                location: {
+                                    select: {
+                                        name: true,
+                                    }
+                                },
                                 createdAt: true,
                                 lastLogin: true,
                                 isCompany: true,

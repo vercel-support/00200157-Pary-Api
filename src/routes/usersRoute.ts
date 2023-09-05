@@ -113,10 +113,7 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
         artAndCultureInterest,
         techInterest,
         hobbiesInterest,
-        locationName,
-        locationLatitude,
-        locationLongitude,
-        locationTimestamp,
+        location,
         isCompany,
         expoPushToken
 
@@ -163,10 +160,7 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 description,
                 birthDate,
                 phoneNumber,
-                locationName,
-                locationLatitude,
-                locationLongitude,
-                locationTimestamp,
+                location,
                 isCompany,
                 expoPushToken: expoPushToken ?? "",
             },
@@ -228,13 +222,15 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
             },
         })
         .then(() => {
+            console.log("Usuario actualizado con éxito.");
             return res.status(200).json({ message: "Usuario actualizado con éxito." });
         })
         .catch(error => {
             if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+                console.log("El nombre de usuario ya está en uso.");
                 return respondWithError(res, 400, "El nombre de usuario ya está en uso.");
             } else {
-                logger.error(error);
+                logger.error("Error al actualizar el usuario.", error);
                 return respondWithError(res, 500, "Error al actualizar el usuario.");
             }
         });
@@ -269,7 +265,11 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 techInterest: true,
                 hobbiesInterest: true,
                 verified: true,
-                locationName: true,
+                location: {
+                    select: {
+                        name: true,
+                    }
+                },
                 createdAt: true,
                 lastLogin: true,
                 isCompany: true,
@@ -743,7 +743,12 @@ router.get("/search-many", authenticateTokenMiddleware, async (req: Authenticate
             techInterest: true,
             hobbiesInterest: true,
             verified: true,
-            locationName: true,
+
+            location: {
+                select: {
+                    name: true,
+                }
+            },
             createdAt: true,
             lastLogin: true,
             isCompany: true,
@@ -788,7 +793,11 @@ router.get("/follower-user-info/:username", authenticateTokenMiddleware, async (
             techInterest: true,
             hobbiesInterest: true,
             verified: true,
-            locationName: true,
+            location: {
+                select: {
+                    name: true,
+                }
+            },
             createdAt: true,
             lastLogin: true,
             isCompany: true,

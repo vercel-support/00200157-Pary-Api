@@ -28,10 +28,7 @@ model User {
   hobbiesInterest       String[]               @default([])
   verified              Boolean                @default(false)
   phoneNumber           String                 @default("")
-  locationName          String                 @default("")
-  locationLatitude      Float                  @default(0)
-  locationLongitude     Float                  @default(0)
-  locationTimestamp     Float                  @default(0)
+  location              Location
   createdAt             DateTime               @default(now())
   lastLogin             DateTime               @default(now())
   isCompany             Boolean                @default(false)
@@ -40,11 +37,12 @@ model User {
   followerUserList      UserFollows[]          @relation("FollowedToFollower")
   partiesParticipating  UserPartyParticipant[] @relation("UserToPartyParticipant")
   partiesModerating     UserPartyModerator[]   @relation("UserToPartyModerator")
-  ownedParties          Party[] // Relación para rastrear los parties que un usuario posee
+  ownedParties          Party[]
   groups                GroupMember[]          @relation("MembershipToUser")
   ledGroups             Group[]                @relation("LeaderToGroup")
   invitedGroups         GroupInvitation[]      @relation("InvitedToInviting")
   invitingGroups        GroupInvitation[]      @relation("InvitingToInvited")
+  membershipRequests    MembershipRequest[]
 
   @@index([username, email, assignedGoogleID])
 }
@@ -79,24 +77,25 @@ model ProfilePicture {
 }
 
 model Party {
-  id              String                 @id @default(auto()) @map("_id") @db.ObjectId
-  location        String
-  name            String
-  description     String
-  image           String
-  creatorUsername String
-  tags            String[]
-  type            PartyType
-  creationDate    DateTime
-  date            DateTime
-  private         Boolean
-  advertisement   Boolean
-  participants    UserPartyParticipant[]
-  moderators      UserPartyModerator[]
-  active          Boolean
-  ownerId         String?                @map("ownerId") @db.ObjectId
-  owner           User?                  @relation(fields: [ownerId], references: [id])
-  groups          PartyGroup[]           @relation("PartyToPartyGroup")
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  location           Location
+  name               String
+  description        String
+  image              String
+  creatorUsername    String
+  tags               String[]
+  type               PartyType
+  date               DateTime
+  private            Boolean
+  advertisement      Boolean
+  participants       UserPartyParticipant[]
+  moderators         UserPartyModerator[]
+  active             Boolean
+  ownerId            String?                @map("ownerId") @db.ObjectId
+  owner              User?                  @relation(fields: [ownerId], references: [id])
+  groups             PartyGroup[]           @relation("PartyToPartyGroup")
+  createdAt          DateTime               @default(now())
+  membershipRequests MembershipRequest[]
 }
 
 enum PartyType {
@@ -137,45 +136,74 @@ model UserPartyModerator {
 }
 
 model Group {
-  id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  description      String            @default("")
-  leader           User              @relation("LeaderToGroup", fields: [leaderId], references: [id])
-  leaderId         String            @map("leaderId") @db.ObjectId
-  groupMembers     GroupMember[]
-  groupInvitations GroupInvitation[]
-  parties          PartyGroup[]      @relation("GroupToPartyGroup")
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  description        String              @default("")
+  leader             User                @relation("LeaderToGroup", fields: [leaderId], references: [id])
+  leaderId           String              @map("leaderId") @db.ObjectId
+  private            Boolean             @default(false)
+  showInFeed         Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  groupMembers       GroupMember[]
+  groupInvitations   GroupInvitation[]
+  parties            PartyGroup[]        @relation("GroupToPartyGroup")
+  membershipRequests MembershipRequest[]
 }
 
 model GroupMember {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  groupId String @map("groupId") @db.ObjectId
-  userId  String @map("userId") @db.ObjectId
-  user    User   @relation("MembershipToUser", fields: [userId], references: [id])
-  group   Group  @relation(fields: [groupId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  groupId   String   @map("groupId") @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  user      User     @relation("MembershipToUser", fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
 
   @@unique([userId, groupId])
 }
 
 model GroupInvitation {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  invitingUser   User   @relation("InvitingToInvited", fields: [invitingUserId], references: [id])
-  invitingUserId String @map("invitingUserId") @db.ObjectId
-
-  invitedUser   User   @relation("InvitedToInviting", fields: [invitedUserId], references: [id])
-  invitedUserId String @map("invitedUserId") @db.ObjectId
-
-  group   Group  @relation(fields: [groupId], references: [id])
-  groupId String @map("groupId") @db.ObjectId
-
-  status InvitationStatus @default(PENDING)
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt      DateTime         @default(now())
+  invitingUser   User             @relation("InvitingToInvited", fields: [invitingUserId], references: [id])
+  invitingUserId String           @map("invitingUserId") @db.ObjectId
+  invitedUser    User             @relation("InvitedToInviting", fields: [invitedUserId], references: [id])
+  invitedUserId  String           @map("invitedUserId") @db.ObjectId
+  group          Group            @relation(fields: [groupId], references: [id])
+  groupId        String           @map("groupId") @db.ObjectId
+  status         InvitationStatus @default(PENDING)
 
   @@unique([groupId, invitedUserId])
+}
+
+model MembershipRequest {
+  id        String                @id @default(auto()) @map("_id") @db.ObjectId
+  groupId   String                @map("groupId") @db.ObjectId
+  partyId   String?               @map("partyId") @db.ObjectId
+  userId    String                @map("userId") @db.ObjectId
+  status    InvitationStatus      @default(PENDING)
+  type      MembershipRequestType
+  createdAt DateTime              @default(now())
+  group     Group?                @relation(fields: [groupId], references: [id])
+  party     Party?                @relation(fields: [partyId], references: [id])
+  user      User                  @relation(fields: [userId], references: [id])
+
+  @@unique([userId, groupId, partyId])
+}
+
+enum MembershipRequestType {
+  GROUP
+  PARTY
 }
 
 enum InvitationStatus {
   PENDING
   ACCEPTED
   DECLINED
+}
+
+type Location {
+  name      String
+  latitude  Float
+  longitude Float
+  timestamp DateTime
 }

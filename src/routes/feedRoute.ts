@@ -1,23 +1,12 @@
 import express, { Request, Response } from "express";
 import { logger, prisma } from "..";
-import { AuthenticatedRequest, FetchedParty, Party } from "../../types";
-import comunasData from "../assets/comunas.json";
+import { AuthenticatedRequest } from "../../types";
 import { authenticateTokenMiddleware, createPartiesForUsers, generatePartiesForUsers, haversineDistance, respondWithError } from "../utils/Utils";
 import { getCachedImageUrl } from "./usersRoute";
 
 
 const router = express.Router();
 const MAX_DISTANCE = 999999; // En kilómetros
-
-export function getCoordinatesFromComuna(comuna: string) {
-    const found = comunasData.find(item => item.comuna.toLowerCase() === comuna.toLowerCase());
-    if (found) {
-        return { lat: found.lat, lon: found.lon };
-    } else {
-        logger.error("Comuna not found in local database:", comuna);
-        return null;
-    }
-}
 
 router.get("/generate-parties", authenticateTokenMiddleware, async (req: Request, res: Response) => {
     try {
@@ -60,12 +49,11 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
                 { username: { contains: query, mode: "insensitive" } },
                 { name: { contains: query, mode: "insensitive" } },
                 { lastName: { contains: query, mode: "insensitive" } },
-                { locationName: { contains: query, mode: "insensitive" } },
                 { techInterest: { has: query } },
                 { musicInterest: { has: query } },
                 { deportsInterest: { has: query } },
                 { hobbiesInterest: { has: query } },
-                { artAndCultureInterest: { has: query } }
+                { artAndCultureInterest: { has: query } },
             ]
         },
         orderBy: [
@@ -87,7 +75,7 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
             techInterest: true,
             hobbiesInterest: true,
             verified: true,
-            locationName: true,
+            location: true,
             createdAt: true,
             lastLogin: true,
             isCompany: true,
@@ -109,7 +97,6 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
             OR: [
                 { name: { contains: query, mode: "insensitive" } },
                 { creatorUsername: { contains: query, mode: "insensitive" } },
-                { location: { contains: query, mode: "insensitive" } },
                 { tags: { has: query } }
             ]
         },
@@ -154,8 +141,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         where: { id: decoded.id },
         select: {
             username: true,
-            locationLatitude: true,
-            locationLongitude: true,
+            location: true,
             musicInterest: true,
             followingUserList: {
                 select: {
@@ -199,7 +185,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                 creatorUsername: true,
                 tags: true,
                 type: true,
-                creationDate: true,
+                createdAt: true,
                 date: true,
                 active: true,
                 ownerId: true,
@@ -212,10 +198,8 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         });
 
         const partiesToReturn = parties.map(party => {
-            const location = getCoordinatesFromComuna(party.location);
-            if (!location) return null;
 
-            const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+            const distance = haversineDistance(currentUser.location, party.location);
             let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
 
             if (followedUsers.includes(party.ownerId!)) relevanceScore++;

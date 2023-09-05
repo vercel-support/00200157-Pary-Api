@@ -57,7 +57,7 @@ export interface FetchedParty extends Party {
 
 export interface Party {
     id: string;
-    location: string;
+    location: Location;
     name: string;
     description: string;
     image: string; // url
@@ -80,4 +80,12 @@ export type PartyType = "carrete" | "junta" | "evento" | "previa" | "otro";
 
 export interface AuthenticatedRequest extends Request {
     decoded?: JwtPayload;
+}
+
+
+export interface Location {
+    name: string;
+    latitude: number;
+    longitude: number;
+    timestamp: Date | string;
 }

@@ -2,7 +2,8 @@ import { randomUUID } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import { logger, prisma } from "..";
-import { AuthenticatedRequest, Party, PartyType } from "../../types";
+import { AuthenticatedRequest, Location, Party, PartyType } from "../../types";
+import comunasData from "../assets/comunas.json";
 
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
@@ -95,99 +96,6 @@ function randomTimeBetween8PMand2AM(date: Date): Date {
     date.setMilliseconds(0);
     return date;
 }
-
-const locations = [
-    "Valparaíso",
-    "Casablanca",
-    "Concón",
-    "Juan Fernández",
-    "Puchuncaví",
-    "Quintero",
-    "Viña del Mar",
-    "Isla de Pascua",
-    "Los Andes",
-    "Calle Larga",
-    "Rinconada",
-    "San Esteban",
-    "La Ligua",
-    "Cabildo",
-    "Papudo",
-    "Petorca",
-    "Zapallar",
-    "Quillota",
-    "La Calera",
-    "Hijuelas",
-    "La Cruz",
-    "Nogales",
-    "San Antonio",
-    "Algarrobo",
-    "Cartagena",
-    "El Quisco",
-    "El Tabo",
-    "Santo Domingo",
-    "San Felipe",
-    "Catemu",
-    "Llay-Llay",
-    "Panquehue",
-    "Putaendo",
-    "Santa María",
-    "Quilpué",
-    "Limache",
-    "Olmué",
-    "Villa Alemana",
-    "Santiago",
-    "Cerrillos",
-    "Cerro Navia",
-    "Conchalí",
-    "El Bosque",
-    "Estación Central",
-    "Huechuraba",
-    "Independencia",
-    "La Cisterna",
-    "La Florida",
-    "La Granja",
-    "La Pintana",
-    "La Reina",
-    "Las Condes",
-    "Lo Barnechea",
-    "Lo Espejo",
-    "Lo Prado",
-    "Macul",
-    "Maipú",
-    "Ñuñoa",
-    "Pedro Aguirre Cerda",
-    "Peñalolén",
-    "Providencia",
-    "Pudahuel",
-    "Quilicura",
-    "Quinta Normal",
-    "Recoleta",
-    "Renca",
-    "San Joaquín",
-    "San Miguel",
-    "San Ramón",
-    "Vitacura",
-    "Puente Alto",
-    "Pirque",
-    "San José de Maipo",
-    "Colina",
-    "Lampa",
-    "Til Til",
-    "San Bernardo",
-    "Buin",
-    "Calera de Tango",
-    "Paine",
-    "Melipilla",
-    "Alhué",
-    "Curacaví",
-    "María Pinto",
-    "San Pedro",
-    "Talagante",
-    "El Monte",
-    "Isla de Maipo",
-    "Padre Hurtado",
-    "Peñaflor"
-];
 
 const names: string[] = [
     "Carrete Nocturno 🌙",
@@ -319,10 +227,10 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
 
     for (let i = 0; i < 50; i++) {
         const index = (randomOffset + i) % 150;
-        const loc = locations[index % locations.length];
+        const location = comunasData[index % comunasData.length];
         const selectedIndex = index % names.length;
         const name = names[selectedIndex];
-        const desc = descriptions[index % descriptions.length].replace('{location}', loc);
+        const desc = descriptions[index % descriptions.length].replace('{location}', location.name);
         const imgNumber = (index % 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const selectedTags = Array.from({ length: 3 }, () => tags[Math.floor(Math.random() * tags.length)]);
@@ -335,7 +243,6 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
 
         parties.push({
             id: randomUUID(),
-            location: loc,
             name: name,
             description: desc,
             image: image,
@@ -349,7 +256,9 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
             participants: [],
             advertisement,
             moderators: [],
-            ownerId: id
+            ownerId: id,
+            location,
+
         });
     }
 
@@ -370,9 +279,9 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
 
     for (let i = 0; i < 200; i++) {
         const index = (i * 37) % userCount;
-        const loc = locations[i % locations.length];
+        const loc = comunasData[index % comunasData.length];
         const name = names[i % names.length];
-        const desc = descriptions[i % descriptions.length].replace('{location}', loc);
+        const desc = descriptions[i % descriptions.length].replace('{location}', loc.name);
         const imgNumber = (i % 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const selectedTags = Array.from({ length: 3 }, () => tags[Math.floor(Math.random() * tags.length)]);
@@ -411,15 +320,18 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
     return [];
 };
 
+export function haversineDistance(userLocation: Location, partyLocation: Location): number {
+    const R = 6371e3; // Radio de la Tierra en metros
+    const lat1 = userLocation.latitude * Math.PI / 180; // Convertir a radianes
+    const lat2 = partyLocation.latitude * Math.PI / 180; // Convertir a radianes
+    const dLat = (partyLocation.latitude - userLocation.latitude) * Math.PI / 180; // Convertir a radianes
+    const dLon = (partyLocation.longitude - userLocation.longitude) * Math.PI / 180; // Convertir a radianes
 
-export function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Radio de la tierra en km
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.cos(lat1) * Math.cos(lat2) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
+
     return distance;
 }

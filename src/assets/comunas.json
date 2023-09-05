@@ -1,1008 +1,2078 @@
 [
-    {"comuna": "Iquique", "provincia": "Iquique", "region": "Tarapacá", "lat": -20.2439, "lon": -70.1389},
-    {"comuna": "Alto Hospicio", "provincia": "Iquique", "region": "Tarapacá", "lat": -20.2569, "lon": -70.0219},
-    {"comuna": "Pozo Almonte", "provincia": "Tamarugal", "region": "Tarapacá", "lat": -20.2908, "lon": -69.6958},
-    {"comuna": "Camiña", "provincia": "Tamarugal", "region": "Tarapacá", "lat": -20.4828, "lon": -69.3669},
-    {"comuna": "Colchane", "provincia": "Tamarugal", "region": "Tarapacá", "lat": -19.2839, "lon": -68.675},
-    {"comuna": "Huara", "provincia": "Tamarugal", "region": "Tarapacá", "lat": -19.8089, "lon": -69.9719},
-    {"comuna": "Pica", "provincia": "Tamarugal", "region": "Tarapacá", "lat": -20.4828, "lon": -69.3778},
-    {"comuna": "Antofagasta", "provincia": "Antofagasta", "region": "Antofagasta", "lat": -23.6508, "lon": -70.395},
-    {"comuna": "Mejillones", "provincia": "Antofagasta", "region": "Antofagasta", "lat": -23.11, "lon": -70.4558},
-    {"comuna": "Sierra Gorda", "provincia": "Antofagasta", "region": "Antofagasta", "lat": -22.8978, "lon": -69.3228},
-    {"comuna": "Taltal", "provincia": "Antofagasta", "region": "Antofagasta", "lat": -25.41, "lon": -70.4889},
-    {"comuna": "Calama", "provincia": "El Loa", "region": "Antofagasta", "lat": -22.4739, "lon": -68.9239},
-    {"comuna": "Ollagüe", "provincia": "El Loa", "region": "Antofagasta", "lat": -21.2328, "lon": -68.2669},
-    {"comuna": "San Pedro de Atacama", "provincia": "El Loa", "region": "Antofagasta", "lat": -22.92, "lon": -68.21},
-    {"comuna": "Tocopilla", "provincia": "Tocopilla", "region": "Antofagasta", "lat": -22.0819, "lon": -70.1889},
-    {"comuna": "María Elena", "provincia": "Tocopilla", "region": "Antofagasta", "lat": -22.3169, "lon": -69.6769},
-    {"comuna": "Copiapó", "provincia": "Copiapó", "region": "Atacama", "lat": -27.375, "lon": -70.3289},
-    {"comuna": "Caldera", "provincia": "Copiapó", "region": "Atacama", "lat": -27.0658, "lon": -70.8258},
-    {"comuna": "Tierra Amarilla", "provincia": "Copiapó", "region": "Atacama", "lat": -27.4728, "lon": -70.2828},
-    {"comuna": "Chañaral", "provincia": "Chañaral", "region": "Atacama", "lat": -26.3458, "lon": -70.6239},
-    {"comuna": "Diego de Almagro", "provincia": "Chañaral", "region": "Atacama", "lat": -26.39, "lon": -70.0519},
-    {"comuna": "Vallenar", "provincia": "Huasco", "region": "Atacama", "lat": -28.5769, "lon": -70.77},
-    {"comuna": "Alto del Carmen", "provincia": "Huasco", "region": "Atacama", "lat": -28.7489, "lon": -70.4908},
-    {"comuna": "Freirina", "provincia": "Huasco", "region": "Atacama", "lat": -28.5058, "lon": -71.0758},
-    {"comuna": "Huasco", "provincia": "Huasco", "region": "Atacama", "lat": -28.4558, "lon": -71.1858},
-    {"comuna": "La Serena", "provincia": "Elqui", "region": "Coquimbo", "lat": -29.9069, "lon": -71.2469},
-    {"comuna": "Coquimbo", "provincia": "Elqui", "region": "Coquimbo", "lat": -29.9708, "lon": -71.3069},
-    {"comuna": "Andacollo", "provincia": "Elqui", "region": "Coquimbo", "lat": -30.23, "lon": -71.0858},
-    {"comuna": "La Higuera", "provincia": "Elqui", "region": "Coquimbo", "lat": -29.5, "lon": -71.2828},
-    {"comuna": "Paihuano", "provincia": "Elqui", "region": "Coquimbo", "lat": -30.0378, "lon": -70.5069},
-    {"comuna": "Vicuña", "provincia": "Elqui", "region": "Coquimbo", "lat": -30.0189, "lon": -70.715},
-    {"comuna": "Illapel", "provincia": "Choapa", "region": "Coquimbo", "lat": -31.6389, "lon": -71.1789},
-    {"comuna": "Canela", "provincia": "Choapa", "region": "Coquimbo", "lat": -31.3958, "lon": -71.4189},
-    {"comuna": "Los Vilos", "provincia": "Choapa", "region": "Coquimbo", "lat": -31.915, "lon": -71.5058},
-    {"comuna": "Salamanca", "provincia": "Choapa", "region": "Coquimbo", "lat": -31.78, "lon": -70.9669},
-    {"comuna": "Ovalle", "provincia": "Limarí", "region": "Coquimbo", "lat": -30.5989, "lon": -71.1889},
-    {"comuna": "Combarbalá", "provincia": "Limarí", "region": "Coquimbo", "lat": -31.18, "lon": -71.0039},
-    {"comuna": "Monte Patria", "provincia": "Limarí", "region": "Coquimbo", "lat": -30.775, "lon": -70.9428},
-    {"comuna": "Punitaqui", "provincia": "Limarí", "region": "Coquimbo", "lat": -30.8328, "lon": -71.26},
-    {"comuna": "Río Hurtado", "provincia": "Limarí", "region": "Coquimbo", "lat": -30.2728, "lon": -70.6669},
-    {"comuna": "Valparaíso", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -33.0333, "lon": -71.6667},
-    {"comuna": "Casablanca", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -33.325, "lon": -71.41},
-    {"comuna": "Concón", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -32.96, "lon": -71.4689},
-    {"comuna": "Juan Fernández", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -33.6328, "lon": -78.8669},
-    {"comuna": "Puchuncaví", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -32.7478, "lon": -71.3978},
-    {"comuna": "Quintero", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -32.845, "lon": -71.4669},
-    {"comuna": "Viña del Mar", "provincia": "Valparaíso", "region": "Valparaíso", "lat": -33.025, "lon": -71.515},
-    {
-        "comuna": "Isla de Pascua",
-        "provincia": "Isla de Pascua",
-        "region": "Valparaíso",
-        "lat": -27.1286,
-        "lon": -109.3597
-    },
-    {"comuna": "Los Andes", "provincia": "Los Andes", "region": "Valparaíso", "lat": -32.8369, "lon": -70.5969},
-    {"comuna": "Calle Larga", "provincia": "Los Andes", "region": "Valparaíso", "lat": -32.8831, "lon": -70.4819},
-    {"comuna": "Rinconada", "provincia": "Los Andes", "region": "Valparaíso", "lat": -32.8331, "lon": -70.6883},
-    {"comuna": "San Esteban", "provincia": "Los Andes", "region": "Valparaíso", "lat": -32.805, "lon": -70.5808},
-    {"comuna": "La Ligua", "provincia": "Petorca", "region": "Valparaíso", "lat": -32.3536, "lon": -71.2719},
-    {"comuna": "Cabildo", "provincia": "Petorca", "region": "Valparaíso", "lat": -32.4089, "lon": -71.08},
-    {"comuna": "Papudo", "provincia": "Petorca", "region": "Valparaíso", "lat": -32.47, "lon": -71.3808},
-    {"comuna": "Petorca", "provincia": "Petorca", "region": "Valparaíso", "lat": -32.29, "lon": -70.95},
-    {"comuna": "Zapallar", "provincia": "Petorca", "region": "Valparaíso", "lat": -32.5678, "lon": -71.4378},
-    {"comuna": "Quillota", "provincia": "Quillota", "region": "Valparaíso", "lat": -32.915, "lon": -71.2639},
-    {"comuna": "La Calera", "provincia": "Quillota", "region": "Valparaíso", "lat": -32.7839, "lon": -71.2039},
-    {"comuna": "Hijuelas", "provincia": "Quillota", "region": "Valparaíso", "lat": -32.855, "lon": -71.0939},
-    {"comuna": "La Cruz", "provincia": "Quillota", "region": "Valparaíso", "lat": -32.8239, "lon": -71.2439},
-    {"comuna": "Nogales", "provincia": "Quillota", "region": "Valparaíso", "lat": -32.7358, "lon": -71.2078},
-    {"comuna": "San Antonio", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.5947, "lon": -71.6072},
-    {"comuna": "Algarrobo", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.3692, "lon": -71.6681},
-    {"comuna": "Cartagena", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.5536, "lon": -71.6075},
-    {"comuna": "El Quisco", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.3914, "lon": -71.6928},
-    {"comuna": "El Tabo", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.48, "lon": -71.6208},
-    {"comuna": "Santo Domingo", "provincia": "San Antonio", "region": "Valparaíso", "lat": -33.7078, "lon": -71.63},
-    {
-        "comuna": "San Felipe",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.75,
-        "lon": -70.7128
-    },
-    {
-        "comuna": "Catemu",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.7808,
-        "lon": -70.9689
-    },
-    {
-        "comuna": "Llay-Llay",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.8439,
-        "lon": -70.9569
-    },
-    {
-        "comuna": "Panquehue",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.7839,
-        "lon": -70.8369
+    {
+        "name": "Iquique",
+        "latitude": -20.2439,
+        "longitude": -70.1389,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Alto Hospicio",
+        "latitude": -20.2569,
+        "longitude": -70.0219,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pozo Almonte",
+        "latitude": -20.2908,
+        "longitude": -69.6958,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Camiña",
+        "latitude": -20.4828,
+        "longitude": -69.3669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Colchane",
+        "latitude": -19.2839,
+        "longitude": -68.675,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Huara",
+        "latitude": -19.8089,
+        "longitude": -69.9719,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pica",
+        "latitude": -20.4828,
+        "longitude": -69.3778,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Antofagasta",
+        "latitude": -23.6508,
+        "longitude": -70.395,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Mejillones",
+        "latitude": -23.11,
+        "longitude": -70.4558,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Sierra Gorda",
+        "latitude": -22.8978,
+        "longitude": -69.3228,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Taltal",
+        "latitude": -25.41,
+        "longitude": -70.4889,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Calama",
+        "latitude": -22.4739,
+        "longitude": -68.9239,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Ollagüe",
+        "latitude": -21.2328,
+        "longitude": -68.2669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Pedro de Atacama",
+        "latitude": -22.92,
+        "longitude": -68.21,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tocopilla",
+        "latitude": -22.0819,
+        "longitude": -70.1889,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "María Elena",
+        "latitude": -22.3169,
+        "longitude": -69.6769,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Copiapó",
+        "latitude": -27.375,
+        "longitude": -70.3289,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Caldera",
+        "latitude": -27.0658,
+        "longitude": -70.8258,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tierra Amarilla",
+        "latitude": -27.4728,
+        "longitude": -70.2828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chañaral",
+        "latitude": -26.3458,
+        "longitude": -70.6239,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Diego de Almagro",
+        "latitude": -26.39,
+        "longitude": -70.0519,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Vallenar",
+        "latitude": -28.5769,
+        "longitude": -70.77,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Alto del Carmen",
+        "latitude": -28.7489,
+        "longitude": -70.4908,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Freirina",
+        "latitude": -28.5058,
+        "longitude": -71.0758,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Huasco",
+        "latitude": -28.4558,
+        "longitude": -71.1858,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Serena",
+        "latitude": -29.9069,
+        "longitude": -71.2469,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Coquimbo",
+        "latitude": -29.9708,
+        "longitude": -71.3069,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Andacollo",
+        "latitude": -30.23,
+        "longitude": -71.0858,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Higuera",
+        "latitude": -29.5,
+        "longitude": -71.2828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Paihuano",
+        "latitude": -30.0378,
+        "longitude": -70.5069,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Vicuña",
+        "latitude": -30.0189,
+        "longitude": -70.715,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Illapel",
+        "latitude": -31.6389,
+        "longitude": -71.1789,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Canela",
+        "latitude": -31.3958,
+        "longitude": -71.4189,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Vilos",
+        "latitude": -31.915,
+        "longitude": -71.5058,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Salamanca",
+        "latitude": -31.78,
+        "longitude": -70.9669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Ovalle",
+        "latitude": -30.5989,
+        "longitude": -71.1889,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Combarbalá",
+        "latitude": -31.18,
+        "longitude": -71.0039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Monte Patria",
+        "latitude": -30.775,
+        "longitude": -70.9428,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Punitaqui",
+        "latitude": -30.8328,
+        "longitude": -71.26,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Río Hurtado",
+        "latitude": -30.2728,
+        "longitude": -70.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Valparaíso",
+        "latitude": -33.0333,
+        "longitude": -71.6667,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Casablanca",
+        "latitude": -33.325,
+        "longitude": -71.41,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Concón",
+        "latitude": -32.96,
+        "longitude": -71.4689,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Juan Fernández",
+        "latitude": -33.6328,
+        "longitude": -78.8669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puchuncaví",
+        "latitude": -32.7478,
+        "longitude": -71.3978,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quintero",
+        "latitude": -32.845,
+        "longitude": -71.4669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Viña del Mar",
+        "latitude": -33.025,
+        "longitude": -71.515,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Isla de Pascua",
+        "latitude": -27.1286,
+        "longitude": -109.3597,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Andes",
+        "latitude": -32.8369,
+        "longitude": -70.5969,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Calle Larga",
+        "latitude": -32.8831,
+        "longitude": -70.4819,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Rinconada",
+        "latitude": -32.8331,
+        "longitude": -70.6883,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Esteban",
+        "latitude": -32.805,
+        "longitude": -70.5808,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Ligua",
+        "latitude": -32.3536,
+        "longitude": -71.2719,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cabildo",
+        "latitude": -32.4089,
+        "longitude": -71.08,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Papudo",
+        "latitude": -32.47,
+        "longitude": -71.3808,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Petorca",
+        "latitude": -32.29,
+        "longitude": -70.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Zapallar",
+        "latitude": -32.5678,
+        "longitude": -71.4378,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quillota",
+        "latitude": -32.915,
+        "longitude": -71.2639,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Calera",
+        "latitude": -32.7839,
+        "longitude": -71.2039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Hijuelas",
+        "latitude": -32.855,
+        "longitude": -71.0939,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Cruz",
+        "latitude": -32.8239,
+        "longitude": -71.2439,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Nogales",
+        "latitude": -32.7358,
+        "longitude": -71.2078,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Antonio",
+        "latitude": -33.5947,
+        "longitude": -71.6072,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Algarrobo",
+        "latitude": -33.3692,
+        "longitude": -71.6681,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cartagena",
+        "latitude": -33.5536,
+        "longitude": -71.6075,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "El Quisco",
+        "latitude": -33.3914,
+        "longitude": -71.6928,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "El Tabo",
+        "latitude": -33.48,
+        "longitude": -71.6208,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santo Domingo",
+        "latitude": -33.7078,
+        "longitude": -71.63,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Felipe",
+        "latitude": -32.75,
+        "longitude": -70.7128,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Catemu",
+        "latitude": -32.7808,
+        "longitude": -70.9689,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Llay-Llay",
+        "latitude": -32.8439,
+        "longitude": -70.9569,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Panquehue",
+        "latitude": -32.7839,
+        "longitude": -70.8369,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Putaendo",
+        "latitude": -32.6278,
+        "longitude": -70.7158,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santa María",
+        "latitude": -32.7503,
+        "longitude": -70.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quilpué",
+        "latitude": -33.0475,
+        "longitude": -71.4422,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Limache",
+        "latitude": -33.0028,
+        "longitude": -71.2608,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Olmué",
+        "latitude": -33.0089,
+        "longitude": -71.17,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Villa Alemana",
+        "latitude": -33.0658,
+        "longitude": -71.3289,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Rancagua",
+        "latitude": -34.1619,
+        "longitude": -70.7408,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Codegua",
+        "latitude": -34.0328,
+        "longitude": -70.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Coinco",
+        "latitude": -34.2728,
+        "longitude": -70.9528,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Coltauco",
+        "latitude": -34.2969,
+        "longitude": -71.0919,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Doñihue",
+        "latitude": -34.185,
+        "longitude": -70.8839,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Graneros",
+        "latitude": -34.0628,
+        "longitude": -70.7208,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Las Cabras",
+        "latitude": -34.285,
+        "longitude": -71.31,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Machalí",
+        "latitude": -34.185,
+        "longitude": -70.6619,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Malloa",
+        "latitude": -34.445,
+        "longitude": -70.945,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Mostazal",
+        "latitude": -33.9769,
+        "longitude": -70.7089,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Olivar",
+        "latitude": -34.2139,
+        "longitude": -70.8189,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Peumo",
+        "latitude": -34.3889,
+        "longitude": -71.1708,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pichidegua",
+        "latitude": -34.3569,
+        "longitude": -71.2869,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quinta de Tilcoco",
+        "latitude": -34.3569,
+        "longitude": -70.9689,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Rengo",
+        "latitude": -34.4019,
+        "longitude": -70.8558,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Requínoa",
+        "latitude": -34.2828,
+        "longitude": -70.8058,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Vicente",
+        "latitude": -34.0828,
+        "longitude": -71.75,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pichilemu",
+        "latitude": -34.4019,
+        "longitude": -72.0089,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Estrella",
+        "latitude": -34.2,
+        "longitude": -71.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Litueche",
+        "latitude": -34.1189,
+        "longitude": -71.7278,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Marchihue",
+        "latitude": -34.4,
+        "longitude": -71.6333,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Navidad",
+        "latitude": -33.95,
+        "longitude": -71.8328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Paredones",
+        "latitude": -34.6608,
+        "longitude": -71.8939,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Fernando",
+        "latitude": -34.5839,
+        "longitude": -70.9869,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chépica",
+        "latitude": -34.7328,
+        "longitude": -71.2828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chimbarongo",
+        "latitude": -34.7078,
+        "longitude": -71.0419,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lolol",
+        "latitude": -34.7308,
+        "longitude": -71.6358,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Nancagua",
+        "latitude": -34.6489,
+        "longitude": -71.2028,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Palmilla",
+        "latitude": -34.6039,
+        "longitude": -71.3578,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Peralillo",
+        "latitude": -34.4828,
+        "longitude": -71.4828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Placilla",
+        "latitude": -34.6328,
+        "longitude": -71.1169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pumanque",
+        "latitude": -34.605,
+        "longitude": -71.6439,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santa Cruz",
+        "latitude": -34.6308,
+        "longitude": -71.3589,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Talca",
+        "latitude": -35.4228,
+        "longitude": -71.6569,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Constitución",
+        "latitude": -35.3389,
+        "longitude": -72.4139,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curepto",
+        "latitude": -35.0828,
+        "longitude": -72.0169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Empedrado",
+        "latitude": -35.5908,
+        "longitude": -72.2728,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Maule",
+        "latitude": -35.5158,
+        "longitude": -71.5719,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pelarco",
+        "latitude": -35.3778,
+        "longitude": -71.445,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pencahue",
+        "latitude": -35.4,
+        "longitude": -71.8167,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Río Claro",
+        "latitude": -35.2169,
+        "longitude": -71.25,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Clemente",
+        "latitude": -35.5339,
+        "longitude": -71.4858,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Rafael",
+        "latitude": -35.3169,
+        "longitude": -71.5328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cauquenes",
+        "latitude": -35.9639,
+        "longitude": -72.3169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chanco",
+        "latitude": -35.7289,
+        "longitude": -72.53,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pelluhue",
+        "latitude": -35.8139,
+        "longitude": -72.5739,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curicó",
+        "latitude": -34.9758,
+        "longitude": -71.2239,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Hualañé",
+        "latitude": -34.9828,
+        "longitude": -71.8169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Licantén",
+        "latitude": -34.9828,
+        "longitude": -72.0,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Molina",
+        "latitude": -35.09,
+        "longitude": -71.2789,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Rauco",
+        "latitude": -34.9289,
+        "longitude": -71.3108,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Romeral",
+        "latitude": -34.9669,
+        "longitude": -71.1328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Sagrada Familia",
+        "latitude": -35.0,
+        "longitude": -71.3828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Teno",
+        "latitude": -34.8728,
+        "longitude": -71.1619,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Vichuquén",
+        "latitude": -34.8228,
+        "longitude": -72.035,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Linares",
+        "latitude": -35.85,
+        "longitude": -71.585,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Colbún",
+        "latitude": -35.7,
+        "longitude": -71.4169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Longaví",
+        "latitude": -35.9658,
+        "longitude": -71.6819,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Parral",
+        "latitude": -36.1469,
+        "longitude": -71.8219,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Retiro",
+        "latitude": -36.0458,
+        "longitude": -71.7589,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Javier",
+        "latitude": -35.6,
+        "longitude": -71.75,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Villa Alegre",
+        "latitude": -35.665,
+        "longitude": -71.7419,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Yerbas Buenas",
+        "latitude": -35.75,
+        "longitude": -71.5828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Concepción",
+        "latitude": -36.815,
+        "longitude": -73.0289,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Coronel",
+        "latitude": -36.9819,
+        "longitude": -73.1569,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chiguayante",
+        "latitude": -36.9089,
+        "longitude": -73.0278,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Florida",
+        "latitude": -36.8208,
+        "longitude": -72.6619,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Hualqui",
+        "latitude": -36.9669,
+        "longitude": -72.9328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lota",
+        "latitude": -37.0889,
+        "longitude": -73.155,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Penco",
+        "latitude": -36.7419,
+        "longitude": -72.9978,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Pedro de La Paz",
+        "latitude": -36.8639,
+        "longitude": -73.1078,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santa Juana",
+        "latitude": -37.1792,
+        "longitude": -72.9353,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Talcahuano",
+        "latitude": -36.7358,
+        "longitude": -73.105,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tomé",
+        "latitude": -36.6239,
+        "longitude": -72.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Hualpén",
+        "latitude": -36.7889,
+        "longitude": -73.11,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lebu",
+        "latitude": -37.6058,
+        "longitude": -73.6428,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Arauco",
+        "latitude": -37.2569,
+        "longitude": -73.2839,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cañete",
+        "latitude": -35.2828,
+        "longitude": -72.2328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Contulmo",
+        "latitude": -38.005,
+        "longitude": -73.225,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curanilahue",
+        "latitude": -37.4719,
+        "longitude": -73.3478,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Álamos",
+        "latitude": -37.6208,
+        "longitude": -73.4558,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tirúa",
+        "latitude": -38.3389,
+        "longitude": -73.4839,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Ángeles",
+        "latitude": -36.9439,
+        "longitude": -72.3508,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Antuco",
+        "latitude": -37.3269,
+        "longitude": -71.6778,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cabrero",
+        "latitude": -37.0389,
+        "longitude": -72.3989,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Laja",
+        "latitude": -37.2669,
+        "longitude": -72.7,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Mulchén",
+        "latitude": -37.715,
+        "longitude": -72.2389,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Nacimiento",
+        "latitude": -37.5008,
+        "longitude": -72.6758,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Negrete",
+        "latitude": -37.5828,
+        "longitude": -72.5169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quilaco",
+        "latitude": -37.68,
+        "longitude": -72.0069,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quilleco",
+        "latitude": -37.4669,
+        "longitude": -71.9669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Rosendo",
+        "latitude": -37.2578,
+        "longitude": -72.7158,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santa Bárbara",
+        "latitude": -37.6628,
+        "longitude": -72.0178,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tucapel",
+        "latitude": -37.6328,
+        "longitude": -73.3328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Yumbel",
+        "latitude": -37.0958,
+        "longitude": -72.5558,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Alto Biobío",
+        "latitude": -38.6189,
+        "longitude": -71.3242,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Temuco",
+        "latitude": -38.7269,
+        "longitude": -72.5989,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Carahue",
+        "latitude": -38.7069,
+        "longitude": -73.16,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cunco",
+        "latitude": -38.93,
+        "longitude": -72.0269,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curarrehue",
+        "latitude": -39.3589,
+        "longitude": -71.5878,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Freire",
+        "latitude": -38.9539,
+        "longitude": -72.6219,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Galvarino",
+        "latitude": -38.4,
+        "longitude": -72.7833,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Gorbea",
+        "latitude": -39.095,
+        "longitude": -72.6719,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lautaro",
+        "latitude": -38.5289,
+        "longitude": -72.4269,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Loncoche",
+        "latitude": -39.3539,
+        "longitude": -72.6278,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Melipeuco",
+        "latitude": -38.8428,
+        "longitude": -71.6869,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Nueva Imperial",
+        "latitude": -38.745,
+        "longitude": -72.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Padre Las Casas",
+        "latitude": -38.7658,
+        "longitude": -72.5928,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Perquenco",
+        "latitude": -38.4169,
+        "longitude": -72.3828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pitrufquén",
+        "latitude": -38.9828,
+        "longitude": -72.6428,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pucón",
+        "latitude": -39.2819,
+        "longitude": -71.9539,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Saavedra",
+        "latitude": -38.7828,
+        "longitude": -73.4,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Teodoro Schmidt",
+        "latitude": -38.9667,
+        "longitude": -73.05,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Toltén",
+        "latitude": -39.2169,
+        "longitude": -73.2169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Vilcún",
+        "latitude": -39.1167,
+        "longitude": -72.3794,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Villarrica",
+        "latitude": -39.28,
+        "longitude": -72.2178,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cholchol",
+        "latitude": -38.6,
+        "longitude": -72.85,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Angol",
+        "latitude": -37.8028,
+        "longitude": -72.7019,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Collipulli",
+        "latitude": -37.9528,
+        "longitude": -72.4319,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curacautín",
+        "latitude": -38.4319,
+        "longitude": -71.89,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Ercilla",
+        "latitude": -38.05,
+        "longitude": -72.3833,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lonquimay",
+        "latitude": -38.4328,
+        "longitude": -71.2328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Sauces",
+        "latitude": -37.9669,
+        "longitude": -72.8328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lumaco",
+        "latitude": -38.1628,
+        "longitude": -72.9039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Purén",
+        "latitude": -38.0219,
+        "longitude": -73.07,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Renaico",
+        "latitude": -37.6669,
+        "longitude": -72.5828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Traiguén",
+        "latitude": -38.2478,
+        "longitude": -72.675,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Victoria",
+        "latitude": -38.23,
+        "longitude": -72.3428,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puerto Montt",
+        "latitude": -41.4539,
+        "longitude": -72.9928,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Calbuco",
+        "latitude": -41.7578,
+        "longitude": -73.1508,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cochamó",
+        "latitude": -41.5,
+        "longitude": -72.3169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Fresia",
+        "latitude": -41.1528,
+        "longitude": -73.42,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Frutillar",
+        "latitude": -41.1167,
+        "longitude": -73.1,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Muermos",
+        "latitude": -41.3908,
+        "longitude": -73.465,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Llanquihue",
+        "latitude": -41.2658,
+        "longitude": -73.0119,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Maullín",
+        "latitude": -41.6178,
+        "longitude": -73.5978,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puerto Varas",
+        "latitude": -41.3228,
+        "longitude": -72.97,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Castro",
+        "latitude": -42.4778,
+        "longitude": -73.7789,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Ancud",
+        "latitude": -41.8769,
+        "longitude": -73.8139,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chonchi",
+        "latitude": -42.6258,
+        "longitude": -73.7808,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curaco de Vélez",
+        "latitude": -42.4339,
+        "longitude": -73.5819,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Dalcahue",
+        "latitude": -42.3739,
+        "longitude": -73.6508,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puqueldón",
+        "latitude": -42.6039,
+        "longitude": -73.6839,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Queilén",
+        "latitude": -42.8739,
+        "longitude": -73.47,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quellón",
+        "latitude": -43.1208,
+        "longitude": -73.6078,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quemchi",
+        "latitude": -42.1419,
+        "longitude": -73.4778,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quinchao",
+        "latitude": -42.4789,
+        "longitude": -73.4969,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Osorno",
+        "latitude": -40.5739,
+        "longitude": -73.1258,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puerto Octay",
+        "latitude": -40.9669,
+        "longitude": -72.9,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Purranque",
+        "latitude": -40.9089,
+        "longitude": -73.175,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puyehue",
+        "latitude": -40.7169,
+        "longitude": -72.3208,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Río Negro",
+        "latitude": -41.9669,
+        "longitude": -72.45,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Juan de la Costa",
+        "latitude": -40.5008,
+        "longitude": -73.3919,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Pablo",
+        "latitude": -40.4,
+        "longitude": -73.0167,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chaitén",
+        "latitude": -42.8989,
+        "longitude": -72.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Futaleufú",
+        "latitude": -43.1678,
+        "longitude": -71.8478,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Hualaihué",
+        "latitude": -41.9919,
+        "longitude": -72.6669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Palena",
+        "latitude": -43.6228,
+        "longitude": -71.8039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Coyhaique",
+        "latitude": -45.5639,
+        "longitude": -72.065,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lago Verde",
+        "latitude": -44.2189,
+        "longitude": -71.8389,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Aysén",
+        "latitude": -45.4119,
+        "longitude": -72.6978,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cisnes",
+        "latitude": -44.7508,
+        "longitude": -72.6969,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Guaitecas",
+        "latitude": -43.8839,
+        "longitude": -73.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cochrane",
+        "latitude": -47.2539,
+        "longitude": -72.5733,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "O' Higgins",
+        "latitude": -48.4667,
+        "longitude": -72.5667,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Tortel",
+        "latitude": -47.7808,
+        "longitude": -73.5119,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Chile Chico",
+        "latitude": -46.5375,
+        "longitude": -71.7292,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Río Ibáñez",
+        "latitude": -46.255,
+        "longitude": -71.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Punta Arenas",
+        "latitude": -53.1478,
+        "longitude": -70.9069,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Laguna Blanca",
+        "latitude": -52.2669,
+        "longitude": -71.1828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Río Verde",
+        "latitude": -52.6278,
+        "longitude": -71.4769,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Gregorio",
+        "latitude": -52.5669,
+        "longitude": -70.0669,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cabo de Hornos",
+        "latitude": -54.9469,
+        "longitude": -67.6069,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Antártica",
+        "latitude": -75.0,
+        "longitude": -71.5,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Porvenir",
+        "latitude": -53.2978,
+        "longitude": -70.385,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Primavera",
+        "latitude": -52.8858,
+        "longitude": -69.3528,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Timaukel",
+        "latitude": -53.6719,
+        "longitude": -69.71,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Natales",
+        "latitude": -51.7328,
+        "longitude": -72.5169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Torres del Paine",
+        "latitude": -50.9819,
+        "longitude": -72.4989,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Santiago",
+        "latitude": -33.4372,
+        "longitude": -70.6572,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cerrillos",
+        "latitude": -33.5,
+        "longitude": -70.7167,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Cerro Navia",
+        "latitude": -33.4219,
+        "longitude": -70.735,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Conchalí",
+        "latitude": -33.38,
+        "longitude": -70.675,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "El Bosque",
+        "latitude": -33.5669,
+        "longitude": -70.675,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Estación Central",
+        "latitude": -33.4589,
+        "longitude": -70.6989,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Huechuraba",
+        "latitude": -33.3678,
+        "longitude": -70.6339,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Independencia",
+        "latitude": -33.4128,
+        "longitude": -70.6658,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Cisterna",
+        "latitude": -33.5289,
+        "longitude": -70.6628,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Florida",
+        "latitude": -33.525,
+        "longitude": -70.5378,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Granja",
+        "latitude": -33.5833,
+        "longitude": -70.5833,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Pintana",
+        "latitude": -33.5828,
+        "longitude": -70.6339,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Reina",
+        "latitude": -33.4428,
+        "longitude": -70.5319,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Las Condes",
+        "latitude": -33.4167,
+        "longitude": -70.5833,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lo Barnechea",
+        "latitude": -33.35,
+        "longitude": -70.5167,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lo Espejo",
+        "latitude": -33.5219,
+        "longitude": -70.6869,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lo Prado",
+        "latitude": -33.445,
+        "longitude": -70.7258,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Macul",
+        "latitude": -33.4869,
+        "longitude": -70.6039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Maipú",
+        "latitude": -33.5167,
+        "longitude": -70.7667,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Ñuñoa",
+        "latitude": -33.4539,
+        "longitude": -70.6039,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pedro Aguirre Cerda",
+        "latitude": -33.4661,
+        "longitude": -70.6336,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Peñalolén",
+        "latitude": -33.4861,
+        "longitude": -70.5333,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Providencia",
+        "latitude": -33.435,
+        "longitude": -70.6158,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pudahuel",
+        "latitude": -33.4333,
+        "longitude": -70.7167,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quilicura",
+        "latitude": -33.3608,
+        "longitude": -70.7289,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Quinta Normal",
+        "latitude": -33.4269,
+        "longitude": -70.6989,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Recoleta",
+        "latitude": -33.4058,
+        "longitude": -70.64,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Renca",
+        "latitude": -33.3978,
+        "longitude": -70.7228,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Joaquín",
+        "latitude": -33.4908,
+        "longitude": -70.6278,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Miguel",
+        "latitude": -33.4858,
+        "longitude": -70.6494,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Ramón",
+        "latitude": -33.5428,
+        "longitude": -70.6439,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Vitacura",
+        "latitude": -33.4,
+        "longitude": -70.6,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Puente Alto",
+        "latitude": -33.6158,
+        "longitude": -70.57,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Pirque",
+        "latitude": -33.6333,
+        "longitude": -70.55,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San José de Maipo",
+        "latitude": -33.6439,
+        "longitude": -70.3528,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Colina",
+        "latitude": -33.1939,
+        "longitude": -70.6678,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lampa",
+        "latitude": -33.2858,
+        "longitude": -70.8778,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Til Til",
+        "latitude": -33.085,
+        "longitude": -70.925,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Bernardo",
+        "latitude": -33.5819,
+        "longitude": -70.6869,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Buin",
+        "latitude": -33.7278,
+        "longitude": -70.7389,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Calera de Tango",
+        "latitude": -33.6278,
+        "longitude": -70.785,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Paine",
+        "latitude": -33.8119,
+        "longitude": -70.7228,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Melipilla",
+        "latitude": -33.6889,
+        "longitude": -71.2078,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Alhué",
+        "latitude": -34.0333,
+        "longitude": -71.1,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Curacaví",
+        "latitude": -33.3989,
+        "longitude": -71.1369,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "María Pinto",
+        "latitude": -33.515,
+        "longitude": -71.1189,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "San Pedro",
+        "latitude": -33.9,
+        "longitude": -71.4667,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Talagante",
+        "latitude": -33.6669,
+        "longitude": -70.9308,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "El Monte",
+        "latitude": -33.6839,
+        "longitude": -71.0169,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Isla de Maipo",
+        "latitude": -33.7539,
+        "longitude": -70.8858,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Padre Hurtado",
+        "latitude": -33.5667,
+        "longitude": -70.8333,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Peñaflor",
+        "latitude": -33.6061,
+        "longitude": -70.8764,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Valdivia",
+        "latitude": -39.8142,
+        "longitude": -73.2458,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Corral",
+        "latitude": -39.8669,
+        "longitude": -73.4328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lanco",
+        "latitude": -39.4469,
+        "longitude": -72.7719,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Los Lagos",
+        "latitude": -41.92,
+        "longitude": -72.1419,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Máfil",
+        "latitude": -39.65,
+        "longitude": -72.95,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Mariquina",
+        "latitude": -40.1328,
+        "longitude": -72.3328,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Paillaco",
+        "latitude": -40.0678,
+        "longitude": -72.8828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Panguipulli",
+        "latitude": -39.6419,
+        "longitude": -72.34,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "La Unión",
+        "latitude": -40.2919,
+        "longitude": -73.0878,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Futrono",
+        "latitude": -40.1308,
+        "longitude": -72.3958,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    },
+    {
+        "name": "Lago Ranco",
+        "latitude": -40.3169,
+        "longitude": -72.5,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Putaendo",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.6278,
-        "lon": -70.7158
+        "name": "Río Bueno",
+        "latitude": -40.3378,
+        "longitude": -72.9569,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Santa María",
-        "provincia": "San Felipe de Aconcagua",
-        "region": "Valparaíso",
-        "lat": -32.7503,
-        "lon": -70.6669
+        "name": "Arica",
+        "latitude": -18.455,
+        "longitude": -70.29,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
-    {"comuna": "Quilpué", "provincia": "Marga Marga", "region": "Valparaíso", "lat": -33.0475, "lon": -71.4422},
-    {"comuna": "Limache", "provincia": "Marga Marga", "region": "Valparaíso", "lat": -33.0028, "lon": -71.2608},
-    {"comuna": "Olmué", "provincia": "Marga Marga", "region": "Valparaíso", "lat": -33.0089, "lon": -71.17},
-    {"comuna": "Villa Alemana", "provincia": "Marga Marga", "region": "Valparaíso", "lat": -33.0658, "lon": -71.3289},
     {
-        "comuna": "Rancagua",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.1619,
-        "lon": -70.7408
+        "name": "Camarones",
+        "latitude": -19.0169,
+        "longitude": -69.8669,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Codegua",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.0328,
-        "lon": -70.6669
+        "name": "Putre",
+        "latitude": -18.2,
+        "longitude": -69.5828,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Coinco",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.2728,
-        "lon": -70.9528
+        "name": "General Lagos",
+        "latitude": -17.6528,
+        "longitude": -69.635,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Coltauco",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.2969,
-        "lon": -71.0919
+        "name": "Chillán",
+        "latitude": -36.6008,
+        "longitude": -72.1089,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Doñihue",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.185,
-        "lon": -70.8839
+        "name": "Bulnes",
+        "latitude": -36.7389,
+        "longitude": -72.2919,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Graneros",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.0628,
-        "lon": -70.7208
+        "name": "Chillán Viejo",
+        "latitude": -36.6328,
+        "longitude": -72.14,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Las Cabras",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.285,
-        "lon": -71.31
+        "name": "El Carmen",
+        "latitude": -36.9,
+        "longitude": -72.0333,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Machalí",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.185,
-        "lon": -70.6619
+        "name": "Pemuco",
+        "latitude": -36.9778,
+        "longitude": -72.0908,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Malloa",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.445,
-        "lon": -70.945
+        "name": "Pinto",
+        "latitude": -36.7,
+        "longitude": -71.9,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Mostazal",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -33.9769,
-        "lon": -70.7089
+        "name": "Quillón",
+        "latitude": -36.7378,
+        "longitude": -72.4689,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Olivar",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.2139,
-        "lon": -70.8189
+        "name": "San Ignacio",
+        "latitude": -36.8,
+        "longitude": -72.0333,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Peumo",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.3889,
-        "lon": -71.1708
+        "name": "Yungay",
+        "latitude": -37.1044,
+        "longitude": -71.9306,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Pichidegua",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.3569,
-        "lon": -71.2869
+        "name": "Quirihue",
+        "latitude": -36.2808,
+        "longitude": -72.545,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Quinta de Tilcoco",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.3569,
-        "lon": -70.9689
+        "name": "Cobquecura",
+        "latitude": -36.1328,
+        "longitude": -72.7828,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Rengo",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.4019,
-        "lon": -70.8558
+        "name": "Coelemu",
+        "latitude": -36.485,
+        "longitude": -72.6939,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Requínoa",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.2828,
-        "lon": -70.8058
+        "name": "Ninhue",
+        "latitude": -36.4008,
+        "longitude": -72.3969,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "San Vicente",
-        "provincia": "Cachapoal",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.0828,
-        "lon": -71.75
+        "name": "Portezuelo",
+        "latitude": -36.5328,
+        "longitude": -72.4328,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Pichilemu",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.4019,
-        "lon": -72.0089
+        "name": "Ránquil",
+        "latitude": -36.65,
+        "longitude": -72.55,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "La Estrella",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.2,
-        "lon": -71.6669
+        "name": "Treguaco",
+        "latitude": -36.4289,
+        "longitude": -72.665,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Litueche",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.1189,
-        "lon": -71.7278
+        "name": "San Carlos",
+        "latitude": -36.4219,
+        "longitude": -71.9589,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Marchihue",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.4,
-        "lon": -71.6333
+        "name": "Coihueco",
+        "latitude": -36.6282,
+        "longitude": -71.8318,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Navidad",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -33.95,
-        "lon": -71.8328
+        "name": "Ñiquén",
+        "latitude": -36.2869,
+        "longitude": -71.8989,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "Paredones",
-        "provincia": "Cardenal Caro",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.6608,
-        "lon": -71.8939
+        "name": "San Fabián",
+        "latitude": -36.5539,
+        "longitude": -71.5489,
+        "timestamp": "2023-09-05 02:05:43.503481"
     },
     {
-        "comuna": "San Fernando",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.5839,
-        "lon": -70.9869
-    },
-    {
-        "comuna": "Chépica",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.7328,
-        "lon": -71.2828
-    },
-    {
-        "comuna": "Chimbarongo",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.7078,
-        "lon": -71.0419
-    },
-    {
-        "comuna": "Lolol",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.7308,
-        "lon": -71.6358
-    },
-    {
-        "comuna": "Nancagua",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.6489,
-        "lon": -71.2028
-    },
-    {
-        "comuna": "Palmilla",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.6039,
-        "lon": -71.3578
-    },
-    {
-        "comuna": "Peralillo",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.4828,
-        "lon": -71.4828
-    },
-    {
-        "comuna": "Placilla",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.6328,
-        "lon": -71.1169
-    },
-    {
-        "comuna": "Pumanque",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.605,
-        "lon": -71.6439
-    },
-    {
-        "comuna": "Santa Cruz",
-        "provincia": "Colchagua",
-        "region": "Lib. Gral. Bernardo O' Higgins",
-        "lat": -34.6308,
-        "lon": -71.3589
-    },
-    {"comuna": "Talca", "provincia": "Talca", "region": "Maule", "lat": -35.4228, "lon": -71.6569},
-    {"comuna": "Constitución", "provincia": "Talca", "region": "Maule", "lat": -35.3389, "lon": -72.4139},
-    {"comuna": "Curepto", "provincia": "Talca", "region": "Maule", "lat": -35.0828, "lon": -72.0169},
-    {"comuna": "Empedrado", "provincia": "Talca", "region": "Maule", "lat": -35.5908, "lon": -72.2728},
-    {"comuna": "Maule", "provincia": "Talca", "region": "Maule", "lat": -35.5158, "lon": -71.5719},
-    {"comuna": "Pelarco", "provincia": "Talca", "region": "Maule", "lat": -35.3778, "lon": -71.445},
-    {"comuna": "Pencahue", "provincia": "Talca", "region": "Maule", "lat": -35.4, "lon": -71.8167},
-    {"comuna": "Río Claro", "provincia": "Talca", "region": "Maule", "lat": -35.2169, "lon": -71.25},
-    {"comuna": "San Clemente", "provincia": "Talca", "region": "Maule", "lat": -35.5339, "lon": -71.4858},
-    {"comuna": "San Rafael", "provincia": "Talca", "region": "Maule", "lat": -35.3169, "lon": -71.5328},
-    {"comuna": "Cauquenes", "provincia": "Cauquenes", "region": "Maule", "lat": -35.9639, "lon": -72.3169},
-    {"comuna": "Chanco", "provincia": "Cauquenes", "region": "Maule", "lat": -35.7289, "lon": -72.53},
-    {"comuna": "Pelluhue", "provincia": "Cauquenes", "region": "Maule", "lat": -35.8139, "lon": -72.5739},
-    {"comuna": "Curicó", "provincia": "Curicó", "region": "Maule", "lat": -34.9758, "lon": -71.2239},
-    {"comuna": "Hualañé", "provincia": "Curicó", "region": "Maule", "lat": -34.9828, "lon": -71.8169},
-    {"comuna": "Licantén", "provincia": "Curicó", "region": "Maule", "lat": -34.9828, "lon": -72.0},
-    {"comuna": "Molina", "provincia": "Curicó", "region": "Maule", "lat": -35.09, "lon": -71.2789},
-    {"comuna": "Rauco", "provincia": "Curicó", "region": "Maule", "lat": -34.9289, "lon": -71.3108},
-    {"comuna": "Romeral", "provincia": "Curicó", "region": "Maule", "lat": -34.9669, "lon": -71.1328},
-    {"comuna": "Sagrada Familia", "provincia": "Curicó", "region": "Maule", "lat": -35.0, "lon": -71.3828},
-    {"comuna": "Teno", "provincia": "Curicó", "region": "Maule", "lat": -34.8728, "lon": -71.1619},
-    {"comuna": "Vichuquén", "provincia": "Curicó", "region": "Maule", "lat": -34.8228, "lon": -72.035},
-    {"comuna": "Linares", "provincia": "Linares", "region": "Maule", "lat": -35.85, "lon": -71.585},
-    {"comuna": "Colbún", "provincia": "Linares", "region": "Maule", "lat": -35.7, "lon": -71.4169},
-    {"comuna": "Longaví", "provincia": "Linares", "region": "Maule", "lat": -35.9658, "lon": -71.6819},
-    {"comuna": "Parral", "provincia": "Linares", "region": "Maule", "lat": -36.1469, "lon": -71.8219},
-    {"comuna": "Retiro", "provincia": "Linares", "region": "Maule", "lat": -36.0458, "lon": -71.7589},
-    {"comuna": "San Javier", "provincia": "Linares", "region": "Maule", "lat": -35.6, "lon": -71.75},
-    {"comuna": "Villa Alegre", "provincia": "Linares", "region": "Maule", "lat": -35.665, "lon": -71.7419},
-    {"comuna": "Yerbas Buenas", "provincia": "Linares", "region": "Maule", "lat": -35.75, "lon": -71.5828},
-    {"comuna": "Concepción", "provincia": "Concepción", "region": "Biobío", "lat": -36.815, "lon": -73.0289},
-    {"comuna": "Coronel", "provincia": "Concepción", "region": "Biobío", "lat": -36.9819, "lon": -73.1569},
-    {"comuna": "Chiguayante", "provincia": "Concepción", "region": "Biobío", "lat": -36.9089, "lon": -73.0278},
-    {"comuna": "Florida", "provincia": "Concepción", "region": "Biobío", "lat": -36.8208, "lon": -72.6619},
-    {"comuna": "Hualqui", "provincia": "Concepción", "region": "Biobío", "lat": -36.9669, "lon": -72.9328},
-    {"comuna": "Lota", "provincia": "Concepción", "region": "Biobío", "lat": -37.0889, "lon": -73.155},
-    {"comuna": "Penco", "provincia": "Concepción", "region": "Biobío", "lat": -36.7419, "lon": -72.9978},
-    {"comuna": "San Pedro de La Paz", "provincia": "Concepción", "region": "Biobío", "lat": -36.8639, "lon": -73.1078},
-    {"comuna": "Santa Juana", "provincia": "Concepción", "region": "Biobío", "lat": -37.1792, "lon": -72.9353},
-    {"comuna": "Talcahuano", "provincia": "Concepción", "region": "Biobío", "lat": -36.7358, "lon": -73.105},
-    {"comuna": "Tomé", "provincia": "Concepción", "region": "Biobío", "lat": -36.6239, "lon": -72.95},
-    {"comuna": "Hualpén", "provincia": "Concepción", "region": "Biobío", "lat": -36.7889, "lon": -73.11},
-    {"comuna": "Lebu", "provincia": "Arauco", "region": "Biobío", "lat": -37.6058, "lon": -73.6428},
-    {"comuna": "Arauco", "provincia": "Arauco", "region": "Biobío", "lat": -37.2569, "lon": -73.2839},
-    {"comuna": "Cañete", "provincia": "Arauco", "region": "Biobío", "lat": -35.2828, "lon": -72.2328},
-    {"comuna": "Contulmo", "provincia": "Arauco", "region": "Biobío", "lat": -38.005, "lon": -73.225},
-    {"comuna": "Curanilahue", "provincia": "Arauco", "region": "Biobío", "lat": -37.4719, "lon": -73.3478},
-    {"comuna": "Los Álamos", "provincia": "Arauco", "region": "Biobío", "lat": -37.6208, "lon": -73.4558},
-    {"comuna": "Tirúa", "provincia": "Arauco", "region": "Biobío", "lat": -38.3389, "lon": -73.4839},
-    {"comuna": "Los Ángeles", "provincia": "Biobío", "region": "Biobío", "lat": -36.9439, "lon": -72.3508},
-    {"comuna": "Antuco", "provincia": "Biobío", "region": "Biobío", "lat": -37.3269, "lon": -71.6778},
-    {"comuna": "Cabrero", "provincia": "Biobío", "region": "Biobío", "lat": -37.0389, "lon": -72.3989},
-    {"comuna": "Laja", "provincia": "Biobío", "region": "Biobío", "lat": -37.2669, "lon": -72.7},
-    {"comuna": "Mulchén", "provincia": "Biobío", "region": "Biobío", "lat": -37.715, "lon": -72.2389},
-    {"comuna": "Nacimiento", "provincia": "Biobío", "region": "Biobío", "lat": -37.5008, "lon": -72.6758},
-    {"comuna": "Negrete", "provincia": "Biobío", "region": "Biobío", "lat": -37.5828, "lon": -72.5169},
-    {"comuna": "Quilaco", "provincia": "Biobío", "region": "Biobío", "lat": -37.68, "lon": -72.0069},
-    {"comuna": "Quilleco", "provincia": "Biobío", "region": "Biobío", "lat": -37.4669, "lon": -71.9669},
-    {"comuna": "San Rosendo", "provincia": "Biobío", "region": "Biobío", "lat": -37.2578, "lon": -72.7158},
-    {"comuna": "Santa Bárbara", "provincia": "Biobío", "region": "Biobío", "lat": -37.6628, "lon": -72.0178},
-    {"comuna": "Tucapel", "provincia": "Biobío", "region": "Biobío", "lat": -37.6328, "lon": -73.3328},
-    {"comuna": "Yumbel", "provincia": "Biobío", "region": "Biobío", "lat": -37.0958, "lon": -72.5558},
-    {"comuna": "Alto Biobío", "provincia": "Biobío", "region": "Biobío", "lat": -38.6189, "lon": -71.3242},
-    {"comuna": "Temuco", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.7269, "lon": -72.5989},
-    {"comuna": "Carahue", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.7069, "lon": -73.16},
-    {"comuna": "Cunco", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.93, "lon": -72.0269},
-    {"comuna": "Curarrehue", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.3589, "lon": -71.5878},
-    {"comuna": "Freire", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.9539, "lon": -72.6219},
-    {"comuna": "Galvarino", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.4, "lon": -72.7833},
-    {"comuna": "Gorbea", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.095, "lon": -72.6719},
-    {"comuna": "Lautaro", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.5289, "lon": -72.4269},
-    {"comuna": "Loncoche", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.3539, "lon": -72.6278},
-    {"comuna": "Melipeuco", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.8428, "lon": -71.6869},
-    {"comuna": "Nueva Imperial", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.745, "lon": -72.95},
-    {"comuna": "Padre Las Casas", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.7658, "lon": -72.5928},
-    {"comuna": "Perquenco", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.4169, "lon": -72.3828},
-    {"comuna": "Pitrufquén", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.9828, "lon": -72.6428},
-    {"comuna": "Pucón", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.2819, "lon": -71.9539},
-    {"comuna": "Saavedra", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.7828, "lon": -73.4},
-    {"comuna": "Teodoro Schmidt", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.9667, "lon": -73.05},
-    {"comuna": "Toltén", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.2169, "lon": -73.2169},
-    {"comuna": "Vilcún", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.1167, "lon": -72.3794},
-    {"comuna": "Villarrica", "provincia": "Cautín", "region": "La Araucanía", "lat": -39.28, "lon": -72.2178},
-    {"comuna": "Cholchol", "provincia": "Cautín", "region": "La Araucanía", "lat": -38.6, "lon": -72.85},
-    {"comuna": "Angol", "provincia": "Malleco", "region": "La Araucanía", "lat": -37.8028, "lon": -72.7019},
-    {"comuna": "Collipulli", "provincia": "Malleco", "region": "La Araucanía", "lat": -37.9528, "lon": -72.4319},
-    {"comuna": "Curacautín", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.4319, "lon": -71.89},
-    {"comuna": "Ercilla", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.05, "lon": -72.3833},
-    {"comuna": "Lonquimay", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.4328, "lon": -71.2328},
-    {"comuna": "Los Sauces", "provincia": "Malleco", "region": "La Araucanía", "lat": -37.9669, "lon": -72.8328},
-    {"comuna": "Lumaco", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.1628, "lon": -72.9039},
-    {"comuna": "Purén", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.0219, "lon": -73.07},
-    {"comuna": "Renaico", "provincia": "Malleco", "region": "La Araucanía", "lat": -37.6669, "lon": -72.5828},
-    {"comuna": "Traiguén", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.2478, "lon": -72.675},
-    {"comuna": "Victoria", "provincia": "Malleco", "region": "La Araucanía", "lat": -38.23, "lon": -72.3428},
-    {"comuna": "Puerto Montt", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.4539, "lon": -72.9928},
-    {"comuna": "Calbuco", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.7578, "lon": -73.1508},
-    {"comuna": "Cochamó", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.5, "lon": -72.3169},
-    {"comuna": "Fresia", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.1528, "lon": -73.42},
-    {"comuna": "Frutillar", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.1167, "lon": -73.1},
-    {"comuna": "Los Muermos", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.3908, "lon": -73.465},
-    {"comuna": "Llanquihue", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.2658, "lon": -73.0119},
-    {"comuna": "Maullín", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.6178, "lon": -73.5978},
-    {"comuna": "Puerto Varas", "provincia": "Llanquihue", "region": "Los Lagos", "lat": -41.3228, "lon": -72.97},
-    {"comuna": "Castro", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.4778, "lon": -73.7789},
-    {"comuna": "Ancud", "provincia": "Chiloé", "region": "Los Lagos", "lat": -41.8769, "lon": -73.8139},
-    {"comuna": "Chonchi", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.6258, "lon": -73.7808},
-    {"comuna": "Curaco de Vélez", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.4339, "lon": -73.5819},
-    {"comuna": "Dalcahue", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.3739, "lon": -73.6508},
-    {"comuna": "Puqueldón", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.6039, "lon": -73.6839},
-    {"comuna": "Queilén", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.8739, "lon": -73.47},
-    {"comuna": "Quellón", "provincia": "Chiloé", "region": "Los Lagos", "lat": -43.1208, "lon": -73.6078},
-    {"comuna": "Quemchi", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.1419, "lon": -73.4778},
-    {"comuna": "Quinchao", "provincia": "Chiloé", "region": "Los Lagos", "lat": -42.4789, "lon": -73.4969},
-    {"comuna": "Osorno", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.5739, "lon": -73.1258},
-    {"comuna": "Puerto Octay", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.9669, "lon": -72.9},
-    {"comuna": "Purranque", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.9089, "lon": -73.175},
-    {"comuna": "Puyehue", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.7169, "lon": -72.3208},
-    {"comuna": "Río Negro", "provincia": "Osorno", "region": "Los Lagos", "lat": -41.9669, "lon": -72.45},
-    {"comuna": "San Juan de la Costa", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.5008, "lon": -73.3919},
-    {"comuna": "San Pablo", "provincia": "Osorno", "region": "Los Lagos", "lat": -40.4, "lon": -73.0167},
-    {"comuna": "Chaitén", "provincia": "Palena", "region": "Los Lagos", "lat": -42.8989, "lon": -72.6669},
-    {"comuna": "Futaleufú", "provincia": "Palena", "region": "Los Lagos", "lat": -43.1678, "lon": -71.8478},
-    {"comuna": "Hualaihué", "provincia": "Palena", "region": "Los Lagos", "lat": -41.9919, "lon": -72.6669},
-    {"comuna": "Palena", "provincia": "Palena", "region": "Los Lagos", "lat": -43.6228, "lon": -71.8039},
-    {
-        "comuna": "Coyhaique",
-        "provincia": "Coyhaique",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -45.5639,
-        "lon": -72.065
-    },
-    {
-        "comuna": "Lago Verde",
-        "provincia": "Coyhaique",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -44.2189,
-        "lon": -71.8389
-    },
-    {
-        "comuna": "Aysén",
-        "provincia": "Aysén",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -45.4119,
-        "lon": -72.6978
-    },
-    {
-        "comuna": "Cisnes",
-        "provincia": "Aysén",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -44.7508,
-        "lon": -72.6969
-    },
-    {
-        "comuna": "Guaitecas",
-        "provincia": "Aysén",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -43.8839,
-        "lon": -73.95
-    },
-    {
-        "comuna": "Cochrane",
-        "provincia": "Capitán Prat",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -47.2539,
-        "lon": -72.5733
-    },
-    {
-        "comuna": "O' Higgins",
-        "provincia": "Capitán Prat",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -48.4667,
-        "lon": -72.5667
-    },
-    {
-        "comuna": "Tortel",
-        "provincia": "Capitán Prat",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -47.7808,
-        "lon": -73.5119
-    },
-    {
-        "comuna": "Chile Chico",
-        "provincia": "General Carrera",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -46.5375,
-        "lon": -71.7292
-    },
-    {
-        "comuna": "Río Ibáñez",
-        "provincia": "General Carrera",
-        "region": "Aysén del Gral. C. Ibáñez del Campo",
-        "lat": -46.255,
-        "lon": -71.95
-    },
-    {
-        "comuna": "Punta Arenas",
-        "provincia": "Magallanes",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -53.1478,
-        "lon": -70.9069
-    },
-    {
-        "comuna": "Laguna Blanca",
-        "provincia": "Magallanes",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -52.2669,
-        "lon": -71.1828
-    },
-    {
-        "comuna": "Río Verde",
-        "provincia": "Magallanes",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -52.6278,
-        "lon": -71.4769
-    },
-    {
-        "comuna": "San Gregorio",
-        "provincia": "Magallanes",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -52.5669,
-        "lon": -70.0669
-    },
-    {
-        "comuna": "Cabo de Hornos",
-        "provincia": "Antártica Chilena",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -54.9469,
-        "lon": -67.6069
-    },
-    {
-        "comuna": "Antártica",
-        "provincia": "Antártica Chilena",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -75.0,
-        "lon": -71.5
-    },
-    {
-        "comuna": "Porvenir",
-        "provincia": "Tierra del Fuego",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -53.2978,
-        "lon": -70.385
-    },
-    {
-        "comuna": "Primavera",
-        "provincia": "Tierra del Fuego",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -52.8858,
-        "lon": -69.3528
-    },
-    {
-        "comuna": "Timaukel",
-        "provincia": "Tierra del Fuego",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -53.6719,
-        "lon": -69.71
-    },
-    {
-        "comuna": "Natales",
-        "provincia": "Última Esperanza",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -51.7328,
-        "lon": -72.5169
-    },
-    {
-        "comuna": "Torres del Paine",
-        "provincia": "Última Esperanza",
-        "region": "Magallanes y Antártica Chilena",
-        "lat": -50.9819,
-        "lon": -72.4989
-    },
-    {
-        "comuna": "Santiago",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4372,
-        "lon": -70.6572
-    },
-    {
-        "comuna": "Cerrillos",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5,
-        "lon": -70.7167
-    },
-    {
-        "comuna": "Cerro Navia",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4219,
-        "lon": -70.735
-    },
-    {
-        "comuna": "Conchalí",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.38,
-        "lon": -70.675
-    },
-    {
-        "comuna": "El Bosque",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5669,
-        "lon": -70.675
-    },
-    {
-        "comuna": "Estación Central",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4589,
-        "lon": -70.6989
-    },
-    {
-        "comuna": "Huechuraba",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.3678,
-        "lon": -70.6339
-    },
-    {
-        "comuna": "Independencia",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4128,
-        "lon": -70.6658
-    },
-    {
-        "comuna": "La Cisterna",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5289,
-        "lon": -70.6628
-    },
-    {
-        "comuna": "La Florida",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.525,
-        "lon": -70.5378
-    },
-    {
-        "comuna": "La Granja",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5833,
-        "lon": -70.5833
-    },
-    {
-        "comuna": "La Pintana",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5828,
-        "lon": -70.6339
-    },
-    {
-        "comuna": "La Reina",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4428,
-        "lon": -70.5319
-    },
-    {
-        "comuna": "Las Condes",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4167,
-        "lon": -70.5833
-    },
-    {
-        "comuna": "Lo Barnechea",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.35,
-        "lon": -70.5167
-    },
-    {
-        "comuna": "Lo Espejo",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5219,
-        "lon": -70.6869
-    },
-    {
-        "comuna": "Lo Prado",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.445,
-        "lon": -70.7258
-    },
-    {
-        "comuna": "Macul",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4869,
-        "lon": -70.6039
-    },
-    {
-        "comuna": "Maipú",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5167,
-        "lon": -70.7667
-    },
-    {
-        "comuna": "Ñuñoa",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4539,
-        "lon": -70.6039
-    },
-    {
-        "comuna": "Pedro Aguirre Cerda",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4661,
-        "lon": -70.6336
-    },
-    {
-        "comuna": "Peñalolén",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4861,
-        "lon": -70.5333
-    },
-    {
-        "comuna": "Providencia",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.435,
-        "lon": -70.6158
-    },
-    {
-        "comuna": "Pudahuel",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4333,
-        "lon": -70.7167
-    },
-    {
-        "comuna": "Quilicura",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.3608,
-        "lon": -70.7289
-    },
-    {
-        "comuna": "Quinta Normal",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4269,
-        "lon": -70.6989
-    },
-    {
-        "comuna": "Recoleta",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4058,
-        "lon": -70.64
-    },
-    {
-        "comuna": "Renca",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.3978,
-        "lon": -70.7228
-    },
-    {
-        "comuna": "San Joaquín",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4908,
-        "lon": -70.6278
-    },
-    {
-        "comuna": "San Miguel",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.4858,
-        "lon": -70.6494
-    },
-    {
-        "comuna": "San Ramón",
-        "provincia": "Santiago",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5428,
-        "lon": -70.6439
-    },
-    {"comuna": "Vitacura", "provincia": "Santiago", "region": "Metropolitana de Santiago", "lat": -33.4, "lon": -70.6},
-    {
-        "comuna": "Puente Alto",
-        "provincia": "Cordillera",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6158,
-        "lon": -70.57
-    },
-    {
-        "comuna": "Pirque",
-        "provincia": "Cordillera",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6333,
-        "lon": -70.55
-    },
-    {
-        "comuna": "San José de Maipo",
-        "provincia": "Cordillera",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6439,
-        "lon": -70.3528
-    },
-    {
-        "comuna": "Colina",
-        "provincia": "Chacabuco",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.1939,
-        "lon": -70.6678
-    },
-    {
-        "comuna": "Lampa",
-        "provincia": "Chacabuco",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.2858,
-        "lon": -70.8778
-    },
-    {
-        "comuna": "Til Til",
-        "provincia": "Chacabuco",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.085,
-        "lon": -70.925
-    },
-    {
-        "comuna": "San Bernardo",
-        "provincia": "Maipo",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5819,
-        "lon": -70.6869
-    },
-    {"comuna": "Buin", "provincia": "Maipo", "region": "Metropolitana de Santiago", "lat": -33.7278, "lon": -70.7389},
-    {
-        "comuna": "Calera de Tango",
-        "provincia": "Maipo",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6278,
-        "lon": -70.785
-    },
-    {"comuna": "Paine", "provincia": "Maipo", "region": "Metropolitana de Santiago", "lat": -33.8119, "lon": -70.7228},
-    {
-        "comuna": "Melipilla",
-        "provincia": "Melipilla",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6889,
-        "lon": -71.2078
-    },
-    {"comuna": "Alhué", "provincia": "Melipilla", "region": "Metropolitana de Santiago", "lat": -34.0333, "lon": -71.1},
-    {
-        "comuna": "Curacaví",
-        "provincia": "Melipilla",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.3989,
-        "lon": -71.1369
-    },
-    {
-        "comuna": "María Pinto",
-        "provincia": "Melipilla",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.515,
-        "lon": -71.1189
-    },
-    {
-        "comuna": "San Pedro",
-        "provincia": "Melipilla",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.9,
-        "lon": -71.4667
-    },
-    {
-        "comuna": "Talagante",
-        "provincia": "Talagante",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6669,
-        "lon": -70.9308
-    },
-    {
-        "comuna": "El Monte",
-        "provincia": "Talagante",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6839,
-        "lon": -71.0169
-    },
-    {
-        "comuna": "Isla de Maipo",
-        "provincia": "Talagante",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.7539,
-        "lon": -70.8858
-    },
-    {
-        "comuna": "Padre Hurtado",
-        "provincia": "Talagante",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.5667,
-        "lon": -70.8333
-    },
-    {
-        "comuna": "Peñaflor",
-        "provincia": "Talagante",
-        "region": "Metropolitana de Santiago",
-        "lat": -33.6061,
-        "lon": -70.8764
-    },
-    {"comuna": "Valdivia", "provincia": "Valdivia", "region": "Los Ríos", "lat": -39.8142, "lon": -73.2458},
-    {"comuna": "Corral", "provincia": "Valdivia", "region": "Los Ríos", "lat": -39.8669, "lon": -73.4328},
-    {"comuna": "Lanco", "provincia": "Valdivia", "region": "Los Ríos", "lat": -39.4469, "lon": -72.7719},
-    {"comuna": "Los Lagos", "provincia": "Valdivia", "region": "Los Ríos", "lat": -41.92, "lon": -72.1419},
-    {"comuna": "Máfil", "provincia": "Valdivia", "region": "Los Ríos", "lat": -39.65, "lon": -72.95},
-    {"comuna": "Mariquina", "provincia": "Valdivia", "region": "Los Ríos", "lat": -40.1328, "lon": -72.3328},
-    {"comuna": "Paillaco", "provincia": "Valdivia", "region": "Los Ríos", "lat": -40.0678, "lon": -72.8828},
-    {"comuna": "Panguipulli", "provincia": "Valdivia", "region": "Los Ríos", "lat": -39.6419, "lon": -72.34},
-    {"comuna": "La Unión", "provincia": "Ranco", "region": "Los Ríos", "lat": -40.2919, "lon": -73.0878},
-    {"comuna": "Futrono", "provincia": "Ranco", "region": "Los Ríos", "lat": -40.1308, "lon": -72.3958},
-    {"comuna": "Lago Ranco", "provincia": "Ranco", "region": "Los Ríos", "lat": -40.3169, "lon": -72.5},
-    {"comuna": "Río Bueno", "provincia": "Ranco", "region": "Los Ríos", "lat": -40.3378, "lon": -72.9569},
-    {"comuna": "Arica", "provincia": "Arica", "region": "Arica y Parinacota", "lat": -18.455, "lon": -70.29},
-    {"comuna": "Camarones", "provincia": "Arica", "region": "Arica y Parinacota", "lat": -19.0169, "lon": -69.8669},
-    {"comuna": "Putre", "provincia": "Parinacota", "region": "Arica y Parinacota", "lat": -18.2, "lon": -69.5828},
-    {
-        "comuna": "General Lagos",
-        "provincia": "Parinacota",
-        "region": "Arica y Parinacota",
-        "lat": -17.6528,
-        "lon": -69.635
-    },
-    {"comuna": "Chillán", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.6008, "lon": -72.1089},
-    {"comuna": "Bulnes", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.7389, "lon": -72.2919},
-    {"comuna": "Chillán Viejo", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.6328, "lon": -72.14},
-    {"comuna": "El Carmen", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.9, "lon": -72.0333},
-    {"comuna": "Pemuco", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.9778, "lon": -72.0908},
-    {"comuna": "Pinto", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.7, "lon": -71.9},
-    {"comuna": "Quillón", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.7378, "lon": -72.4689},
-    {"comuna": "San Ignacio", "provincia": "Diguillín", "region": "Ñuble", "lat": -36.8, "lon": -72.0333},
-    {"comuna": "Yungay", "provincia": "Diguillín", "region": "Ñuble", "lat": -37.1044, "lon": -71.9306},
-    {"comuna": "Quirihue", "provincia": "Itata", "region": "Ñuble", "lat": -36.2808, "lon": -72.545},
-    {"comuna": "Cobquecura", "provincia": "Itata", "region": "Ñuble", "lat": -36.1328, "lon": -72.7828},
-    {"comuna": "Coelemu", "provincia": "Itata", "region": "Ñuble", "lat": -36.485, "lon": -72.6939},
-    {"comuna": "Ninhue", "provincia": "Itata", "region": "Ñuble", "lat": -36.4008, "lon": -72.3969},
-    {"comuna": "Portezuelo", "provincia": "Itata", "region": "Ñuble", "lat": -36.5328, "lon": -72.4328},
-    {"comuna": "Ránquil", "provincia": "Itata", "region": "Ñuble", "lat": -36.65, "lon": -72.55},
-    {"comuna": "Treguaco", "provincia": "Itata", "region": "Ñuble", "lat": -36.4289, "lon": -72.665},
-    {"comuna": "San Carlos", "provincia": "Punilla", "region": "Ñuble", "lat": -36.4219, "lon": -71.9589},
-    {"comuna": "Coihueco", "provincia": "Punilla", "region": "Ñuble", "lat": -36.6282, "lon": -71.8318},
-    {"comuna": "Ñiquén", "provincia": "Punilla", "region": "Ñuble", "lat": -36.2869, "lon": -71.8989},
-    {"comuna": "San Fabián", "provincia": "Punilla", "region": "Ñuble", "lat": -36.5539, "lon": -71.5489},
-    {"comuna": "San Nicolás", "provincia": "Punilla", "region": "Ñuble", "lat": -36.8828, "lon": -72.4828}
+        "name": "San Nicolás",
+        "latitude": -36.8828,
+        "longitude": -72.4828,
+        "timestamp": "2023-09-05 02:05:43.503481"
+    }
 ]

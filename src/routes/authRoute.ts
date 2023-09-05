@@ -45,6 +45,13 @@ router.post("/signIn", async (req, res) => {
                 lastLogin: new Date(),
                 createdAt: new Date(),
                 birthDate: new Date(),
+                location: {
+                    name: "",
+                    latitude: 0,
+                    longitude: 0,
+                    timestamp: new Date(),
+                }
+
             },
             include: {
                 profilePictures: true,

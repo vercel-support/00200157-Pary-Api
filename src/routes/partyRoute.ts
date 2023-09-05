@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { logger, prisma } from "..";
 import { AuthenticatedRequest, GoogleUser } from "../../types";
 import { authenticateRefreshTokenMiddleware, authenticateTokenMiddleware, extractToken, haversineDistance, respondWithError } from "../utils/Utils";
-import { getCoordinatesFromComuna } from "./feedRoute";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -34,9 +33,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
         const currentUser = await prisma.user.findUnique({
             where: { id: decoded.id },
             select: {
-                locationLatitude: true,
-                locationLongitude: true,
-
+                location: true,
             }
         });
 
@@ -91,10 +88,8 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
         });
 
         const partiesToReturn = parties.map(party => {
-            const location = getCoordinatesFromComuna(party.location);
-            if (!location) return null;
 
-            const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+            const distance = haversineDistance(currentUser.location, party.location);
 
 
             return { ...party, distance };
@@ -133,9 +128,7 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
         const currentUser = await prisma.user.findUnique({
             where: { id: decoded.id },
             select: {
-                locationLatitude: true,
-                locationLongitude: true,
-
+                location: true,
             }
         });
 
@@ -143,10 +136,8 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
             return respondWithError(res, 500, "Error fetching user data.");
         }
 
-        const location = getCoordinatesFromComuna(party.location);
-        if (!location) return null;
 
-        const distance = haversineDistance(currentUser.locationLatitude, currentUser.locationLongitude, location.lat, location.lon);
+        const distance = haversineDistance(currentUser.location, party.location);
 
         // Renovar URLs de las imágenes
         /* if (!party.image || !party.image.amazonId) {
