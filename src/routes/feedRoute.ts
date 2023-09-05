@@ -200,6 +200,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
         const partiesToReturn = parties.map(party => {
 
             const distance = haversineDistance(currentUser.location, party.location);
+            console.log("Distance:", distance);
             let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
 
             if (followedUsers.includes(party.ownerId!)) relevanceScore++;

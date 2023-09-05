@@ -274,58 +274,57 @@ function getUsersToConnect(users: any[], probability: number): { userId: string;
 
 
 export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
-    const userCount = users.length;
     const partiesToCreate = [];
 
     for (let i = 0; i < 200; i++) {
-        const index = (i * 37) % userCount;
-        const loc = comunasData[index % comunasData.length];
-        const name = names[i % names.length];
-        const desc = descriptions[i % descriptions.length].replace('{location}', loc.name);
-        const imgNumber = (i % 17) + 1;
+        const loc = comunasData[Math.floor(Math.random() * comunasData.length)];
+        const name = names[Math.floor(Math.random() * names.length)];
+        const desc = descriptions[Math.floor(Math.random() * descriptions.length)].replace('{location}', loc.name);
+        const imgNumber = Math.floor(Math.random() * 17) + 1;
         const image = `/images/parties/disco${imgNumber}.jpg`;
         const selectedTags = Array.from({ length: 3 }, () => tags[Math.floor(Math.random() * tags.length)]);
-        const creator = users[index % userCount];
-        const type = types[i % types.length];
-        const creationDate = randomDateWithinAWeek();
-        const date = randomTimeBetween8PMand2AM(new Date(creationDate));
+        const creator = users[Math.floor(Math.random() * users.length)];
+        const type = types[Math.floor(Math.random() * types.length)];
+        const createdAt = randomDateWithinAWeek();
+        const date = randomTimeBetween8PMand2AM(new Date(createdAt));
         const privateParty = Math.random() < 0.5;
         const advertisement = Math.random() < 0.5;
 
         partiesToCreate.push({
             location: loc,
-            name: name,
+            name,
             description: desc,
-            image: image,
+            image,
             creatorUsername: creator.username,
             ownerId: creator.id,
             tags: selectedTags,
-            type: type,
-            creationDate,
+            type,
+            createdAt,
             date,
             private: privateParty,
             advertisement,
             active: true,
         });
-    };
+    }
 
     await prisma.party.createMany({
         data: partiesToCreate
+    }).catch(err => {
+        logger.error("Error creating parties: ", err);
+        throw err;
+    }).then(() => {
+        logger.info("Parties created.");
     });
-
-
-    // Puedes necesitar realizar una consulta adicional para obtener todos los detalles de las partes creadas 
-    // si necesitas todas las propiedades de las partes en el resultado. 
 
     return [];
 };
 
-export function haversineDistance(userLocation: Location, partyLocation: Location): number {
-    const R = 6371e3; // Radio de la Tierra en metros
-    const lat1 = userLocation.latitude * Math.PI / 180; // Convertir a radianes
-    const lat2 = partyLocation.latitude * Math.PI / 180; // Convertir a radianes
-    const dLat = (partyLocation.latitude - userLocation.latitude) * Math.PI / 180; // Convertir a radianes
-    const dLon = (partyLocation.longitude - userLocation.longitude) * Math.PI / 180; // Convertir a radianes
+export function haversineDistance(location1: Location, location2: Location): number {
+    const R = 6371; // Radio de la Tierra en kilómetros
+    const lat1 = location1.latitude * Math.PI / 180; // Convertir a radianes
+    const lat2 = location2.latitude * Math.PI / 180; // Convertir a radianes
+    const dLat = (location2.latitude - location1.latitude) * Math.PI / 180; // Convertir a radianes
+    const dLon = (location2.longitude - location1.longitude) * Math.PI / 180; // Convertir a radianes
 
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1) * Math.cos(lat2) *

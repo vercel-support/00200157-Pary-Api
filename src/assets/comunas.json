@@ -3,2076 +3,2076 @@
         "name": "Iquique",
         "latitude": -20.2439,
         "longitude": -70.1389,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Alto Hospicio",
         "latitude": -20.2569,
         "longitude": -70.0219,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pozo Almonte",
         "latitude": -20.2908,
         "longitude": -69.6958,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Camiña",
         "latitude": -20.4828,
         "longitude": -69.3669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Colchane",
         "latitude": -19.2839,
         "longitude": -68.675,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Huara",
         "latitude": -19.8089,
         "longitude": -69.9719,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pica",
         "latitude": -20.4828,
         "longitude": -69.3778,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Antofagasta",
         "latitude": -23.6508,
         "longitude": -70.395,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Mejillones",
         "latitude": -23.11,
         "longitude": -70.4558,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Sierra Gorda",
         "latitude": -22.8978,
         "longitude": -69.3228,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Taltal",
         "latitude": -25.41,
         "longitude": -70.4889,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Calama",
         "latitude": -22.4739,
         "longitude": -68.9239,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ollagüe",
         "latitude": -21.2328,
         "longitude": -68.2669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Pedro de Atacama",
         "latitude": -22.92,
         "longitude": -68.21,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tocopilla",
         "latitude": -22.0819,
         "longitude": -70.1889,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "María Elena",
         "latitude": -22.3169,
         "longitude": -69.6769,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Copiapó",
         "latitude": -27.375,
         "longitude": -70.3289,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Caldera",
         "latitude": -27.0658,
         "longitude": -70.8258,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tierra Amarilla",
         "latitude": -27.4728,
         "longitude": -70.2828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chañaral",
         "latitude": -26.3458,
         "longitude": -70.6239,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Diego de Almagro",
         "latitude": -26.39,
         "longitude": -70.0519,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Vallenar",
         "latitude": -28.5769,
         "longitude": -70.77,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Alto del Carmen",
         "latitude": -28.7489,
         "longitude": -70.4908,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Freirina",
         "latitude": -28.5058,
         "longitude": -71.0758,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Huasco",
         "latitude": -28.4558,
         "longitude": -71.1858,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Serena",
         "latitude": -29.9069,
         "longitude": -71.2469,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coquimbo",
         "latitude": -29.9708,
         "longitude": -71.3069,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Andacollo",
         "latitude": -30.23,
         "longitude": -71.0858,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Higuera",
         "latitude": -29.5,
         "longitude": -71.2828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Paihuano",
         "latitude": -30.0378,
         "longitude": -70.5069,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Vicuña",
         "latitude": -30.0189,
         "longitude": -70.715,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Illapel",
         "latitude": -31.6389,
         "longitude": -71.1789,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Canela",
         "latitude": -31.3958,
         "longitude": -71.4189,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Vilos",
         "latitude": -31.915,
         "longitude": -71.5058,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Salamanca",
         "latitude": -31.78,
         "longitude": -70.9669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ovalle",
         "latitude": -30.5989,
         "longitude": -71.1889,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Combarbalá",
         "latitude": -31.18,
         "longitude": -71.0039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Monte Patria",
         "latitude": -30.775,
         "longitude": -70.9428,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Punitaqui",
         "latitude": -30.8328,
         "longitude": -71.26,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Hurtado",
         "latitude": -30.2728,
         "longitude": -70.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Valparaíso",
         "latitude": -33.0333,
         "longitude": -71.6667,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Casablanca",
         "latitude": -33.325,
         "longitude": -71.41,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Concón",
         "latitude": -32.96,
         "longitude": -71.4689,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Juan Fernández",
         "latitude": -33.6328,
         "longitude": -78.8669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puchuncaví",
         "latitude": -32.7478,
         "longitude": -71.3978,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quintero",
         "latitude": -32.845,
         "longitude": -71.4669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Viña del Mar",
         "latitude": -33.025,
         "longitude": -71.515,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Isla de Pascua",
         "latitude": -27.1286,
         "longitude": -109.3597,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Andes",
         "latitude": -32.8369,
         "longitude": -70.5969,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Calle Larga",
         "latitude": -32.8831,
         "longitude": -70.4819,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Rinconada",
         "latitude": -32.8331,
         "longitude": -70.6883,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Esteban",
         "latitude": -32.805,
         "longitude": -70.5808,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Ligua",
         "latitude": -32.3536,
         "longitude": -71.2719,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cabildo",
         "latitude": -32.4089,
         "longitude": -71.08,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Papudo",
         "latitude": -32.47,
         "longitude": -71.3808,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Petorca",
         "latitude": -32.29,
         "longitude": -70.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Zapallar",
         "latitude": -32.5678,
         "longitude": -71.4378,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quillota",
         "latitude": -32.915,
         "longitude": -71.2639,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Calera",
         "latitude": -32.7839,
         "longitude": -71.2039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Hijuelas",
         "latitude": -32.855,
         "longitude": -71.0939,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Cruz",
         "latitude": -32.8239,
         "longitude": -71.2439,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Nogales",
         "latitude": -32.7358,
         "longitude": -71.2078,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Antonio",
         "latitude": -33.5947,
         "longitude": -71.6072,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Algarrobo",
         "latitude": -33.3692,
         "longitude": -71.6681,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cartagena",
         "latitude": -33.5536,
         "longitude": -71.6075,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "El Quisco",
         "latitude": -33.3914,
         "longitude": -71.6928,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "El Tabo",
         "latitude": -33.48,
         "longitude": -71.6208,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santo Domingo",
         "latitude": -33.7078,
         "longitude": -71.63,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Felipe",
         "latitude": -32.75,
         "longitude": -70.7128,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Catemu",
         "latitude": -32.7808,
         "longitude": -70.9689,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Llay-Llay",
         "latitude": -32.8439,
         "longitude": -70.9569,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Panquehue",
         "latitude": -32.7839,
         "longitude": -70.8369,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Putaendo",
         "latitude": -32.6278,
         "longitude": -70.7158,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santa María",
         "latitude": -32.7503,
         "longitude": -70.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quilpué",
         "latitude": -33.0475,
         "longitude": -71.4422,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Limache",
         "latitude": -33.0028,
         "longitude": -71.2608,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Olmué",
         "latitude": -33.0089,
         "longitude": -71.17,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Villa Alemana",
         "latitude": -33.0658,
         "longitude": -71.3289,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Rancagua",
         "latitude": -34.1619,
         "longitude": -70.7408,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Codegua",
         "latitude": -34.0328,
         "longitude": -70.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coinco",
         "latitude": -34.2728,
         "longitude": -70.9528,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coltauco",
         "latitude": -34.2969,
         "longitude": -71.0919,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Doñihue",
         "latitude": -34.185,
         "longitude": -70.8839,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Graneros",
         "latitude": -34.0628,
         "longitude": -70.7208,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Las Cabras",
         "latitude": -34.285,
         "longitude": -71.31,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Machalí",
         "latitude": -34.185,
         "longitude": -70.6619,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Malloa",
         "latitude": -34.445,
         "longitude": -70.945,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Mostazal",
         "latitude": -33.9769,
         "longitude": -70.7089,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Olivar",
         "latitude": -34.2139,
         "longitude": -70.8189,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Peumo",
         "latitude": -34.3889,
         "longitude": -71.1708,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pichidegua",
         "latitude": -34.3569,
         "longitude": -71.2869,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quinta de Tilcoco",
         "latitude": -34.3569,
         "longitude": -70.9689,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Rengo",
         "latitude": -34.4019,
         "longitude": -70.8558,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Requínoa",
         "latitude": -34.2828,
         "longitude": -70.8058,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Vicente",
         "latitude": -34.0828,
         "longitude": -71.75,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pichilemu",
         "latitude": -34.4019,
         "longitude": -72.0089,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Estrella",
         "latitude": -34.2,
         "longitude": -71.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Litueche",
         "latitude": -34.1189,
         "longitude": -71.7278,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Marchihue",
         "latitude": -34.4,
         "longitude": -71.6333,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Navidad",
         "latitude": -33.95,
         "longitude": -71.8328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Paredones",
         "latitude": -34.6608,
         "longitude": -71.8939,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Fernando",
         "latitude": -34.5839,
         "longitude": -70.9869,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chépica",
         "latitude": -34.7328,
         "longitude": -71.2828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chimbarongo",
         "latitude": -34.7078,
         "longitude": -71.0419,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lolol",
         "latitude": -34.7308,
         "longitude": -71.6358,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Nancagua",
         "latitude": -34.6489,
         "longitude": -71.2028,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Palmilla",
         "latitude": -34.6039,
         "longitude": -71.3578,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Peralillo",
         "latitude": -34.4828,
         "longitude": -71.4828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Placilla",
         "latitude": -34.6328,
         "longitude": -71.1169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pumanque",
         "latitude": -34.605,
         "longitude": -71.6439,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santa Cruz",
         "latitude": -34.6308,
         "longitude": -71.3589,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Talca",
         "latitude": -35.4228,
         "longitude": -71.6569,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Constitución",
         "latitude": -35.3389,
         "longitude": -72.4139,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curepto",
         "latitude": -35.0828,
         "longitude": -72.0169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Empedrado",
         "latitude": -35.5908,
         "longitude": -72.2728,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Maule",
         "latitude": -35.5158,
         "longitude": -71.5719,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pelarco",
         "latitude": -35.3778,
         "longitude": -71.445,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pencahue",
         "latitude": -35.4,
         "longitude": -71.8167,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Claro",
         "latitude": -35.2169,
         "longitude": -71.25,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Clemente",
         "latitude": -35.5339,
         "longitude": -71.4858,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Rafael",
         "latitude": -35.3169,
         "longitude": -71.5328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cauquenes",
         "latitude": -35.9639,
         "longitude": -72.3169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chanco",
         "latitude": -35.7289,
         "longitude": -72.53,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pelluhue",
         "latitude": -35.8139,
         "longitude": -72.5739,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curicó",
         "latitude": -34.9758,
         "longitude": -71.2239,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Hualañé",
         "latitude": -34.9828,
         "longitude": -71.8169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Licantén",
         "latitude": -34.9828,
         "longitude": -72.0,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Molina",
         "latitude": -35.09,
         "longitude": -71.2789,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Rauco",
         "latitude": -34.9289,
         "longitude": -71.3108,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Romeral",
         "latitude": -34.9669,
         "longitude": -71.1328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Sagrada Familia",
         "latitude": -35.0,
         "longitude": -71.3828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Teno",
         "latitude": -34.8728,
         "longitude": -71.1619,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Vichuquén",
         "latitude": -34.8228,
         "longitude": -72.035,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Linares",
         "latitude": -35.85,
         "longitude": -71.585,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Colbún",
         "latitude": -35.7,
         "longitude": -71.4169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Longaví",
         "latitude": -35.9658,
         "longitude": -71.6819,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Parral",
         "latitude": -36.1469,
         "longitude": -71.8219,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Retiro",
         "latitude": -36.0458,
         "longitude": -71.7589,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Javier",
         "latitude": -35.6,
         "longitude": -71.75,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Villa Alegre",
         "latitude": -35.665,
         "longitude": -71.7419,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Yerbas Buenas",
         "latitude": -35.75,
         "longitude": -71.5828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Concepción",
         "latitude": -36.815,
         "longitude": -73.0289,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coronel",
         "latitude": -36.9819,
         "longitude": -73.1569,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chiguayante",
         "latitude": -36.9089,
         "longitude": -73.0278,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Florida",
         "latitude": -36.8208,
         "longitude": -72.6619,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Hualqui",
         "latitude": -36.9669,
         "longitude": -72.9328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lota",
         "latitude": -37.0889,
         "longitude": -73.155,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Penco",
         "latitude": -36.7419,
         "longitude": -72.9978,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Pedro de La Paz",
         "latitude": -36.8639,
         "longitude": -73.1078,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santa Juana",
         "latitude": -37.1792,
         "longitude": -72.9353,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Talcahuano",
         "latitude": -36.7358,
         "longitude": -73.105,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tomé",
         "latitude": -36.6239,
         "longitude": -72.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Hualpén",
         "latitude": -36.7889,
         "longitude": -73.11,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lebu",
         "latitude": -37.6058,
         "longitude": -73.6428,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Arauco",
         "latitude": -37.2569,
         "longitude": -73.2839,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cañete",
         "latitude": -35.2828,
         "longitude": -72.2328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Contulmo",
         "latitude": -38.005,
         "longitude": -73.225,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curanilahue",
         "latitude": -37.4719,
         "longitude": -73.3478,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Álamos",
         "latitude": -37.6208,
         "longitude": -73.4558,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tirúa",
         "latitude": -38.3389,
         "longitude": -73.4839,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Ángeles",
         "latitude": -36.9439,
         "longitude": -72.3508,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Antuco",
         "latitude": -37.3269,
         "longitude": -71.6778,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cabrero",
         "latitude": -37.0389,
         "longitude": -72.3989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Laja",
         "latitude": -37.2669,
         "longitude": -72.7,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Mulchén",
         "latitude": -37.715,
         "longitude": -72.2389,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Nacimiento",
         "latitude": -37.5008,
         "longitude": -72.6758,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Negrete",
         "latitude": -37.5828,
         "longitude": -72.5169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quilaco",
         "latitude": -37.68,
         "longitude": -72.0069,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quilleco",
         "latitude": -37.4669,
         "longitude": -71.9669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Rosendo",
         "latitude": -37.2578,
         "longitude": -72.7158,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santa Bárbara",
         "latitude": -37.6628,
         "longitude": -72.0178,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tucapel",
         "latitude": -37.6328,
         "longitude": -73.3328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Yumbel",
         "latitude": -37.0958,
         "longitude": -72.5558,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Alto Biobío",
         "latitude": -38.6189,
         "longitude": -71.3242,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Temuco",
         "latitude": -38.7269,
         "longitude": -72.5989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Carahue",
         "latitude": -38.7069,
         "longitude": -73.16,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cunco",
         "latitude": -38.93,
         "longitude": -72.0269,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curarrehue",
         "latitude": -39.3589,
         "longitude": -71.5878,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Freire",
         "latitude": -38.9539,
         "longitude": -72.6219,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Galvarino",
         "latitude": -38.4,
         "longitude": -72.7833,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Gorbea",
         "latitude": -39.095,
         "longitude": -72.6719,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lautaro",
         "latitude": -38.5289,
         "longitude": -72.4269,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Loncoche",
         "latitude": -39.3539,
         "longitude": -72.6278,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Melipeuco",
         "latitude": -38.8428,
         "longitude": -71.6869,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Nueva Imperial",
         "latitude": -38.745,
         "longitude": -72.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Padre Las Casas",
         "latitude": -38.7658,
         "longitude": -72.5928,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Perquenco",
         "latitude": -38.4169,
         "longitude": -72.3828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pitrufquén",
         "latitude": -38.9828,
         "longitude": -72.6428,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pucón",
         "latitude": -39.2819,
         "longitude": -71.9539,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Saavedra",
         "latitude": -38.7828,
         "longitude": -73.4,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Teodoro Schmidt",
         "latitude": -38.9667,
         "longitude": -73.05,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Toltén",
         "latitude": -39.2169,
         "longitude": -73.2169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Vilcún",
         "latitude": -39.1167,
         "longitude": -72.3794,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Villarrica",
         "latitude": -39.28,
         "longitude": -72.2178,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cholchol",
         "latitude": -38.6,
         "longitude": -72.85,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Angol",
         "latitude": -37.8028,
         "longitude": -72.7019,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Collipulli",
         "latitude": -37.9528,
         "longitude": -72.4319,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curacautín",
         "latitude": -38.4319,
         "longitude": -71.89,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ercilla",
         "latitude": -38.05,
         "longitude": -72.3833,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lonquimay",
         "latitude": -38.4328,
         "longitude": -71.2328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Sauces",
         "latitude": -37.9669,
         "longitude": -72.8328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lumaco",
         "latitude": -38.1628,
         "longitude": -72.9039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Purén",
         "latitude": -38.0219,
         "longitude": -73.07,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Renaico",
         "latitude": -37.6669,
         "longitude": -72.5828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Traiguén",
         "latitude": -38.2478,
         "longitude": -72.675,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Victoria",
         "latitude": -38.23,
         "longitude": -72.3428,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puerto Montt",
         "latitude": -41.4539,
         "longitude": -72.9928,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Calbuco",
         "latitude": -41.7578,
         "longitude": -73.1508,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cochamó",
         "latitude": -41.5,
         "longitude": -72.3169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Fresia",
         "latitude": -41.1528,
         "longitude": -73.42,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Frutillar",
         "latitude": -41.1167,
         "longitude": -73.1,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Muermos",
         "latitude": -41.3908,
         "longitude": -73.465,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Llanquihue",
         "latitude": -41.2658,
         "longitude": -73.0119,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Maullín",
         "latitude": -41.6178,
         "longitude": -73.5978,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puerto Varas",
         "latitude": -41.3228,
         "longitude": -72.97,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Castro",
         "latitude": -42.4778,
         "longitude": -73.7789,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ancud",
         "latitude": -41.8769,
         "longitude": -73.8139,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chonchi",
         "latitude": -42.6258,
         "longitude": -73.7808,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curaco de Vélez",
         "latitude": -42.4339,
         "longitude": -73.5819,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Dalcahue",
         "latitude": -42.3739,
         "longitude": -73.6508,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puqueldón",
         "latitude": -42.6039,
         "longitude": -73.6839,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Queilén",
         "latitude": -42.8739,
         "longitude": -73.47,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quellón",
         "latitude": -43.1208,
         "longitude": -73.6078,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quemchi",
         "latitude": -42.1419,
         "longitude": -73.4778,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quinchao",
         "latitude": -42.4789,
         "longitude": -73.4969,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Osorno",
         "latitude": -40.5739,
         "longitude": -73.1258,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puerto Octay",
         "latitude": -40.9669,
         "longitude": -72.9,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Purranque",
         "latitude": -40.9089,
         "longitude": -73.175,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puyehue",
         "latitude": -40.7169,
         "longitude": -72.3208,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Negro",
         "latitude": -41.9669,
         "longitude": -72.45,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Juan de la Costa",
         "latitude": -40.5008,
         "longitude": -73.3919,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Pablo",
         "latitude": -40.4,
         "longitude": -73.0167,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chaitén",
         "latitude": -42.8989,
         "longitude": -72.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Futaleufú",
         "latitude": -43.1678,
         "longitude": -71.8478,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Hualaihué",
         "latitude": -41.9919,
         "longitude": -72.6669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Palena",
         "latitude": -43.6228,
         "longitude": -71.8039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coyhaique",
         "latitude": -45.5639,
         "longitude": -72.065,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lago Verde",
         "latitude": -44.2189,
         "longitude": -71.8389,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Aysén",
         "latitude": -45.4119,
         "longitude": -72.6978,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cisnes",
         "latitude": -44.7508,
         "longitude": -72.6969,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Guaitecas",
         "latitude": -43.8839,
         "longitude": -73.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cochrane",
         "latitude": -47.2539,
         "longitude": -72.5733,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "O' Higgins",
         "latitude": -48.4667,
         "longitude": -72.5667,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Tortel",
         "latitude": -47.7808,
         "longitude": -73.5119,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chile Chico",
         "latitude": -46.5375,
         "longitude": -71.7292,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Ibáñez",
         "latitude": -46.255,
         "longitude": -71.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Punta Arenas",
         "latitude": -53.1478,
         "longitude": -70.9069,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Laguna Blanca",
         "latitude": -52.2669,
         "longitude": -71.1828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Verde",
         "latitude": -52.6278,
         "longitude": -71.4769,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Gregorio",
         "latitude": -52.5669,
         "longitude": -70.0669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cabo de Hornos",
         "latitude": -54.9469,
         "longitude": -67.6069,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Antártica",
         "latitude": -75.0,
         "longitude": -71.5,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Porvenir",
         "latitude": -53.2978,
         "longitude": -70.385,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Primavera",
         "latitude": -52.8858,
         "longitude": -69.3528,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Timaukel",
         "latitude": -53.6719,
         "longitude": -69.71,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Natales",
         "latitude": -51.7328,
         "longitude": -72.5169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Torres del Paine",
         "latitude": -50.9819,
         "longitude": -72.4989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Santiago",
         "latitude": -33.4372,
         "longitude": -70.6572,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cerrillos",
         "latitude": -33.5,
         "longitude": -70.7167,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cerro Navia",
         "latitude": -33.4219,
         "longitude": -70.735,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Conchalí",
         "latitude": -33.38,
         "longitude": -70.675,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "El Bosque",
         "latitude": -33.5669,
         "longitude": -70.675,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Estación Central",
         "latitude": -33.4589,
         "longitude": -70.6989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Huechuraba",
         "latitude": -33.3678,
         "longitude": -70.6339,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Independencia",
         "latitude": -33.4128,
         "longitude": -70.6658,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Cisterna",
         "latitude": -33.5289,
         "longitude": -70.6628,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Florida",
         "latitude": -33.525,
         "longitude": -70.5378,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Granja",
         "latitude": -33.5833,
         "longitude": -70.5833,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Pintana",
         "latitude": -33.5828,
         "longitude": -70.6339,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Reina",
         "latitude": -33.4428,
         "longitude": -70.5319,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Las Condes",
         "latitude": -33.4167,
         "longitude": -70.5833,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lo Barnechea",
         "latitude": -33.35,
         "longitude": -70.5167,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lo Espejo",
         "latitude": -33.5219,
         "longitude": -70.6869,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lo Prado",
         "latitude": -33.445,
         "longitude": -70.7258,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Macul",
         "latitude": -33.4869,
         "longitude": -70.6039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Maipú",
         "latitude": -33.5167,
         "longitude": -70.7667,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ñuñoa",
         "latitude": -33.4539,
         "longitude": -70.6039,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pedro Aguirre Cerda",
         "latitude": -33.4661,
         "longitude": -70.6336,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Peñalolén",
         "latitude": -33.4861,
         "longitude": -70.5333,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Providencia",
         "latitude": -33.435,
         "longitude": -70.6158,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pudahuel",
         "latitude": -33.4333,
         "longitude": -70.7167,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quilicura",
         "latitude": -33.3608,
         "longitude": -70.7289,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quinta Normal",
         "latitude": -33.4269,
         "longitude": -70.6989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Recoleta",
         "latitude": -33.4058,
         "longitude": -70.64,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Renca",
         "latitude": -33.3978,
         "longitude": -70.7228,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Joaquín",
         "latitude": -33.4908,
         "longitude": -70.6278,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Miguel",
         "latitude": -33.4858,
         "longitude": -70.6494,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Ramón",
         "latitude": -33.5428,
         "longitude": -70.6439,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Vitacura",
         "latitude": -33.4,
         "longitude": -70.6,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Puente Alto",
         "latitude": -33.6158,
         "longitude": -70.57,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pirque",
         "latitude": -33.6333,
         "longitude": -70.55,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San José de Maipo",
         "latitude": -33.6439,
         "longitude": -70.3528,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Colina",
         "latitude": -33.1939,
         "longitude": -70.6678,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lampa",
         "latitude": -33.2858,
         "longitude": -70.8778,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Til Til",
         "latitude": -33.085,
         "longitude": -70.925,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Bernardo",
         "latitude": -33.5819,
         "longitude": -70.6869,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Buin",
         "latitude": -33.7278,
         "longitude": -70.7389,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Calera de Tango",
         "latitude": -33.6278,
         "longitude": -70.785,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Paine",
         "latitude": -33.8119,
         "longitude": -70.7228,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Melipilla",
         "latitude": -33.6889,
         "longitude": -71.2078,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Alhué",
         "latitude": -34.0333,
         "longitude": -71.1,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Curacaví",
         "latitude": -33.3989,
         "longitude": -71.1369,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "María Pinto",
         "latitude": -33.515,
         "longitude": -71.1189,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Pedro",
         "latitude": -33.9,
         "longitude": -71.4667,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Talagante",
         "latitude": -33.6669,
         "longitude": -70.9308,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "El Monte",
         "latitude": -33.6839,
         "longitude": -71.0169,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Isla de Maipo",
         "latitude": -33.7539,
         "longitude": -70.8858,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Padre Hurtado",
         "latitude": -33.5667,
         "longitude": -70.8333,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Peñaflor",
         "latitude": -33.6061,
         "longitude": -70.8764,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Valdivia",
         "latitude": -39.8142,
         "longitude": -73.2458,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Corral",
         "latitude": -39.8669,
         "longitude": -73.4328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lanco",
         "latitude": -39.4469,
         "longitude": -72.7719,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Los Lagos",
         "latitude": -41.92,
         "longitude": -72.1419,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Máfil",
         "latitude": -39.65,
         "longitude": -72.95,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Mariquina",
         "latitude": -40.1328,
         "longitude": -72.3328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Paillaco",
         "latitude": -40.0678,
         "longitude": -72.8828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Panguipulli",
         "latitude": -39.6419,
         "longitude": -72.34,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "La Unión",
         "latitude": -40.2919,
         "longitude": -73.0878,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Futrono",
         "latitude": -40.1308,
         "longitude": -72.3958,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Lago Ranco",
         "latitude": -40.3169,
         "longitude": -72.5,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Río Bueno",
         "latitude": -40.3378,
         "longitude": -72.9569,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Arica",
         "latitude": -18.455,
         "longitude": -70.29,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Camarones",
         "latitude": -19.0169,
         "longitude": -69.8669,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Putre",
         "latitude": -18.2,
         "longitude": -69.5828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "General Lagos",
         "latitude": -17.6528,
         "longitude": -69.635,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chillán",
         "latitude": -36.6008,
         "longitude": -72.1089,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Bulnes",
         "latitude": -36.7389,
         "longitude": -72.2919,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Chillán Viejo",
         "latitude": -36.6328,
         "longitude": -72.14,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "El Carmen",
         "latitude": -36.9,
         "longitude": -72.0333,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pemuco",
         "latitude": -36.9778,
         "longitude": -72.0908,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Pinto",
         "latitude": -36.7,
         "longitude": -71.9,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quillón",
         "latitude": -36.7378,
         "longitude": -72.4689,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Ignacio",
         "latitude": -36.8,
         "longitude": -72.0333,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Yungay",
         "latitude": -37.1044,
         "longitude": -71.9306,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Quirihue",
         "latitude": -36.2808,
         "longitude": -72.545,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Cobquecura",
         "latitude": -36.1328,
         "longitude": -72.7828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coelemu",
         "latitude": -36.485,
         "longitude": -72.6939,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ninhue",
         "latitude": -36.4008,
         "longitude": -72.3969,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Portezuelo",
         "latitude": -36.5328,
         "longitude": -72.4328,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ránquil",
         "latitude": -36.65,
         "longitude": -72.55,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Treguaco",
         "latitude": -36.4289,
         "longitude": -72.665,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Carlos",
         "latitude": -36.4219,
         "longitude": -71.9589,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Coihueco",
         "latitude": -36.6282,
         "longitude": -71.8318,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "Ñiquén",
         "latitude": -36.2869,
         "longitude": -71.8989,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Fabián",
         "latitude": -36.5539,
         "longitude": -71.5489,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     },
     {
         "name": "San Nicolás",
         "latitude": -36.8828,
         "longitude": -72.4828,
-        "timestamp": "2023-09-05 02:05:43.503481"
+        "timestamp": "2023-09-11T03:56:00.000Z"
     }
 ]
