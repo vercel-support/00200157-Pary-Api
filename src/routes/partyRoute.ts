@@ -1,8 +1,11 @@
+import { Storage } from "aws-amplify";
+import { randomUUID } from "crypto";
 import express, { Response } from "express";
-import jwt from "jsonwebtoken";
-import { logger, prisma } from "..";
-import { AuthenticatedRequest, GoogleUser } from "../../types";
-import { authenticateRefreshTokenMiddleware, authenticateTokenMiddleware, extractToken, haversineDistance, respondWithError } from "../utils/Utils";
+import { configureAmazonCognito, logger, prisma } from "..";
+import { AuthenticatedRequest } from "../../types";
+import { sendPartyInviteNotification } from "../utils/NotificationsUtils";
+import { authenticateTokenMiddleware, haversineDistance, respondWithError } from "../utils/Utils";
+import { getCachedImageUrl } from "./usersRoute";
 
 const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
@@ -45,7 +48,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
                 OR: [
                     { ownerId: id },
                     {
-                        participants: {
+                        members: {
                             some: {
                                 userId: id
                             }
@@ -70,7 +73,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
                 OR: [
                     { ownerId: id },
                     {
-                        participants: {
+                        members: {
                             some: {
                                 userId: id
                             }
@@ -87,23 +90,157 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
             }
         });
 
-        const partiesToReturn = parties.map(party => {
+        const partiesToReturn = await Promise.all(parties.map(async party => {
 
             const distance = haversineDistance(currentUser.location, party.location);
-
+            if (party.image.amazonId) {
+                party.image.url = await getCachedImageUrl(party.image.amazonId);
+            }
 
             return { ...party, distance };
-        });
+        }));
 
         const hasNextPage = (page * limit) < totalParties;
         const nextPage = hasNextPage ? page + 1 : null;
 
-        logger.info("Parties:", partiesToReturn, "Has next page:", hasNextPage, "Next page:", nextPage);
         res.status(200).json({ parties: partiesToReturn, hasNextPage, nextPage });
 
     } catch (error) {
         logger.error("Error fetching parties:", error);
         return respondWithError(res, 500, "Error al buscar las fiestas.");
+    }
+});
+router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        console.log("File:", req.body);
+        const { name, description, location, date, type, tags, participants, image } = req.body;
+        const decoded = req.decoded;
+        if (typeof decoded !== "object" || !("id" in decoded)) {
+            return respondWithError(res, 500, "Error al decodificar el token.");
+        }
+        /* 
+                if (!name || !description || !location || !date || !type || !tags || !image) {
+                    return res.status(400).json({ error: "Missing fields." });
+                } */
+
+        const inviter = await prisma.user.findUnique({ where: { id: decoded.id }, select: { name: true, username: true, id: true } });
+
+        if (!inviter) {
+            console.log("Error fetching user data.");
+            return respondWithError(res, 500, "Error fetching user data.");
+        }
+
+        // Resto de la lógica después de una carga exitosa
+
+        const usersToInvite: string[] = participants;
+        const users = await prisma.user.findMany({
+            where: {
+                username: {
+                    in: usersToInvite
+                }
+            },
+            select: {
+                id: true,
+                username: true,
+                expoPushToken: true // asumimos que usarás Expo para notificaciones push
+            }
+        });
+        const party = await prisma.party.create({
+            data: {
+                name,
+                description,
+                location,
+                type,
+                tags,
+                advertisement: false,
+                active: true,
+                date: new Date(date),
+                private: req.body.private || false,
+                ownerId: decoded.id,
+                image,
+                creatorUsername: inviter.username,
+                // Aquí puedes agregar más campos como el ID del creador
+            },
+        });
+
+        if (!party) {
+            console.log("Error creating party.");
+            return respondWithError(res, 500, "Error creating party.");
+        }
+
+        for (const user of users) {
+
+            if (user.id === decoded.id) continue;
+            const response = await prisma.partyInvitation.create({
+                data: {
+                    partyId: party.id,
+                    invitedUserId: user.id,
+                    invitingUserId: decoded.id
+                }
+            });
+            if (response) {
+                sendPartyInviteNotification(user.expoPushToken, inviter, party.name, party.id, party.type);
+            }
+
+            // Aquí podrías enviar una notificación push a cada usuario invitado
+        }
+
+        res.status(200).json({ party });
+
+
+
+    } catch (error) {
+        console.error('Error al crear la fiesta:', error);
+        res.status(500).json({ error: 'No se pudo crear la fiesta' });
+    }
+});
+
+router.post('/upload-party-image', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+
+    try {
+        const imageBase64 = req.body.image;
+
+        if (!imageBase64) {
+            console.log("Error uploading image.1");
+            return respondWithError(res, 400, "No image provided.");
+        }
+
+        const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
+        const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+
+        const uploadImageToS3 = async (retry = true) => {
+            try {
+                const result = await Storage.put(`party-${randomUUID()}.` + fileType, imageBuffer, {
+                    contentType: "image/" + fileType,
+                    level: "public",
+                });
+
+                // Resto de la lógica después de una carga exitosa
+                const imageUrl = await getCachedImageUrl(result.key);
+
+                if (imageUrl === "") {
+                    console.log("Error uploading image.2");
+                    return res.status(500).json({ error: "Error uploading image." });
+                }
+
+                res.status(200).json({ url: imageUrl, amazonId: result.key });
+
+            } catch (error) {
+                logger.error("Error al subir la imagen a S3:", error);
+                if (retry) {
+                    logger.info("Reconfigurando Amplify y reintentando...");
+                    configureAmazonCognito();
+                    uploadImageToS3(false);
+                } else {
+                    return respondWithError(res, 500, "Error uploading image.");
+                }
+            }
+        };
+        await uploadImageToS3();
+
+    } catch (error) {
+        console.error('Error al subir la imagen:', error);
+        res.status(500).json({ error: 'No se pudo crear la fiesta' });
     }
 });
 
@@ -140,9 +277,9 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
         const distance = haversineDistance(currentUser.location, party.location);
 
         // Renovar URLs de las imágenes
-        /* if (!party.image || !party.image.amazonId) {
-            pic.url = await getCachedImageUrl(pic.amazonId);
-        } */
+        if (party.image.amazonId) {
+            party.image.url = await getCachedImageUrl(party.image.amazonId);
+        }
 
         return res.status(200).json({ ...party, distance });
     })

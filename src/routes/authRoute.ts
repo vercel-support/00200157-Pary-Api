@@ -62,9 +62,33 @@ router.post("/signIn", async (req, res) => {
                         id: true,
                     }
                 },
-                partiesParticipating: {
+                parties: {
                     select: {
                         partyId: true,
+                    }
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
+                    }
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
                     }
                 },
                 partiesModerating: {
@@ -126,9 +150,33 @@ router.post("/signIn", async (req, res) => {
             profilePictures: true,
             followerUserList: true,
             followingUserList: true,
-            partiesParticipating: {
+            parties: {
                 select: {
                     partyId: true,
+                }
+            },
+            invitedParties: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            creatorUsername: true,
+                        }
+                    }
+                }
+            },
+            invitingParties: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            creatorUsername: true,
+                        }
+                    }
                 }
             },
             ownedParties: {
@@ -208,9 +256,33 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                     profilePictures: true,
                     followerUserList: true,
                     followingUserList: true,
-                    partiesParticipating: {
+                    parties: {
                         select: {
                             partyId: true,
+                        }
+                    },
+                    invitedParties: {
+                        select: {
+                            partyId: true,
+                            party: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    creatorUsername: true,
+                                }
+                            }
+                        }
+                    },
+                    invitingParties: {
+                        select: {
+                            partyId: true,
+                            party: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    creatorUsername: true,
+                                }
+                            }
                         }
                     },
                     ownedParties: {

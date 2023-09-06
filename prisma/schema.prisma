@@ -8,40 +8,42 @@ datasource db {
 }
 
 model User {
-  id                    String                 @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID      String                 @unique
-  username              String                 @unique
-  email                 String                 @unique
-  name                  String                 @default("")
-  lastName              String                 @default("")
-  signedIn              Boolean                @default(false)
+  id                    String               @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID      String               @unique
+  username              String               @unique
+  email                 String               @unique
+  name                  String               @default("")
+  lastName              String               @default("")
+  signedIn              Boolean              @default(false)
   profilePictures       ProfilePicture[]
-  accessToken           String                 @default("")
-  refreshToken          String                 @default("")
-  gender                Gender                 @default(Femenino)
-  description           String                 @default("")
+  accessToken           String               @default("")
+  refreshToken          String               @default("")
+  gender                Gender               @default(Femenino)
+  description           String               @default("")
   birthDate             DateTime
-  musicInterest         String[]               @default([])
-  deportsInterest       String[]               @default([])
-  artAndCultureInterest String[]               @default([])
-  techInterest          String[]               @default([])
-  hobbiesInterest       String[]               @default([])
-  verified              Boolean                @default(false)
-  phoneNumber           String                 @default("")
+  musicInterest         String[]             @default([])
+  deportsInterest       String[]             @default([])
+  artAndCultureInterest String[]             @default([])
+  techInterest          String[]             @default([])
+  hobbiesInterest       String[]             @default([])
+  verified              Boolean              @default(false)
+  phoneNumber           String               @default("")
   location              Location
-  createdAt             DateTime               @default(now())
-  lastLogin             DateTime               @default(now())
-  isCompany             Boolean                @default(false)
-  expoPushToken         String                 @default("")
-  followingUserList     UserFollows[]          @relation("FollowerToFollowed")
-  followerUserList      UserFollows[]          @relation("FollowedToFollower")
-  partiesParticipating  UserPartyParticipant[] @relation("UserToPartyParticipant")
-  partiesModerating     UserPartyModerator[]   @relation("UserToPartyModerator")
+  createdAt             DateTime             @default(now())
+  lastLogin             DateTime             @default(now())
+  isCompany             Boolean              @default(false)
+  expoPushToken         String               @default("")
+  followingUserList     UserFollows[]        @relation("FollowerToFollowed")
+  followerUserList      UserFollows[]        @relation("FollowedToFollower")
+  parties               PartyMember[]        @relation("PartyMembershipToUser")
+  invitedParties        PartyInvitation[]    @relation("PartyInvitedToInviting")
+  invitingParties       PartyInvitation[]    @relation("PartyInvitingToInvited")
+  partiesModerating     UserPartyModerator[] @relation("UserToPartyModerator")
   ownedParties          Party[]
-  groups                GroupMember[]          @relation("MembershipToUser")
-  ledGroups             Group[]                @relation("LeaderToGroup")
-  invitedGroups         GroupInvitation[]      @relation("InvitedToInviting")
-  invitingGroups        GroupInvitation[]      @relation("InvitingToInvited")
+  groups                GroupMember[]        @relation("MembershipToUser")
+  ledGroups             Group[]              @relation("LeaderToGroup")
+  invitedGroups         GroupInvitation[]    @relation("InvitedToInviting")
+  invitingGroups        GroupInvitation[]    @relation("InvitingToInvited")
   membershipRequests    MembershipRequest[]
 
   @@index([username, email, assignedGoogleID])
@@ -77,25 +79,26 @@ model ProfilePicture {
 }
 
 model Party {
-  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
   location           Location
   name               String
   description        String
-  image              String
+  image              PartyPicture
   creatorUsername    String
   tags               String[]
   type               PartyType
   date               DateTime
   private            Boolean
   advertisement      Boolean
-  participants       UserPartyParticipant[]
+  members            PartyMember[]
   moderators         UserPartyModerator[]
   active             Boolean
-  ownerId            String?                @map("ownerId") @db.ObjectId
-  owner              User?                  @relation(fields: [ownerId], references: [id])
-  groups             PartyGroup[]           @relation("PartyToPartyGroup")
-  createdAt          DateTime               @default(now())
+  ownerId            String?              @map("ownerId") @db.ObjectId
+  owner              User?                @relation(fields: [ownerId], references: [id])
+  groups             PartyGroup[]         @relation("PartyToPartyGroup")
+  createdAt          DateTime             @default(now())
   membershipRequests MembershipRequest[]
+  partyInvitations   PartyInvitation[]
 }
 
 enum PartyType {
@@ -117,13 +120,29 @@ model PartyGroup {
   @@unique([partyId, groupId])
 }
 
-model UserPartyParticipant {
-  partyId String @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String @map("userId") @db.ObjectId
-  user    User   @relation("UserToPartyParticipant", fields: [userId], references: [id])
-  party   Party  @relation(fields: [partyId], references: [id])
+model PartyMember {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  partyId   String   @map("partyId") @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  user      User     @relation("PartyMembershipToUser", fields: [userId], references: [id])
+  party     Party    @relation(fields: [partyId], references: [id])
+  createdAt DateTime @default(now())
 
   @@unique([userId, partyId])
+}
+
+model PartyInvitation {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt      DateTime         @default(now())
+  invitingUser   User             @relation("PartyInvitingToInvited", fields: [invitingUserId], references: [id])
+  invitingUserId String           @map("invitingUserId") @db.ObjectId
+  invitedUser    User             @relation("PartyInvitedToInviting", fields: [invitedUserId], references: [id])
+  invitedUserId  String           @map("invitedUserId") @db.ObjectId
+  party          Party            @relation(fields: [partyId], references: [id])
+  partyId        String           @map("partyId") @db.ObjectId
+  status         InvitationStatus @default(PENDING)
+
+  @@unique([partyId, invitedUserId])
 }
 
 model UserPartyModerator {
@@ -206,4 +225,9 @@ type Location {
   latitude  Float
   longitude Float
   timestamp DateTime
+}
+
+type PartyPicture {
+  amazonId String
+  url      String
 }

@@ -294,7 +294,10 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
             location: loc,
             name,
             description: desc,
-            image,
+            image: {
+                url: image,
+                amazonId: "",
+            },
             creatorUsername: creator.username,
             ownerId: creator.id,
             tags: selectedTags,

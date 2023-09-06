@@ -5,6 +5,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import winston from "winston";
 import awsconfig from "./aws-exports";
+import multer from "multer";
 import authRoute from "./routes/authRoute";
 import feedRoute from "./routes/feedRoute";
 import groupRoute from "./routes/groupRoute";

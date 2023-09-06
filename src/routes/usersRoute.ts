@@ -168,9 +168,33 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 profilePictures: true,
                 followerUserList: true,
                 followingUserList: true,
-                partiesParticipating: {
+                parties: {
                     select: {
                         partyId: true,
+                    }
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
+                    }
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
                     }
                 },
                 ownedParties: {
@@ -275,9 +299,33 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 isCompany: true,
                 followingUserList: true,
                 followerUserList: true,
-                partiesParticipating: {
+                parties: {
                     select: {
                         partyId: true,
+                    }
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
+                    }
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
                     }
                 },
                 ownedParties: {
@@ -365,7 +413,7 @@ router.post("/upload-profile-picture", authenticateTokenMiddleware, async (req: 
 
     const uploadImageToS3 = async (retry = true) => {
         try {
-            const result = await Storage.put(`${randomUUID()}-${Date.now()}.` + fileType, imageBuffer, {
+            const result = await Storage.put(`profile-${randomUUID()}}.` + fileType, imageBuffer, {
                 contentType: "image/" + fileType,
                 level: "public",
             });
@@ -505,9 +553,33 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                         id: true,
                     }
                 },
-                partiesParticipating: {
+                parties: {
                     select: {
                         partyId: true,
+                    }
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
+                    }
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
                     }
                 },
                 partiesModerating: {
@@ -831,9 +903,33 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                 profilePictures: true,
                 followerUserList: true,
                 followingUserList: true,
-                partiesParticipating: {
+                parties: {
                     select: {
                         partyId: true,
+                    }
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
+                    }
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                creatorUsername: true,
+                            }
+                        }
                     }
                 },
                 ownedParties: {

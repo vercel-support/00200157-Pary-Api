@@ -103,6 +103,13 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
         orderBy: { advertisement: 'desc' }
     });
 
+    for (let i = 0; i < parties.length; i++) {
+        let party = parties[i];
+        if (party.image.amazonId) {
+            party.image.url = await getCachedImageUrl(party.image.amazonId);
+        }
+    }
+
 
     res.status(200).json({ users, parties });
 });
@@ -166,9 +173,9 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
 
     const totalParties = await prisma.party.count({ where: queryFilters });
 
-    const foundedParties = [];
 
-    while (foundedParties.length < limit && !(page * limit >= totalParties)) {
+    const foundedParties = [];
+    while (foundedParties.length < limit && (page - 1) * limit < totalParties) {
         const parties = await prisma.party.findMany({
             skip: (page - 1) * limit,
             take: limit,
@@ -189,7 +196,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                 date: true,
                 active: true,
                 ownerId: true,
-                participants: {
+                members: {
                     select: {
                         userId: true
                     }
@@ -197,18 +204,19 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
             }
         });
 
-        const partiesToReturn = parties.map(party => {
-
+        const partiesToReturn = await Promise.all(parties.map(async (party) => {
             const distance = haversineDistance(currentUser.location, party.location);
-            console.log("Distance:", distance);
             let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
 
             if (followedUsers.includes(party.ownerId!)) relevanceScore++;
-            if (party.participants.some(participant => followedUsers.includes(participant.userId))) relevanceScore++;
-
+            if (party.members.some(member => followedUsers.includes(member.userId))) relevanceScore++;
+            if (party.image.amazonId) {
+                party.image.url = await getCachedImageUrl(party.image.amazonId);
+            }
             return { ...party, distance, relevanceScore };
-        }).filter(party => party !== null && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore);
-        foundedParties.push(...partiesToReturn);
+        }).filter(async (party) => party !== null && (await party).distance <= distanceLimit));
+
+        foundedParties.push(...partiesToReturn.sort((a, b) => b!.relevanceScore - a!.relevanceScore));
         page++;
 
     }
