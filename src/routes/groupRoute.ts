@@ -89,7 +89,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
             }
         }
 
-        res.status(201).json(group);
+        res.status(200).json(group);
     } catch (error) {
 
         console.log("Error creating group:", error);
@@ -461,7 +461,7 @@ router.post('/:groupId/invite', authenticateTokenMiddleware, async (req: Authent
         });
         //TODO: Enviar notificacion al usuario que invito
 
-        res.status(201).json(invitation);
+        res.status(200).json(invitation);
     } catch (error) {
         res.status(500).json({ error: "Failed to send group invitation." });
     }
@@ -582,8 +582,6 @@ router.post('/:groupId/cancel-invitation', authenticateTokenMiddleware, async (r
     }
 });
 
-// Salir del grupo
-// Salir del grupo
 router.post('/:groupId/leave', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const groupId = req.params.groupId;

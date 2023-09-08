@@ -88,11 +88,12 @@ model Party {
   tags               String[]
   type               PartyType
   date               DateTime
-  private            Boolean
+  private            Boolean              @default(false)
   advertisement      Boolean
   members            PartyMember[]
   moderators         UserPartyModerator[]
-  active             Boolean
+  active             Boolean              @default(true)
+  showAddressInFeed  Boolean              @default(false)
   ownerId            String?              @map("ownerId") @db.ObjectId
   owner              User?                @relation(fields: [ownerId], references: [id])
   groups             PartyGroup[]         @relation("PartyToPartyGroup")
@@ -225,6 +226,7 @@ type Location {
   latitude  Float
   longitude Float
   timestamp DateTime
+  address   String
 }
 
 type PartyPicture {

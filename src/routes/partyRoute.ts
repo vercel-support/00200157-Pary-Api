@@ -1,4 +1,4 @@
-import { Storage } from "aws-amplify";
+import { Amplify, Storage } from "aws-amplify";
 import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import { configureAmazonCognito, logger, prisma } from "..";
@@ -112,8 +112,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
 });
 router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        console.log("File:", req.body);
-        const { name, description, location, date, type, tags, participants, image } = req.body;
+        const { name, description, location, date, type, tags, participants, image, showAddressInFeed } = req.body;
         const decoded = req.decoded;
         if (typeof decoded !== "object" || !("id" in decoded)) {
             return respondWithError(res, 500, "Error al decodificar el token.");
@@ -159,6 +158,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
                 ownerId: decoded.id,
                 image,
                 creatorUsername: inviter.username,
+                showAddressInFeed
                 // Aquí puedes agregar más campos como el ID del creador
             },
         });
@@ -186,8 +186,6 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
         }
 
         res.status(200).json({ party });
-
-
 
     } catch (error) {
         console.error('Error al crear la fiesta:', error);
@@ -289,6 +287,91 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
         });
 
 
+});
+router.post('/:partyId/leave', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const partyId = req.params.partyId;
+        const decoded = req.decoded;
+
+        if (typeof decoded !== "object" || !("id" in decoded)) {
+            return respondWithError(res, 500, "Error al decodificar el token.");
+        }
+
+        // Check if the group exists
+        const party = await prisma.party.findUnique({
+            where: { id: partyId }
+        });
+
+        if (!party) {
+            return respondWithError(res, 404, "Group not found.");
+        }
+
+        // If the user is the owner of the group
+        if (party.ownerId === decoded.id) {
+            // Delete all group invitations related to this group
+            await prisma.partyInvitation.deleteMany({
+                where: { partyId }
+            });
+
+            // Delete all group members
+            await prisma.partyMember.deleteMany({
+                where: { partyId }
+            });
+
+            // Delete the group itself
+            await prisma.party.delete({
+                where: { id: partyId }
+            });
+
+            try {
+                await Storage.remove(party.image.amazonId, { level: "public" });
+            } catch (error) {
+                Amplify.Auth.currentAuthenticatedUser();
+                logger.error("Error al eliminar la imagen de S3:", error);
+                return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
+            }
+
+            res.status(200).json({ message: "Party deleted as you are the owner." });
+        } else {
+            // If the user is not the owner but a member of the group
+            const isMember = await prisma.partyMember.findFirst({
+                where: {
+                    partyId,
+                    userId: decoded.id
+                }
+            });
+
+            if (!isMember) {
+                return respondWithError(res, 403, "You are not a member of this group.");
+            }
+
+            // Delete all group invitations from and to the user related to this group
+            await prisma.partyInvitation.deleteMany({
+                where: {
+                    partyId,
+                    OR: [
+                        { invitedUserId: decoded.id },
+                        { invitingUserId: decoded.id }
+                    ]
+                }
+            });
+
+            // Remove the user from the group
+            await prisma.partyMember.delete({
+                where: {
+                    userId_partyId: {
+                        partyId,
+                        userId: decoded.id
+                    }
+                }
+            });
+
+            res.status(200).json({ message: "User left party." });
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: "Failed to leave the party." });
+    }
 });
 
 

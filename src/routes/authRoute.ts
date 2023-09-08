@@ -50,6 +50,7 @@ router.post("/signIn", async (req, res) => {
                     latitude: 0,
                     longitude: 0,
                     timestamp: new Date(),
+                    address: "",
                 }
 
             },

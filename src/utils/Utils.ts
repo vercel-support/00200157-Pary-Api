@@ -291,7 +291,10 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
         const advertisement = Math.random() < 0.5;
 
         partiesToCreate.push({
-            location: loc,
+            location: {
+                ...loc,
+                address: "Calle Falsa 123",
+            },
             name,
             description: desc,
             image: {
