@@ -4,7 +4,7 @@ import { PartyType, User } from "@prisma/client";
 export type NotificationType = "follow" | "like" | "comment" | "message" | "newParty" | "partyUpdate" | "partyDelete" | "groupInvite" | "group" | "groupNewMember";
 
 export async function sendNewFollowerNotification(pushToken: string, followerId: string) {
-    if (!Expo.isExpoPushToken(pushToken)) {
+    if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
         return;
     }
     const follower = await prisma.user.findUnique({ where: { id: followerId }, select: { name: true, username: true } });
@@ -34,7 +34,7 @@ export async function sendNewFollowerNotification(pushToken: string, followerId:
 
 export async function sendGroupInviteNotification(pushToken: string, inviter: Partial<User>, groupName: string, groupId: string) {
     // Comprueba si el token es válido
-    if (!Expo.isExpoPushToken(pushToken)) {
+    if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
         console.error(`Push token ${pushToken} is not a valid Expo push token`);
         return;
     }
@@ -68,7 +68,7 @@ export async function sendGroupInviteNotification(pushToken: string, inviter: Pa
 
 export async function sendPartyInviteNotification(pushToken: string, inviter: Partial<User>, partyName: string, partyId: string, partyType: PartyType) {
     // Comprueba si el token es válido
-    if (!Expo.isExpoPushToken(pushToken)) {
+    if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
         console.error(`Push token ${pushToken} is not a valid Expo push token`);
         return;
     }
@@ -104,7 +104,7 @@ export async function sendPartyInviteNotification(pushToken: string, inviter: Pa
 
 export async function sendNewMemberNotification(pushTokens: string[], newMemberId: string, groupId: string) {
     // Comprueba si el token es válido
-    if (!pushTokens.every(token => Expo.isExpoPushToken(token))) {
+    if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
         console.error(`Push token ${pushTokens} is not a valid Expo push token`);
         return;
     }

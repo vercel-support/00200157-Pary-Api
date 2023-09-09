@@ -367,6 +367,7 @@ router.post("/logout", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 data: {
                     accessToken: "",
                     refreshToken: "",
+                    expoPushToken: "",
                 },
             });
 
