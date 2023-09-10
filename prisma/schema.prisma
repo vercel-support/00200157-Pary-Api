@@ -36,12 +36,13 @@ model User {
   followingUserList     UserFollows[]        @relation("FollowerToFollowed")
   followerUserList      UserFollows[]        @relation("FollowedToFollower")
   parties               PartyMember[]        @relation("PartyMembershipToUser")
+  ownedParties          Party[]
   invitedParties        PartyInvitation[]    @relation("PartyInvitedToInviting")
   invitingParties       PartyInvitation[]    @relation("PartyInvitingToInvited")
   partiesModerating     UserPartyModerator[] @relation("UserToPartyModerator")
-  ownedParties          Party[]
   groups                GroupMember[]        @relation("MembershipToUser")
   ledGroups             Group[]              @relation("LeaderToGroup")
+  groupsModerating      UserGroupModerator[] @relation("UserToGroupModerator")
   invitedGroups         GroupInvitation[]    @relation("InvitedToInviting")
   invitingGroups        GroupInvitation[]    @relation("InvitingToInvited")
   membershipRequests    MembershipRequest[]
@@ -84,7 +85,6 @@ model Party {
   name               String
   description        String
   image              PartyPicture
-  creatorUsername    String
   tags               String[]
   type               PartyType
   date               DateTime
@@ -92,10 +92,11 @@ model Party {
   advertisement      Boolean
   members            PartyMember[]
   moderators         UserPartyModerator[]
+  distance           Int? // optional field to be used in the query
   active             Boolean              @default(true)
   showAddressInFeed  Boolean              @default(false)
-  ownerId            String?              @map("ownerId") @db.ObjectId
-  owner              User?                @relation(fields: [ownerId], references: [id])
+  ownerId            String               @map("ownerId") @db.ObjectId
+  owner              User                 @relation(fields: [ownerId], references: [id])
   groups             PartyGroup[]         @relation("PartyToPartyGroup")
   createdAt          DateTime             @default(now())
   membershipRequests MembershipRequest[]
@@ -156,17 +157,18 @@ model UserPartyModerator {
 }
 
 model Group {
-  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
   name               String
-  description        String              @default("")
-  leader             User                @relation("LeaderToGroup", fields: [leaderId], references: [id])
-  leaderId           String              @map("leaderId") @db.ObjectId
-  private            Boolean             @default(false)
-  showInFeed         Boolean             @default(true)
-  createdAt          DateTime            @default(now())
-  groupMembers       GroupMember[]
+  description        String               @default("")
+  leader             User                 @relation("LeaderToGroup", fields: [leaderId], references: [id])
+  leaderId           String               @map("leaderId") @db.ObjectId
+  private            Boolean              @default(false)
+  showInFeed         Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  members            GroupMember[]
+  moderators         UserGroupModerator[]
   groupInvitations   GroupInvitation[]
-  parties            PartyGroup[]        @relation("GroupToPartyGroup")
+  parties            PartyGroup[]         @relation("GroupToPartyGroup")
   membershipRequests MembershipRequest[]
 }
 
@@ -193,6 +195,15 @@ model GroupInvitation {
   status         InvitationStatus @default(PENDING)
 
   @@unique([groupId, invitedUserId])
+}
+
+model UserGroupModerator {
+  groupId String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @map("userId") @db.ObjectId
+  user    User   @relation("UserToGroupModerator", fields: [userId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
 }
 
 model MembershipRequest {

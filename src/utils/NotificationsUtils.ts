@@ -102,7 +102,7 @@ export async function sendPartyInviteNotification(pushToken: string, inviter: Pa
 
 // create a new notification for the leader and the members of the group when a new member joins
 
-export async function sendNewMemberNotification(pushTokens: string[], newMemberId: string, groupId: string) {
+export async function sendNewGroupMemberNotification(pushTokens: string[], newMemberId: string, groupId: string) {
     // Comprueba si el token es válido
     if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
         console.error(`Push token ${pushTokens} is not a valid Expo push token`);
@@ -127,6 +127,43 @@ export async function sendNewMemberNotification(pushTokens: string[], newMemberI
                 groupId: groupId
             },
             type: "groupNewMember"
+        },
+    };
+
+    // Envía la notificación
+    try {
+        const receipts = await expo.sendPushNotificationsAsync([message]);
+        console.log(receipts);
+    } catch (error) {
+        console.error("Error sending push notification:", error);
+    }
+}
+
+export async function sendNewPartyMemberNotification(pushTokens: string[], newMemberId: string, partyId: string) {
+    // Comprueba si el token es válido
+    if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
+        console.error(`Push token ${pushTokens} is not a valid Expo push token`);
+        return;
+    }
+
+
+    const newMember = await prisma.user.findUnique({ where: { id: newMemberId }, select: { name: true, username: true } });
+    const party = await prisma.party.findUnique({ where: { id: partyId }, select: { name: true } });
+    if (newMember === null || party === null) return;
+
+    // Configura el mensaje de la notificación
+    const message: ExpoPushMessage = {
+        to: pushTokens,
+        sound: "default",
+        title: "Nuevo miembro en el evento",
+        body: `@${newMember.username} se ha unido al grupo ${party.name}.`,
+        priority: "normal",
+        data: {
+            url: `/news/party/${partyId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
+            params: {
+                partyId
+            },
+            type: "partyNewMember"
         },
     };
 

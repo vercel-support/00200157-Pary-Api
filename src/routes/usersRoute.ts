@@ -180,7 +180,11 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -192,7 +196,11 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -205,6 +213,11 @@ router.post("/update", authenticateTokenMiddleware, async (req: AuthenticatedReq
                 partiesModerating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
                     }
                 },
                 groups: {
@@ -311,7 +324,11 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -323,7 +340,11 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -336,6 +357,11 @@ router.get("/basic-user-info/:username", authenticateTokenMiddleware, async (req
                 partiesModerating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
                     }
                 },
                 groups: {
@@ -565,7 +591,11 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -577,7 +607,11 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -585,6 +619,11 @@ router.delete("/delete-profile-picture", authenticateTokenMiddleware, async (req
                 partiesModerating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
                     }
                 },
                 groups: {
@@ -915,7 +954,11 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -927,7 +970,11 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                }
                             }
                         }
                     }
@@ -940,6 +987,11 @@ router.get("/:id", authenticateTokenMiddleware, async (req: AuthenticatedRequest
                 partiesModerating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
                     }
                 },
                 groups: {

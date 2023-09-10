@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import express, { Response } from "express";
 import { configureAmazonCognito, logger, prisma } from "..";
 import { AuthenticatedRequest } from "../../types";
-import { sendPartyInviteNotification } from "../utils/NotificationsUtils";
+import { sendNewPartyMemberNotification, sendPartyInviteNotification } from "../utils/NotificationsUtils";
 import { authenticateTokenMiddleware, haversineDistance, respondWithError } from "../utils/Utils";
 import { getCachedImageUrl } from "./usersRoute";
 
@@ -63,6 +63,34 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
                     }
                 ]
             },
+            include: {
+                owner: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: { take: 1 },
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    }
+                },
+                members: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            }
+                        }
+                    }
+                },
+            },
             take: limit,
             skip: skip,
             orderBy: { date: 'asc' },
@@ -91,13 +119,24 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
         });
 
         const partiesToReturn = await Promise.all(parties.map(async party => {
-
             const distance = haversineDistance(currentUser.location, party.location);
+            party.distance = distance;
             if (party.image.amazonId) {
                 party.image.url = await getCachedImageUrl(party.image.amazonId);
             }
-
-            return { ...party, distance };
+            let pic = party.owner.profilePictures[0];
+            if (!pic || !pic.amazonId) return;
+            pic.url = await getCachedImageUrl(pic.amazonId);
+            party.owner.profilePictures[0] = pic;
+            if (party?.members) {
+                for (let i = 0; i < party.members.length; i++) {
+                    let pic = party.members[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    party.members[i].user.profilePictures[0] = pic;
+                }
+            }
+            return party;
         }));
 
         const hasNextPage = (page * limit) < totalParties;
@@ -110,6 +149,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
         return respondWithError(res, 500, "Error al buscar las fiestas.");
     }
 });
+
 router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { name, description, location, date, type, tags, participants, image, showAddressInFeed } = req.body;
@@ -117,12 +157,27 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
         if (typeof decoded !== "object" || !("id" in decoded)) {
             return respondWithError(res, 500, "Error al decodificar el token.");
         }
+        const { id } = decoded;
         /* 
                 if (!name || !description || !location || !date || !type || !tags || !image) {
                     return res.status(400).json({ error: "Missing fields." });
                 } */
 
-        const inviter = await prisma.user.findUnique({ where: { id: decoded.id }, select: { name: true, username: true, id: true } });
+        const userParties = await prisma.party.count({
+            where: {
+                ownerId: id,
+                active: true,
+                date: {
+                    gte: new Date()
+                }
+            }
+        });
+
+        if (userParties >= 15) {
+            return res.status(400).json({ error: "You can only create up to 15 parties." });
+        }
+
+        const inviter = await prisma.user.findUnique({ where: { id }, select: { name: true, username: true, id: true } });
 
         if (!inviter) {
             console.log("Error fetching user data.");
@@ -132,6 +187,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
         // Resto de la lógica después de una carga exitosa
 
         const usersToInvite: string[] = participants;
+
         const users = await prisma.user.findMany({
             where: {
                 username: {
@@ -155,11 +211,10 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
                 active: true,
                 date: new Date(date),
                 private: req.body.private || false,
-                ownerId: decoded.id,
+                ownerId: id,
                 image,
-                creatorUsername: inviter.username,
-                showAddressInFeed
-                // Aquí puedes agregar más campos como el ID del creador
+                showAddressInFeed,
+
             },
         });
 
@@ -170,12 +225,12 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
 
         for (const user of users) {
 
-            if (user.id === decoded.id) continue;
+            if (user.id === id) continue;
             const response = await prisma.partyInvitation.create({
                 data: {
                     partyId: party.id,
                     invitedUserId: user.id,
-                    invitingUserId: decoded.id
+                    invitingUserId: id
                 }
             });
             if (response) {
@@ -242,6 +297,106 @@ router.post('/upload-party-image', authenticateTokenMiddleware, async (req: Auth
     }
 });
 
+router.get("/invited-parties", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const decoded = req.decoded;
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const { id } = decoded;
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    try {
+
+        const currentUser = await prisma.user.findUnique({
+            where: { id: decoded.id },
+            select: {
+                location: true,
+            }
+        });
+
+        if (!currentUser) {
+            return respondWithError(res, 500, "Error fetching user data.");
+        }
+
+        const invitedParties = await prisma.user.findMany({
+            where: { id: id },
+            select: {
+                invitedParties: {
+                    select: {
+                        party: {
+                            include: {
+                                members: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: { take: 1 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                            }
+                                        }
+                                    }
+                                },
+                                owner: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: { take: 1 },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+        });
+
+        const parties = invitedParties.flatMap(user => user.invitedParties.map(invitedParty => invitedParty.party));
+
+        const totalGroups = parties.length;
+
+        const hasNextPage = (page * limit) < totalGroups;
+        const nextPage = hasNextPage ? page + 1 : null;
+
+
+        for (let i = 0; i < parties.length; i++) {
+            let party = parties[i];
+            const distance = haversineDistance(currentUser.location, party.location);
+            party.distance = distance;
+            if (party.image.amazonId) {
+                party.image.url = await getCachedImageUrl(party.image.amazonId);
+            }
+            let pic = party.owner.profilePictures[0];
+            if (!pic || !pic.amazonId) return;
+            pic.url = await getCachedImageUrl(pic.amazonId);
+            party.owner.profilePictures[0] = pic;
+            if (party?.members) {
+                for (let i = 0; i < party.members.length; i++) {
+                    let pic = party.members[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    party.members[i].user.profilePictures[0] = pic;
+                }
+            }
+        }
+
+        res.status(200).json({ parties, hasNextPage, nextPage });
+
+    } catch (error) {
+        logger.error("Error fetching groups:", error);
+        return respondWithError(res, 500, "Error al buscar los grupos.");
+    }
+});
+
 router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     const decoded = req.decoded;
     if (typeof decoded !== "object" || !("id" in decoded)) {
@@ -253,7 +408,32 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
     prisma.party.findUnique({
         where: { id: partyId },
         include: {
-            owner: true,
+            owner: {
+                select: {
+                    username: true,
+                    name: true,
+                    lastName: true,
+                    profilePictures: { take: 1 },
+                    verified: true,
+                    isCompany: true,
+                    gender: true,
+                }
+            },
+            members: {
+                include: {
+                    user: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: { take: 1 },
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                        }
+                    }
+                }
+            },
         }
     }).then(async party => {
         if (!party) {
@@ -273,13 +453,23 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
 
 
         const distance = haversineDistance(currentUser.location, party.location);
+        party.distance = distance;
+        party.image.url = await getCachedImageUrl(party.image.amazonId);
 
-        // Renovar URLs de las imágenes
-        if (party.image.amazonId) {
-            party.image.url = await getCachedImageUrl(party.image.amazonId);
+        let pic = party.owner.profilePictures[0];
+        if (!pic || !pic.amazonId) return;
+        pic.url = await getCachedImageUrl(pic.amazonId);
+        party.owner.profilePictures[0] = pic;
+        if (party?.members) {
+            for (let i = 0; i < party.members.length; i++) {
+                let pic = party.members[i].user.profilePictures[0];
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                party.members[i].user.profilePictures[0] = pic;
+            }
         }
 
-        return res.status(200).json({ ...party, distance });
+        return res.status(200).json({ party });
     })
         .catch(error => {
             logger.error(error);
@@ -288,6 +478,7 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
 
 
 });
+
 router.post('/:partyId/leave', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
         const partyId = req.params.partyId;
@@ -374,5 +565,92 @@ router.post('/:partyId/leave', authenticateTokenMiddleware, async (req: Authenti
     }
 });
 
+router.post('/:partyId/accept-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const partyId = req.params.partyId;
+        const decoded = req.decoded;
+
+        if (typeof decoded !== "object" || !("id" in decoded)) {
+            return respondWithError(res, 500, "Error al decodificar el token.");
+        }
+
+        const invitation = await prisma.partyInvitation.findFirst({
+            where: {
+                partyId,
+                invitedUserId: decoded.id
+            }
+        });
+
+        if (invitation) {
+            await prisma.partyInvitation.delete({
+                where: { id: invitation.id }
+            });
+        }
+
+        await prisma.partyMember.create({
+            data: {
+                partyId,
+                userId: decoded.id
+            }
+        });
+
+        const members = await prisma.party.findMany({
+            where: {
+                id: partyId
+            },
+            select: {
+                members: {
+                    select: {
+                        user: {
+                            select: {
+                                expoPushToken: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (members) {
+            const expoTokens = members.flatMap(member => member.members.map(partyMember => partyMember.user.expoPushToken));
+            sendNewPartyMemberNotification(expoTokens, decoded.id, partyId);
+        }
+
+        res.status(200).json({ message: "Invitation accepted and user added to party." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to accept party invitation." });
+    }
+});
+
+// Declinar una invitación
+router.post('/:partyId/decline-invitation', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const partyId = req.params.partyId;
+        const decoded = req.decoded;
+
+        if (typeof decoded !== "object" || !("id" in decoded)) {
+            return respondWithError(res, 500, "Error al decodificar el token.");
+        }
+
+        const invitation = await prisma.partyInvitation.findFirst({
+            where: {
+                partyId,
+                invitedUserId: decoded.id
+            }
+        });
+
+        if (invitation) {
+            await prisma.partyInvitation.delete({
+                where: { id: invitation.id }
+            });
+        }
+        //TODO: Enviar notificacion al usuario que invito
+
+        res.status(200).json({ message: "Invitation declined." });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to decline party invitation." });
+    }
+});
 
 export default router;

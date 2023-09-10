@@ -40,6 +40,23 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
         return respondWithError(res, 400, "La consulta debe ser de tipo string.");
     }
 
+    const decoded = req.decoded;
+
+    if (typeof decoded !== "object" || !("id" in decoded)) {
+        return respondWithError(res, 500, "Error al decodificar el token.");
+    }
+
+    const currentUser = await prisma.user.findUnique({
+        where: { id: decoded.id },
+        select: {
+            location: true,
+        }
+    });
+
+    if (!currentUser) {
+        return respondWithError(res, 404, "Usuario no encontrado.");
+    }
+
     const users = await prisma.user.findMany({
         skip: skip,
         take: limit,
@@ -96,22 +113,66 @@ router.get("/search", authenticateTokenMiddleware, async (req: AuthenticatedRequ
         where: {
             OR: [
                 { name: { contains: query, mode: "insensitive" } },
-                { creatorUsername: { contains: query, mode: "insensitive" } },
+                {
+                    owner: {
+                        username: { contains: query, mode: "insensitive" }
+                    }
+                },
                 { tags: { has: query } }
             ]
+        }, include: {
+            owner: {
+                select: {
+                    username: true,
+                    name: true,
+                    lastName: true,
+                    profilePictures: { take: 1 },
+                    verified: true,
+                    isCompany: true,
+                    gender: true,
+                }
+            },
+            members: {
+                include: {
+                    user: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: { take: 1 },
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                        }
+                    }
+                }
+            },
         },
         orderBy: { advertisement: 'desc' }
     });
 
-    for (let i = 0; i < parties.length; i++) {
-        let party = parties[i];
+    const partiesToReturn = await Promise.all(parties.map(async party => {
+        const distance = haversineDistance(currentUser.location, party.location);
+        party.distance = distance;
         if (party.image.amazonId) {
             party.image.url = await getCachedImageUrl(party.image.amazonId);
         }
-    }
+        let pic = party.owner.profilePictures[0];
+        if (!pic || !pic.amazonId) return;
+        pic.url = await getCachedImageUrl(pic.amazonId);
+        party.owner.profilePictures[0] = pic;
+        if (party?.members) {
+            for (let i = 0; i < party.members.length; i++) {
+                let pic = party.members[i].user.profilePictures[0];
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                party.members[i].user.profilePictures[0] = pic;
+            }
+        }
+        return party;
+    }));
 
-
-    res.status(200).json({ users, parties });
+    res.status(200).json({ users, parties: partiesToReturn });
 });
 
 router.get("/create-parties", authenticateTokenMiddleware, async (req: Request, res: Response) => {
@@ -150,6 +211,10 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
             username: true,
             location: true,
             musicInterest: true,
+            deportsInterest: true,
+            artAndCultureInterest: true,
+            techInterest: true,
+            hobbiesInterest: true,
             followingUserList: {
                 select: {
                     followedUserId: true
@@ -189,34 +254,71 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                 name: true,
                 description: true,
                 image: true,
-                creatorUsername: true,
                 tags: true,
                 type: true,
                 createdAt: true,
                 date: true,
                 active: true,
                 ownerId: true,
-                members: {
+                owner: {
                     select: {
-                        userId: true
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: { take: 1 },
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
                     }
-                }
-            }
+                },
+                members: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            }
+                        }
+                    }
+                },
+            },
         });
 
         const partiesToReturn = await Promise.all(parties.map(async (party) => {
             const distance = haversineDistance(currentUser.location, party.location);
-            let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
-
-            if (followedUsers.includes(party.ownerId!)) relevanceScore++;
-            if (party.members.some(member => followedUsers.includes(member.userId))) relevanceScore++;
             if (party.image.amazonId) {
                 party.image.url = await getCachedImageUrl(party.image.amazonId);
             }
-            return { ...party, distance, relevanceScore };
-        }).filter(async (party) => party !== null && (await party).distance <= distanceLimit));
+            let pic = party.owner.profilePictures[0];
+            if (!pic || !pic.amazonId) return;
+            pic.url = await getCachedImageUrl(pic.amazonId);
+            party.owner.profilePictures[0] = pic;
+            if (party?.members) {
+                for (let i = 0; i < party.members.length; i++) {
+                    let pic = party.members[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    party.members[i].user.profilePictures[0] = pic;
+                }
+            }
+            let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
+            relevanceScore += party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
+            relevanceScore += party.tags.filter(tag => currentUser.deportsInterest.includes(tag)).length;
+            relevanceScore += party.tags.filter(tag => currentUser.artAndCultureInterest.includes(tag)).length;
+            relevanceScore += party.tags.filter(tag => currentUser.techInterest.includes(tag)).length;
+            relevanceScore += party.tags.filter(tag => currentUser.hobbiesInterest.includes(tag)).length;
 
-        foundedParties.push(...partiesToReturn.sort((a, b) => b!.relevanceScore - a!.relevanceScore));
+            if (followedUsers.includes(party.ownerId!)) relevanceScore++;
+            if (party.members.some(member => followedUsers.includes(member.userId))) relevanceScore++;
+            return { ...party, distance, relevanceScore };
+        }));
+
+        foundedParties.push(...partiesToReturn.filter((party) => party !== undefined && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore));
         page++;
 
     }

@@ -1,7 +1,7 @@
 import express, { Response } from 'express';
 import { logger, prisma } from '..';
 import { AuthenticatedRequest } from '../../types';
-import { sendGroupInviteNotification, sendNewMemberNotification } from '../utils/NotificationsUtils';
+import { sendGroupInviteNotification, sendNewGroupMemberNotification } from '../utils/NotificationsUtils';
 import { authenticateTokenMiddleware, respondWithError } from '../utils/Utils';
 import { getCachedImageUrl } from './usersRoute';
 
@@ -112,7 +112,7 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
         const groups = await prisma.group.findMany({
             where: {
                 OR: [
-                    { groupMembers: { some: { userId: id } } },
+                    { members: { some: { userId: id } } },
                     { leaderId: id }
                 ]
             },
@@ -120,7 +120,7 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
             skip: skip,
             orderBy: { name: 'asc' },
             include: {
-                groupMembers: {
+                members: {
                     include: {
                         user: {
                             select: {
@@ -146,7 +146,7 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
         const totalGroups = await prisma.group.count({
             where: {
                 OR: [
-                    { groupMembers: { some: { userId: id } } },
+                    { members: { some: { userId: id } } },
                     { leaderId: id }
                 ]
             },
@@ -155,16 +155,16 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
 
         for (let i = 0; i < groups.length; i++) {
             let group = groups[i];
-            if (group?.groupMembers) {
+            if (group?.members) {
                 let pic = group.leader.profilePictures[0];
                 if (!pic || !pic.amazonId) return;
                 pic.url = await getCachedImageUrl(pic.amazonId);
                 group.leader.profilePictures[0] = pic;
-                for (let i = 0; i < group.groupMembers.length; i++) {
-                    let pic = group.groupMembers[i].user.profilePictures[0];
+                for (let i = 0; i < group.members.length; i++) {
+                    let pic = group.members[i].user.profilePictures[0];
                     if (!pic || !pic.amazonId) continue;
                     pic.url = await getCachedImageUrl(pic.amazonId);
-                    group.groupMembers[i].user.profilePictures[0] = pic;
+                    group.members[i].user.profilePictures[0] = pic;
                 }
             }
         }
@@ -199,7 +199,7 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
                     select: {
                         group: {
                             include: {
-                                groupMembers: {
+                                members: {
                                     include: {
                                         user: {
                                             select: {
@@ -237,16 +237,16 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
 
         for (let i = 0; i < groups.length; i++) {
             let group = groups[i];
-            if (group?.groupMembers) {
+            if (group?.members) {
                 let pic = group.leader.profilePictures[0];
                 if (!pic || !pic.amazonId) return;
                 pic.url = await getCachedImageUrl(pic.amazonId);
                 group.leader.profilePictures[0] = pic;
-                for (let i = 0; i < group.groupMembers.length; i++) {
-                    let pic = group.groupMembers[i].user.profilePictures[0];
+                for (let i = 0; i < group.members.length; i++) {
+                    let pic = group.members[i].user.profilePictures[0];
                     if (!pic || !pic.amazonId) continue;
                     pic.url = await getCachedImageUrl(pic.amazonId);
-                    group.groupMembers[i].user.profilePictures[0] = pic;
+                    group.members[i].user.profilePictures[0] = pic;
                 }
             }
         }
@@ -292,7 +292,7 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
                         isCompany: true,
                     }
                 },
-                groupMembers: {
+                members: {
                     include: {
                         user: {
                             select: {
@@ -324,12 +324,12 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
             }
         });
 
-        if (group?.groupMembers) {
-            for (let i = 0; i < group.groupMembers.length; i++) {
-                let pic = group.groupMembers[i].user.profilePictures[0];
+        if (group?.members) {
+            for (let i = 0; i < group.members.length; i++) {
+                let pic = group.members[i].user.profilePictures[0];
                 if (!pic || !pic.amazonId) continue;
                 pic.url = await getCachedImageUrl(pic.amazonId);
-                group.groupMembers[i].user.profilePictures[0] = pic;
+                group.members[i].user.profilePictures[0] = pic;
             }
             let pic = group.leader.profilePictures[0];
             if (!pic || !pic.amazonId) return;
@@ -502,7 +502,7 @@ router.post('/:groupId/accept-invitation', authenticateTokenMiddleware, async (r
                 id: groupId
             },
             select: {
-                groupMembers: {
+                members: {
                     select: {
                         user: {
                             select: {
@@ -515,8 +515,8 @@ router.post('/:groupId/accept-invitation', authenticateTokenMiddleware, async (r
         });
 
         if (members) {
-            const expoTokens = members.flatMap(member => member.groupMembers.map(groupMember => groupMember.user.expoPushToken));
-            sendNewMemberNotification(expoTokens, decoded.id, groupId);
+            const expoTokens = members.flatMap(member => member.members.map(groupMember => groupMember.user.expoPushToken));
+            sendNewGroupMemberNotification(expoTokens, decoded.id, groupId);
         }
 
         res.status(200).json({ message: "Invitation accepted and user added to group." });

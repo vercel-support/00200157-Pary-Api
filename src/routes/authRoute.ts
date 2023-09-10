@@ -75,7 +75,11 @@ router.post("/signIn", async (req, res) => {
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                },
                             }
                         }
                     }
@@ -87,7 +91,11 @@ router.post("/signIn", async (req, res) => {
                             select: {
                                 name: true,
                                 description: true,
-                                creatorUsername: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    }
+                                },
                             }
                         }
                     }
@@ -95,6 +103,11 @@ router.post("/signIn", async (req, res) => {
                 partiesModerating: {
                     select: {
                         partyId: true,
+                    }
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
                     }
                 },
                 groups: {
@@ -163,7 +176,11 @@ router.post("/signIn", async (req, res) => {
                         select: {
                             name: true,
                             description: true,
-                            creatorUsername: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                }
+                            },
                         }
                     }
                 }
@@ -175,7 +192,11 @@ router.post("/signIn", async (req, res) => {
                         select: {
                             name: true,
                             description: true,
-                            creatorUsername: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                }
+                            },
                         }
                     }
                 }
@@ -188,6 +209,11 @@ router.post("/signIn", async (req, res) => {
             partiesModerating: {
                 select: {
                     partyId: true,
+                }
+            },
+            groupsModerating: {
+                select: {
+                    groupId: true,
                 }
             },
             groups: {
@@ -269,7 +295,11 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                                 select: {
                                     name: true,
                                     description: true,
-                                    creatorUsername: true,
+                                    owner: {
+                                        select: {
+                                            username: true,
+                                        }
+                                    },
                                 }
                             }
                         }
@@ -281,7 +311,11 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                                 select: {
                                     name: true,
                                     description: true,
-                                    creatorUsername: true,
+                                    owner: {
+                                        select: {
+                                            username: true,
+                                        }
+                                    },
                                 }
                             }
                         }
@@ -294,6 +328,11 @@ router.post("/refresh-token", authenticateRefreshTokenMiddleware, async (req: Au
                     partiesModerating: {
                         select: {
                             partyId: true,
+                        }
+                    },
+                    groupsModerating: {
+                        select: {
+                            groupId: true,
                         }
                     },
                     groups: {
