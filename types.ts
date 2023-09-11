@@ -60,7 +60,7 @@ export interface Party {
     location: Location;
     name: string;
     description: string;
-    image: string; // url
+    image: ProfilePicture; // url
     creatorUsername: string;
     tags: string[];
     type: PartyType;

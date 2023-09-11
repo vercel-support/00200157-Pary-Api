@@ -16,7 +16,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
         return respondWithError(res, 500, "Error al decodificar el token.");
     }
 
-    const { name, description, inviteUserNames } = req.body;
+    const { name, description, inviteUserNames, ageRange, showInFeed, private: isPrivate } = req.body;
 
     if (!name) {
         return res.status(400).json({ error: "Missing required field." });
@@ -48,6 +48,9 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
                 name,
                 description,
                 leaderId: id,
+                ageRange,
+                private: isPrivate,
+                showInFeed,
             },
         });
 
@@ -139,6 +142,20 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
                         lastName: true,
                         profilePictures: { take: 1 },
                     }
+                }, moderators: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -165,6 +182,12 @@ router.get("/own-groups", authenticateTokenMiddleware, async (req: Authenticated
                     if (!pic || !pic.amazonId) continue;
                     pic.url = await getCachedImageUrl(pic.amazonId);
                     group.members[i].user.profilePictures[0] = pic;
+                }
+                for (let i = 0; i < group.moderators.length; i++) {
+                    let pic = group.moderators[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    group.moderators[i].user.profilePictures[0] = pic;
                 }
             }
         }
@@ -218,6 +241,20 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
                                         lastName: true,
                                         profilePictures: { take: 1 },
                                     }
+                                }, moderators: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: { take: 1 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -247,6 +284,12 @@ router.get("/invited-groups", authenticateTokenMiddleware, async (req: Authentic
                     if (!pic || !pic.amazonId) continue;
                     pic.url = await getCachedImageUrl(pic.amazonId);
                     group.members[i].user.profilePictures[0] = pic;
+                }
+                for (let i = 0; i < group.moderators.length; i++) {
+                    let pic = group.moderators[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    group.moderators[i].user.profilePictures[0] = pic;
                 }
             }
         }
@@ -320,6 +363,34 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
                             }
                         }
                     }
+                }, moderators: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                                description: true,
+                                birthDate: true,
+                                gender: true,
+                                musicInterest: true,
+                                deportsInterest: true,
+                                artAndCultureInterest: true,
+                                techInterest: true,
+                                hobbiesInterest: true,
+                                verified: true,
+                                location: {
+                                    select: {
+                                        name: true,
+                                    }
+                                },
+                                createdAt: true,
+                                lastLogin: true,
+                                isCompany: true,
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -330,6 +401,13 @@ router.get('/:groupId', authenticateTokenMiddleware, async (req: AuthenticatedRe
                 if (!pic || !pic.amazonId) continue;
                 pic.url = await getCachedImageUrl(pic.amazonId);
                 group.members[i].user.profilePictures[0] = pic;
+            }
+
+            for (let i = 0; i < group.moderators.length; i++) {
+                let pic = group.moderators[i].user.profilePictures[0];
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                group.moderators[i].user.profilePictures[0] = pic;
             }
             let pic = group.leader.profilePictures[0];
             if (!pic || !pic.amazonId) return;

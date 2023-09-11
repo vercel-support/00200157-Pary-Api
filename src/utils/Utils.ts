@@ -245,7 +245,10 @@ export const generatePartiesForUsers = async (users: any[]): Promise<Party[]> =>
             id: randomUUID(),
             name: name,
             description: desc,
-            image: image,
+            image: {
+                url: image,
+                amazonId: "",
+            },
             creatorUsername: creatorUsername,
             tags: selectedTags,
             type: type,
@@ -310,6 +313,10 @@ export const createPartiesForUsers = async (users: any[]): Promise<Party[]> => {
             private: privateParty,
             advertisement,
             active: true,
+            ageRange: {
+                min: 18,
+                max: 99,
+            }
         });
     }
 

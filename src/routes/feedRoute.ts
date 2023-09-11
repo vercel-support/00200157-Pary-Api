@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { logger, prisma } from "..";
-import { AuthenticatedRequest } from "../../types";
+import { AuthenticatedRequest, ProfilePicture } from "../../types";
 import { authenticateTokenMiddleware, createPartiesForUsers, generatePartiesForUsers, haversineDistance, respondWithError } from "../utils/Utils";
 import { getCachedImageUrl } from "./usersRoute";
 
@@ -204,6 +204,9 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
     let page = Number(req.query.page) || 1;
     const distanceLimit = Number(req.query.distanceLimit) || MAX_DISTANCE;
     const limit = Number(req.query.limit) || 15;
+    const maxAge = Number(req.query.maxAge) || 100;
+    const minAge = Number(req.query.minAge) || 0;
+    const showGroups = req.query.showGroups === "true";
 
     const currentUser = await prisma.user.findUnique({
         where: { id: decoded.id },
@@ -260,6 +263,7 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
                 date: true,
                 active: true,
                 ownerId: true,
+                ageRange: true,
                 owner: {
                     select: {
                         username: true,
@@ -289,36 +293,58 @@ router.get("/personalized-parties", authenticateTokenMiddleware, async (req: Aut
             },
         });
 
+        interface ImageUrlCache {
+            [key: string]: string;
+        }
+
+        interface ProfilePicture {
+            amazonId: string;
+            url?: string;
+        }
+
+        const getProfileImageUrl = async (pic: ProfilePicture) => {
+            if (!pic || !pic.amazonId) return;
+            const imageUrlCache: { [key: string]: string; } = {};
+            if (!imageUrlCache[pic.amazonId]) {
+                imageUrlCache[pic.amazonId] = await getCachedImageUrl(pic.amazonId);
+            }
+            pic.url = imageUrlCache[pic.amazonId];
+        };
+
         const partiesToReturn = await Promise.all(parties.map(async (party) => {
             const distance = haversineDistance(currentUser.location, party.location);
             if (party.image.amazonId) {
-                party.image.url = await getCachedImageUrl(party.image.amazonId);
+                party.image.url = await getCachedImageUrl(party.image.amazonId); // This could also benefit from caching, but it's not shown here.
             }
-            let pic = party.owner.profilePictures[0];
-            if (!pic || !pic.amazonId) return;
-            pic.url = await getCachedImageUrl(pic.amazonId);
-            party.owner.profilePictures[0] = pic;
-            if (party?.members) {
-                for (let i = 0; i < party.members.length; i++) {
-                    let pic = party.members[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await getCachedImageUrl(pic.amazonId);
-                    party.members[i].user.profilePictures[0] = pic;
+            await getProfileImageUrl(party.owner.profilePictures[0]);
+            if (party.members) {
+                for (let member of party.members) {
+                    await getProfileImageUrl(member.user.profilePictures[0]);
                 }
             }
-            let relevanceScore = party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
-            relevanceScore += party.tags.filter(tag => currentUser.musicInterest.includes(tag)).length;
-            relevanceScore += party.tags.filter(tag => currentUser.deportsInterest.includes(tag)).length;
-            relevanceScore += party.tags.filter(tag => currentUser.artAndCultureInterest.includes(tag)).length;
-            relevanceScore += party.tags.filter(tag => currentUser.techInterest.includes(tag)).length;
-            relevanceScore += party.tags.filter(tag => currentUser.hobbiesInterest.includes(tag)).length;
+
+            let relevanceScore = 0;
+            for (let tag of party.tags) {
+                if (currentUser.musicInterest.includes(tag)) relevanceScore++;
+                if (currentUser.deportsInterest.includes(tag)) relevanceScore++;
+                if (currentUser.artAndCultureInterest.includes(tag)) relevanceScore++;
+                if (currentUser.techInterest.includes(tag)) relevanceScore++;
+                if (currentUser.hobbiesInterest.includes(tag)) relevanceScore++;
+            }
 
             if (followedUsers.includes(party.ownerId!)) relevanceScore++;
             if (party.members.some(member => followedUsers.includes(member.userId))) relevanceScore++;
+
             return { ...party, distance, relevanceScore };
         }));
 
-        foundedParties.push(...partiesToReturn.filter((party) => party !== undefined && party.distance <= distanceLimit).sort((a, b) => b!.relevanceScore - a!.relevanceScore));
+        foundedParties.push(...partiesToReturn.filter(party => {
+            return party
+                && party.distance <= distanceLimit
+                && party.ageRange.min <= maxAge
+                && party.ageRange.max >= minAge;
+        }).sort((a, b) => b!.relevanceScore - a!.relevanceScore));
+
         page++;
 
     }

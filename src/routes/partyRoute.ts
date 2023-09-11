@@ -90,6 +90,21 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
                         }
                     }
                 },
+                moderators: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: { take: 1 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            }
+                        }
+                    }
+                }
             },
             take: limit,
             skip: skip,
@@ -136,6 +151,14 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
                     party.members[i].user.profilePictures[0] = pic;
                 }
             }
+            if (party?.moderators) {
+                for (let i = 0; i < party.moderators.length; i++) {
+                    let pic = party.moderators[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    party.moderators[i].user.profilePictures[0] = pic;
+                }
+            }
             return party;
         }));
 
@@ -152,7 +175,7 @@ router.get("/own-parties", authenticateTokenMiddleware, async (req: Authenticate
 
 router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { name, description, location, date, type, tags, participants, image, showAddressInFeed } = req.body;
+        const { name, description, location, date, type, tags, participants, image, showAddressInFeed, ageRange } = req.body;
         const decoded = req.decoded;
         if (typeof decoded !== "object" || !("id" in decoded)) {
             return respondWithError(res, 500, "Error al decodificar el token.");
@@ -214,7 +237,7 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
                 ownerId: id,
                 image,
                 showAddressInFeed,
-
+                ageRange
             },
         });
 
@@ -222,6 +245,13 @@ router.post('/create', authenticateTokenMiddleware, async (req: AuthenticatedReq
             console.log("Error creating party.");
             return respondWithError(res, 500, "Error creating party.");
         }
+        await prisma.partyMember.create({
+            data: {
+                partyId: party.id,
+                userId: id,
+            },
+        });
+
 
         for (const user of users) {
 
@@ -351,6 +381,21 @@ router.get("/invited-parties", authenticateTokenMiddleware, async (req: Authenti
                                         isCompany: true,
                                         gender: true,
                                     }
+                                },
+                                moderators: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: { take: 1 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -385,6 +430,15 @@ router.get("/invited-parties", authenticateTokenMiddleware, async (req: Authenti
                     if (!pic || !pic.amazonId) continue;
                     pic.url = await getCachedImageUrl(pic.amazonId);
                     party.members[i].user.profilePictures[0] = pic;
+                }
+            }
+
+            if (party?.moderators) {
+                for (let i = 0; i < party.moderators.length; i++) {
+                    let pic = party.moderators[i].user.profilePictures[0];
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await getCachedImageUrl(pic.amazonId);
+                    party.moderators[i].user.profilePictures[0] = pic;
                 }
             }
         }
@@ -434,6 +488,21 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
                     }
                 }
             },
+            moderators: {
+                include: {
+                    user: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: { take: 1 },
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                        }
+                    }
+                }
+            }
         }
     }).then(async party => {
         if (!party) {
@@ -469,6 +538,14 @@ router.get("/:partyId", authenticateTokenMiddleware, async (req: AuthenticatedRe
             }
         }
 
+        if (party?.moderators) {
+            for (let i = 0; i < party.moderators.length; i++) {
+                let pic = party.moderators[i].user.profilePictures[0];
+                if (!pic || !pic.amazonId) continue;
+                pic.url = await getCachedImageUrl(pic.amazonId);
+                party.moderators[i].user.profilePictures[0] = pic;
+            }
+        }
         return res.status(200).json({ party });
     })
         .catch(error => {
@@ -561,6 +638,7 @@ router.post('/:partyId/leave', authenticateTokenMiddleware, async (req: Authenti
         }
 
     } catch (error) {
+        logger.error(error);
         res.status(500).json({ error: "Failed to leave the party." });
     }
 });

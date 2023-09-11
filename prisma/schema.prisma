@@ -92,6 +92,7 @@ model Party {
   advertisement      Boolean
   members            PartyMember[]
   moderators         UserPartyModerator[]
+  ageRange           AgeRange
   distance           Int? // optional field to be used in the query
   active             Boolean              @default(true)
   showAddressInFeed  Boolean              @default(false)
@@ -109,6 +110,11 @@ enum PartyType {
   evento
   previa
   otro
+}
+
+type AgeRange {
+  min Int
+  max Int
 }
 
 model PartyGroup {
@@ -165,6 +171,7 @@ model Group {
   private            Boolean              @default(false)
   showInFeed         Boolean              @default(true)
   createdAt          DateTime             @default(now())
+  ageRange           AgeRange
   members            GroupMember[]
   moderators         UserGroupModerator[]
   groupInvitations   GroupInvitation[]
