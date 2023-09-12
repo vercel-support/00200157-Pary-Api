@@ -1,0 +1,18 @@
+{
+  "resourceName": "parystorage",
+  "policyUUID": "2e4afdae",
+  "bucketName": "parystorage-001",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
