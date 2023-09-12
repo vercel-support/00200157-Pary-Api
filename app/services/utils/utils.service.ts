@@ -6,8 +6,8 @@ import {Location} from "types";
 @Injectable()
 export class UtilsService {
     private imageCache = new Map<string, {url: string; expiry: number}>();
-    private CACHE_DURATION = 601800;
-    private AMAZON_CACHE_DURATION = 604800;
+    private readonly CACHE_DURATION = 601800;
+    private readonly AMAZON_CACHE_DURATION = 604800;
 
     async getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
         try {
