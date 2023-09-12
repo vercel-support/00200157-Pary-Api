@@ -266,7 +266,7 @@ export class AuthService {
             if (!pic || !pic.amazonId) continue;
             pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
         }
-        return {user};
+        return user;
     }
 
     async logoutUser(userId: string) {
