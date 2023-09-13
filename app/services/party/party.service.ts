@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
 import {configureAmazonCognito} from "app/src/main";
-import {Amplify, Storage} from "aws-amplify";
+import {Storage} from "aws-amplify";
 import {randomUUID} from "crypto";
 import {PrismaService} from "../db/prisma.service";
 import {NotificationsService} from "../notifications/notifications.service";
@@ -546,12 +546,9 @@ export class PartyService {
                 where: {id: partyId},
             });
 
-            try {
-                await Storage.remove(party.image.amazonId, {level: "public"});
-            } catch (error) {
-                Amplify.Auth.currentAuthenticatedUser();
+            await Storage.remove(party.image.amazonId, {level: "public"}).catch(() => {
                 throw new InternalServerErrorException("Error deleting image from S3.");
-            }
+            });
             return;
         } else {
             // If the user is not the owner but a member of the group
