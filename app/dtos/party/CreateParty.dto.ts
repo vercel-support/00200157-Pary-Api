@@ -1,4 +1,4 @@
-import {AgeRange, PartyPicture, PartyType} from "@prisma/client";
+import {AgeRange, Location, PartyPicture, PartyType} from "@prisma/client";
 import {IsArray, IsBoolean, IsNotEmpty} from "class-validator";
 
 export class CreatePartyDto {
@@ -7,7 +7,7 @@ export class CreatePartyDto {
     @IsNotEmpty()
     description: string;
     @IsNotEmpty()
-    location: string;
+    location: Location;
     @IsNotEmpty()
     date: Date;
     @IsNotEmpty()
