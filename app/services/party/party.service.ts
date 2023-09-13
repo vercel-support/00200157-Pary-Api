@@ -1,11 +1,17 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
-import {PrismaService} from "../db/prisma.service";
-import {UtilsService} from "../utils/utils.service";
-import {NotificationsService} from "../notifications/notifications.service";
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
 import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
+import {configureAmazonCognito} from "app/src/main";
 import {Amplify, Storage} from "aws-amplify";
 import {randomUUID} from "crypto";
-import {configureAmazonCognito} from "app/src/main";
+import {PrismaService} from "../db/prisma.service";
+import {NotificationsService} from "../notifications/notifications.service";
+import {UtilsService} from "../utils/utils.service";
 
 @Injectable()
 export class PartyService {
@@ -151,7 +157,11 @@ export class PartyService {
         const hasNextPage = page * limit < totalParties;
         const nextPage = hasNextPage ? page + 1 : null;
 
-        res.status(200).json({parties: partiesToReturn, hasNextPage, nextPage});
+        return {
+            parties: partiesToReturn,
+            hasNextPage,
+            nextPage,
+        };
     }
 
     async createParty(partyBody: CreatePartyDto, userId: string) {
@@ -179,7 +189,7 @@ export class PartyService {
         });
 
         if (userParties >= 15) {
-            return res.status(400).json({error: "You can only create up to 15 parties."});
+            throw new BadRequestException("You can only create up to 15 parties.");
         }
 
         const inviter = await this.prisma.user.findUnique({
@@ -227,8 +237,7 @@ export class PartyService {
         });
 
         if (!party) {
-            console.log("Error creating party.");
-            return respondWithError(res, 500, "Error creating party.");
+            throw new InternalServerErrorException("Error creating party.");
         }
         await this.prisma.partyMember.create({
             data: {
@@ -259,15 +268,14 @@ export class PartyService {
             // Aquí podrías enviar una notificación push a cada usuario invitado
         }
 
-        res.status(200).json({party});
+        return party;
     }
 
     async uploadPartyImage(body: any) {
         const imageBase64 = body.image;
 
         if (!imageBase64) {
-            console.log("Error uploading image.1");
-            return respondWithError(res, 400, "No image provided.");
+            throw new BadRequestException("No image provided.");
         }
 
         const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
@@ -285,18 +293,21 @@ export class PartyService {
 
                 if (imageUrl === "") {
                     console.log("Error uploading image.2");
-                    return res.status(500).json({error: "Error uploading image."});
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
 
-                res.status(200).json({url: imageUrl, amazonId: result.key});
+                const image = {
+                    amazonId: result.key,
+                    url: imageUrl,
+                };
+
+                return image;
             } catch (error) {
-                logger.error("Error al subir la imagen a S3:", error);
                 if (retry) {
-                    logger.info("Reconfigurando Amplify y reintentando...");
                     configureAmazonCognito();
                     uploadImageToS3(false);
                 } else {
-                    return respondWithError(res, 500, "Error uploading image.");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
             }
         };
@@ -406,8 +417,11 @@ export class PartyService {
                 }
             }
         }
-
-        res.status(200).json({parties, hasNextPage, nextPage});
+        return {
+            parties,
+            hasNextPage,
+            nextPage,
+        };
     }
 
     async getParty(partyId: string, userId: string) {
@@ -460,7 +474,7 @@ export class PartyService {
             })
             .then(async party => {
                 if (!party) {
-                    return res.status(404).json({error: "Party not found."});
+                    throw new NotFoundException("Party not found");
                 }
 
                 const currentUser = await this.prisma.user.findUnique({
@@ -499,7 +513,7 @@ export class PartyService {
                         party.moderators[i].user.profilePictures[0] = pic;
                     }
                 }
-                return res.status(200).json({party});
+                return party;
             })
             .catch(() => {
                 throw new NotFoundException("User not found");
@@ -512,7 +526,7 @@ export class PartyService {
         });
 
         if (!party) {
-            return respondWithError(res, 404, "Group not found.");
+            throw new NotFoundException("Party not found");
         }
 
         // If the user is the owner of the group
@@ -536,11 +550,9 @@ export class PartyService {
                 await Storage.remove(party.image.amazonId, {level: "public"});
             } catch (error) {
                 Amplify.Auth.currentAuthenticatedUser();
-                logger.error("Error al eliminar la imagen de S3:", error);
-                return respondWithError(res, 500, "Error al eliminar la imagen de S3.");
+                throw new InternalServerErrorException("Error deleting image from S3.");
             }
-
-            res.status(200).json({message: "Party deleted as you are the owner."});
+            return;
         } else {
             // If the user is not the owner but a member of the group
             const isMember = await this.prisma.partyMember.findFirst({
@@ -551,7 +563,7 @@ export class PartyService {
             });
 
             if (!isMember) {
-                return respondWithError(res, 403, "You are not a member of this group.");
+                throw new ForbiddenException("You are not a member of this group.");
             }
 
             // Delete all group invitations from and to the user related to this group
@@ -571,8 +583,7 @@ export class PartyService {
                     },
                 },
             });
-
-            res.status(200).json({message: "User left party."});
+            return;
         }
     }
 
@@ -620,8 +631,7 @@ export class PartyService {
             );
             this.notifications.sendNewPartyMemberNotification(expoTokens, userId, partyId);
         }
-
-        res.status(200).json({message: "Invitation accepted and user added to party."});
+        return;
     }
 
     async declineInvitation(partyId: string, userId: string) {
@@ -638,7 +648,6 @@ export class PartyService {
             });
         }
         //TODO: Enviar notificacion al usuario que invito
-
-        res.status(200).json({message: "Invitation declined."});
+        return;
     }
 }
