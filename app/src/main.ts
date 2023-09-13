@@ -24,6 +24,6 @@ if (EXPO_ACCESS_TOKEN === undefined) {
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({logger: true}));
-    await app.listen(80 /* , "192.168.100.7" */);
+    await app.listen(80, "192.168.100.7");
 }
 bootstrap();
