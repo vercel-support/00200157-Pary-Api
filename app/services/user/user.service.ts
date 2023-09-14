@@ -171,18 +171,6 @@ export class UserService {
                 } else {
                     throw new InternalServerErrorException("Error al actualizar el usuario.");
                 }
-            })
-            .then(async user => {
-                if (!user) {
-                    throw new NotFoundException("User not found.");
-                }
-
-                for (const pic of user.profilePictures) {
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                }
-
-                return user;
             });
     }
 
@@ -306,19 +294,6 @@ export class UserService {
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error fetching user data.");
-            })
-            .then(async user => {
-                if (!user) {
-                    throw new NotFoundException("User not found.");
-                }
-
-                // Renovar URLs de las imágenes
-                for (const pic of user.profilePictures) {
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                }
-
-                return user;
             });
     }
 
@@ -339,7 +314,7 @@ export class UserService {
                 });
 
                 // Resto de la lógica después de una carga exitosa
-                const imageUrl = await this.utils.getCachedImageUrl(result.key);
+                const imageUrl = `https://parystorage-001125056-staging.s3.sa-east-1.amazonaws.com/public/${result.key}`;
 
                 if (imageUrl === "") {
                     throw new InternalServerErrorException("Error uploading image, imageUrl === empty.");
@@ -637,7 +612,7 @@ export class UserService {
     }
 
     async getFollowerUserInfo(username: string) {
-        const user = await this.prisma.user.findUnique({
+        return await this.prisma.user.findUnique({
             where: {
                 signedIn: true,
                 username,
@@ -666,19 +641,11 @@ export class UserService {
                 isCompany: true,
             },
         });
-
-        if (user) {
-            const pic = user.profilePictures[0];
-            if (!pic || !pic.amazonId) return user;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            user.profilePictures[0] = pic;
-        }
-        return user;
     }
 
     async searchUsers(page: number, limit: number, search: string) {
         const skip = page * limit;
-        const users = await this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             skip: skip,
             take: limit,
             where: {
@@ -715,15 +682,6 @@ export class UserService {
                 isCompany: true,
             },
         });
-
-        for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            const pic = user.profilePictures[0];
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            user.profilePictures[0] = pic;
-        }
-        return users;
     }
 
     async getUserById(id: string) {
@@ -823,19 +781,6 @@ export class UserService {
                         },
                     },
                 },
-            })
-            .then(async user => {
-                if (!user) {
-                    throw new NotFoundException("User not found.");
-                }
-
-                // Renovar URLs de las imágenes
-                for (const pic of user.profilePictures) {
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                }
-
-                return user;
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error fetching user data.");
@@ -943,19 +888,6 @@ export class UserService {
                         },
                     },
                 },
-            })
-            .then(async user => {
-                if (!user) {
-                    throw new NotFoundException("User not found.");
-                }
-
-                // Renovar URLs de las imágenes
-                for (const pic of user.profilePictures) {
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                }
-
-                return user;
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error fetching user data.");

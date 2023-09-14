@@ -234,29 +234,6 @@ export class PartyService {
             parties.map(async party => {
                 const distance = this.utils.haversineDistance(currentUser.location, party.location);
                 party.distance = distance;
-                if (party.image.amazonId) {
-                    party.image.url = await this.utils.getCachedImageUrl(party.image.amazonId);
-                }
-                const pic = party.owner.profilePictures[0];
-                if (!pic || !pic.amazonId) return;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                party.owner.profilePictures[0] = pic;
-                if (party?.members) {
-                    for (let i = 0; i < party.members.length; i++) {
-                        const pic = party.members[i].user.profilePictures[0];
-                        if (!pic || !pic.amazonId) continue;
-                        pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                        party.members[i].user.profilePictures[0] = pic;
-                    }
-                }
-                if (party?.moderators) {
-                    for (let i = 0; i < party.moderators.length; i++) {
-                        const pic = party.moderators[i].user.profilePictures[0];
-                        if (!pic || !pic.amazonId) continue;
-                        pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                        party.moderators[i].user.profilePictures[0] = pic;
-                    }
-                }
                 return party;
             }),
         );
@@ -289,7 +266,7 @@ export class PartyService {
                 });
 
                 // Resto de la lógica después de una carga exitosa
-                const imageUrl = await this.utils.getCachedImageUrl(result.key);
+                const imageUrl = `https://parystorage-001125056-staging.s3.sa-east-1.amazonaws.com/public/${result.key}`;
 
                 if (imageUrl === "") {
                     console.log("Error uploading image.2");
@@ -392,30 +369,6 @@ export class PartyService {
             const party = parties[i];
             const distance = this.utils.haversineDistance(currentUser.location, party.location);
             party.distance = distance;
-            if (party.image.amazonId) {
-                party.image.url = await this.utils.getCachedImageUrl(party.image.amazonId);
-            }
-            const pic = party.owner.profilePictures[0];
-            if (!pic || !pic.amazonId) return;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            party.owner.profilePictures[0] = pic;
-            if (party?.members) {
-                for (let i = 0; i < party.members.length; i++) {
-                    const pic = party.members[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    party.members[i].user.profilePictures[0] = pic;
-                }
-            }
-
-            if (party?.moderators) {
-                for (let i = 0; i < party.moderators.length; i++) {
-                    const pic = party.moderators[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    party.moderators[i].user.profilePictures[0] = pic;
-                }
-            }
         }
         return {
             parties,
@@ -490,29 +443,7 @@ export class PartyService {
 
                 const distance = this.utils.haversineDistance(currentUser.location, party.location);
                 party.distance = distance;
-                party.image.url = await this.utils.getCachedImageUrl(party.image.amazonId);
 
-                const pic = party.owner.profilePictures[0];
-                if (!pic || !pic.amazonId) return;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                party.owner.profilePictures[0] = pic;
-                if (party?.members) {
-                    for (let i = 0; i < party.members.length; i++) {
-                        const pic = party.members[i].user.profilePictures[0];
-                        if (!pic || !pic.amazonId) continue;
-                        pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                        party.members[i].user.profilePictures[0] = pic;
-                    }
-                }
-
-                if (party?.moderators) {
-                    for (let i = 0; i < party.moderators.length; i++) {
-                        const pic = party.moderators[i].user.profilePictures[0];
-                        if (!pic || !pic.amazonId) continue;
-                        pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                        party.moderators[i].user.profilePictures[0] = pic;
-                    }
-                }
                 return party;
             })
             .catch(() => {

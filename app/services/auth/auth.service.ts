@@ -261,10 +261,6 @@ export class AuthService {
             },
         });
 
-        for (const pic of user.profilePictures) {
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-        }
         return user;
     }
 
@@ -382,11 +378,6 @@ export class AuthService {
                 },
             },
         });
-        // Renovar URLs de las imágenes
-        for (const pic of user.profilePictures) {
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-        }
 
         return user;
     }

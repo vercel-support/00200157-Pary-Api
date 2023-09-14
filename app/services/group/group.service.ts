@@ -137,28 +137,6 @@ export class GroupService {
             },
         });
 
-        for (let i = 0; i < groups.length; i++) {
-            const group = groups[i];
-            if (group?.members) {
-                const pic = group.leader.profilePictures[0];
-                if (!pic || !pic.amazonId) return;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                group.leader.profilePictures[0] = pic;
-                for (let i = 0; i < group.members.length; i++) {
-                    const pic = group.members[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    group.members[i].user.profilePictures[0] = pic;
-                }
-                for (let i = 0; i < group.moderators.length; i++) {
-                    const pic = group.moderators[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    group.moderators[i].user.profilePictures[0] = pic;
-                }
-            }
-        }
-
         const hasNextPage = page * limit < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
 
@@ -221,28 +199,6 @@ export class GroupService {
 
         const hasNextPage = page * limit < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
-
-        for (let i = 0; i < groups.length; i++) {
-            const group = groups[i];
-            if (group?.members) {
-                const pic = group.leader.profilePictures[0];
-                if (!pic || !pic.amazonId) return;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                group.leader.profilePictures[0] = pic;
-                for (let i = 0; i < group.members.length; i++) {
-                    const pic = group.members[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    group.members[i].user.profilePictures[0] = pic;
-                }
-                for (let i = 0; i < group.moderators.length; i++) {
-                    const pic = group.moderators[i].user.profilePictures[0];
-                    if (!pic || !pic.amazonId) continue;
-                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                    group.moderators[i].user.profilePictures[0] = pic;
-                }
-            }
-        }
 
         return {groups, hasNextPage, nextPage};
     }
@@ -336,26 +292,6 @@ export class GroupService {
                 },
             },
         });
-
-        if (group?.members) {
-            for (let i = 0; i < group.members.length; i++) {
-                const pic = group.members[i].user.profilePictures[0];
-                if (!pic || !pic.amazonId) continue;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                group.members[i].user.profilePictures[0] = pic;
-            }
-
-            for (let i = 0; i < group.moderators.length; i++) {
-                const pic = group.moderators[i].user.profilePictures[0];
-                if (!pic || !pic.amazonId) continue;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                group.moderators[i].user.profilePictures[0] = pic;
-            }
-            const pic = group.leader.profilePictures[0];
-            if (!pic || !pic.amazonId) return;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            group.leader.profilePictures[0] = pic;
-        }
 
         return group;
     }

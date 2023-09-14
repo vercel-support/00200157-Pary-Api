@@ -1,6 +1,4 @@
 import {Injectable} from "@nestjs/common";
-import {Storage} from "aws-amplify";
-import {configureAmazonCognito} from "app/src/main";
 import {Location} from "types";
 
 @Injectable()
@@ -9,7 +7,7 @@ export class UtilsService {
     private readonly CACHE_DURATION = 601800;
     private readonly AMAZON_CACHE_DURATION = 604800;
 
-    async getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
+    /* async getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
         try {
             const imageUrl = await Storage.get(amazonId, {
                 level: "public",
@@ -46,7 +44,7 @@ export class UtilsService {
         });
 
         return newUrl;
-    }
+    } */
 
     haversineDistance(location1: Location, location2: Location): number {
         const R = 6371; // Radio de la Tierra en kilómetros

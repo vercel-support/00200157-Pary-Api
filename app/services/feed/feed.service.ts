@@ -64,14 +64,6 @@ export class FeedService {
             },
         });
 
-        for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            const pic = user.profilePictures[0];
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            user.profilePictures[0] = pic;
-        }
-
         const parties = await this.prisma.party.findMany({
             skip: skip,
             take: limit,
@@ -121,21 +113,6 @@ export class FeedService {
             parties.map(async party => {
                 const distance = this.utils.haversineDistance(currentUser.location, party.location);
                 party.distance = distance;
-                if (party.image.amazonId) {
-                    party.image.url = await this.utils.getCachedImageUrl(party.image.amazonId);
-                }
-                const pic = party.owner.profilePictures[0];
-                if (!pic || !pic.amazonId) return;
-                pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                party.owner.profilePictures[0] = pic;
-                if (party?.members) {
-                    for (let i = 0; i < party.members.length; i++) {
-                        const pic = party.members[i].user.profilePictures[0];
-                        if (!pic || !pic.amazonId) continue;
-                        pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-                        party.members[i].user.profilePictures[0] = pic;
-                    }
-                }
                 return party;
             }),
         );
@@ -234,32 +211,9 @@ export class FeedService {
                 },
             });
 
-            interface ProfilePicture {
-                amazonId: string;
-                url?: string;
-            }
-
-            const getProfileImageUrl = async (pic: ProfilePicture) => {
-                if (!pic || !pic.amazonId) return;
-                const imageUrlCache: {[key: string]: string} = {};
-                if (!imageUrlCache[pic.amazonId]) {
-                    imageUrlCache[pic.amazonId] = await this.utils.getCachedImageUrl(pic.amazonId);
-                }
-                pic.url = imageUrlCache[pic.amazonId];
-            };
-
             const partiesToReturn = await Promise.all(
                 parties.map(async party => {
                     const distance = this.utils.haversineDistance(currentUser.location, party.location);
-                    if (party.image.amazonId) {
-                        party.image.url = await this.utils.getCachedImageUrl(party.image.amazonId); // This could also benefit from caching, but it's not shown here.
-                    }
-                    await getProfileImageUrl(party.owner.profilePictures[0]);
-                    if (party.members) {
-                        for (const member of party.members) {
-                            await getProfileImageUrl(member.user.profilePictures[0]);
-                        }
-                    }
 
                     let relevanceScore = 0;
                     for (const tag of party.tags) {
@@ -337,14 +291,6 @@ export class FeedService {
                 },
             },
         });
-        for (let i = 0; i < followerUsers.length; i++) {
-            const user = followerUsers[i];
-            const pic = user.profilePictures[0];
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            user.profilePictures[0] = pic;
-        }
-
         return followerUsers;
     }
 
@@ -386,13 +332,6 @@ export class FeedService {
                 },
             },
         });
-        for (let i = 0; i < followerUsers.length; i++) {
-            const user = followerUsers[i];
-            const pic = user.profilePictures[0];
-            if (!pic || !pic.amazonId) continue;
-            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
-            user.profilePictures[0] = pic;
-        }
 
         return followerUsers;
     }
