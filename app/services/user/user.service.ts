@@ -5,9 +5,9 @@ import {configureAmazonCognito} from "app/src/main";
 import {Amplify, Storage} from "aws-amplify";
 import {randomUUID} from "crypto";
 import {PrismaService} from "../db/prisma.service";
-import {UtilsService} from "../utils/utils.service";
-import {DeleteProfilePictureDto} from "app/dtos/user/DeleteProfilePicture.dto";
 import {NotificationsService} from "../notifications/notifications.service";
+import {UtilsService} from "../utils/utils.service";
+import {Location} from "@prisma/client";
 
 @Injectable()
 export class UserService {
@@ -28,7 +28,6 @@ export class UserService {
                 },
             })
             .then(user => {
-                console.log("user", user);
                 return !user;
             });
     }
@@ -172,6 +171,18 @@ export class UserService {
                 } else {
                     throw new InternalServerErrorException("Error al actualizar el usuario.");
                 }
+            })
+            .then(async user => {
+                if (!user) {
+                    throw new NotFoundException("User not found.");
+                }
+
+                for (const pic of user.profilePictures) {
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
+                }
+
+                return user;
             });
     }
 
@@ -322,7 +333,7 @@ export class UserService {
         const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1];
         const uploadImageToS3 = async (retry = true) => {
             try {
-                const result = await Storage.put(`profile-${randomUUID()}}.` + fileType, imageBuffer, {
+                const result = await Storage.put(`profile-${randomUUID()}.` + fileType, imageBuffer, {
                     contentType: "image/" + fileType,
                     level: "public",
                 });
@@ -417,8 +428,7 @@ export class UserService {
         await uploadImageToS3();
     }
 
-    async deleteProfilePicture(body: DeleteProfilePictureDto, userId: string) {
-        const {amazonId, id} = body;
+    async deleteProfilePicture(amazonId: string, id: string, userId: string) {
         await Storage.remove(amazonId, {level: "public"}).catch(() => {
             Amplify.Auth.currentAuthenticatedUser();
             throw new InternalServerErrorException("Error al eliminar la imagen de S3.");
@@ -667,7 +677,7 @@ export class UserService {
     }
 
     async searchUsers(page: number, limit: number, search: string) {
-        const skip = (page - 1) * limit;
+        const skip = page * limit;
         const users = await this.prisma.user.findMany({
             skip: skip,
             take: limit,
@@ -717,9 +727,129 @@ export class UserService {
     }
 
     async getUserById(id: string) {
-        this.prisma.user
-            .findUnique({
+        return this.prisma.user
+            .findFirst({
                 where: {id},
+                include: {
+                    profilePictures: true,
+                    followerUserList: true,
+                    followingUserList: true,
+                    parties: {
+                        select: {
+                            partyId: true,
+                        },
+                    },
+                    invitedParties: {
+                        select: {
+                            partyId: true,
+                            party: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    owner: {
+                                        select: {
+                                            username: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    invitingParties: {
+                        select: {
+                            partyId: true,
+                            party: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    owner: {
+                                        select: {
+                                            username: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    ownedParties: {
+                        select: {
+                            id: true,
+                        },
+                    },
+                    partiesModerating: {
+                        select: {
+                            partyId: true,
+                        },
+                    },
+                    groupsModerating: {
+                        select: {
+                            groupId: true,
+                        },
+                    },
+                    groups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                },
+                            },
+                        },
+                    },
+                    invitedGroups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                },
+                            },
+                        },
+                    },
+                    invitingGroups: {
+                        select: {
+                            groupId: true,
+                            group: {
+                                select: {
+                                    name: true,
+                                    description: true,
+                                    leaderId: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            })
+            .then(async user => {
+                if (!user) {
+                    throw new NotFoundException("User not found.");
+                }
+
+                // Renovar URLs de las imágenes
+                for (const pic of user.profilePictures) {
+                    if (!pic || !pic.amazonId) continue;
+                    pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
+                }
+
+                return user;
+            })
+            .catch(() => {
+                throw new InternalServerErrorException("Error fetching user data.");
+            });
+    }
+
+    async updateAndGetUserById(id: string, location: Location, expoPushToken: string) {
+        return this.prisma.user
+            .update({
+                where: {id},
+                data: {
+                    location,
+                    expoPushToken,
+                },
                 include: {
                     profilePictures: true,
                     followerUserList: true,

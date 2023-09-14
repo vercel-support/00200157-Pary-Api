@@ -33,6 +33,11 @@ export class AuthController {
         return this.authService.logoutUser(request.raw.decoded.id);
     }
 
+    @Post("refresh-token")
+    async refreshToken(@Req() request: any): Promise<any> {
+        return this.authService.refreshToken(request.raw.decoded.id);
+    }
+
     @Post("test-token")
     async testToken(@Headers("authorization") bearerToken: string): Promise<any> {
         if (!bearerToken) {

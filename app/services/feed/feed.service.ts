@@ -13,7 +13,7 @@ export class FeedService {
     ) {}
 
     async search(page: number, limit: number, search: string, userId: string) {
-        const skip = (page - 1) * limit;
+        const skip = page * limit;
 
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
@@ -186,9 +186,9 @@ export class FeedService {
         const totalParties = await this.prisma.party.count({where: queryFilters});
 
         const foundedParties = [];
-        while (foundedParties.length < limit && (page - 1) * limit < totalParties) {
+        while (foundedParties.length < limit && page * limit < totalParties) {
             const parties = await this.prisma.party.findMany({
-                skip: (page - 1) * limit,
+                skip: page * limit,
                 take: limit,
                 orderBy: [{date: "asc"}],
                 where: queryFilters,
@@ -283,8 +283,8 @@ export class FeedService {
                         return (
                             party &&
                             party.distance <= distanceLimit &&
-                            party.ageRange.min <= maxAge &&
-                            party.ageRange.max >= minAge
+                            party.ageRange.min >= minAge &&
+                            party.ageRange.max <= maxAge
                         );
                     })
                     .sort((a, b) => b!.relevanceScore - a!.relevanceScore),
@@ -300,7 +300,7 @@ export class FeedService {
     }
 
     async getFollowers(page: number, limit: number, username: string) {
-        const skip = (page - 1) * 10;
+        const skip = page * 10;
         const user = await this.prisma.user.findUnique({
             where: {username: username},
             select: {
@@ -349,7 +349,7 @@ export class FeedService {
     }
 
     async getFollowing(page: number, limit: number, username: string) {
-        const skip = (page - 1) * 10;
+        const skip = page * 10;
         const user = await this.prisma.user.findUnique({
             where: {username: username},
             select: {

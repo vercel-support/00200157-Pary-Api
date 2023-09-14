@@ -22,7 +22,6 @@ export class AuthService {
                 audience: process.env.GOOGLE_AUTH_WEN_TOKEN,
             });
             const payload = ticket.getPayload();
-            console.log(payload);
             if (!payload) throw new InternalServerErrorException("Invalid access token.");
         }
 
@@ -270,7 +269,7 @@ export class AuthService {
     }
 
     async logoutUser(userId: string) {
-        await this.prisma.user.update({
+        return await this.prisma.user.update({
             where: {id: userId},
             data: {
                 accessToken: "",
@@ -278,6 +277,117 @@ export class AuthService {
                 expoPushToken: "",
             },
         });
-        return;
+    }
+
+    async refreshToken(userId: string) {
+        const accessToken = sign({id: userId}, JWT_SECRET, {expiresIn: "1d"});
+        const refreshToken = sign({id: userId}, JWT_REFRESH_SECRET, {expiresIn: "4weeks"});
+        const user = await this.prisma.user.update({
+            where: {id: userId},
+            data: {
+                accessToken,
+                refreshToken,
+            },
+            include: {
+                profilePictures: true,
+                followerUserList: true,
+                followingUserList: true,
+                parties: {
+                    select: {
+                        partyId: true,
+                    },
+                },
+                invitedParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                invitingParties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            select: {
+                                name: true,
+                                description: true,
+                                owner: {
+                                    select: {
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                ownedParties: {
+                    select: {
+                        id: true,
+                    },
+                },
+                partiesModerating: {
+                    select: {
+                        partyId: true,
+                    },
+                },
+                groupsModerating: {
+                    select: {
+                        groupId: true,
+                    },
+                },
+                groups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            },
+                        },
+                    },
+                },
+                invitedGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            },
+                        },
+                    },
+                },
+                invitingGroups: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                                description: true,
+                                leaderId: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        // Renovar URLs de las imágenes
+        for (const pic of user.profilePictures) {
+            if (!pic || !pic.amazonId) continue;
+            pic.url = await this.utils.getCachedImageUrl(pic.amazonId);
+        }
+
+        return user;
     }
 }

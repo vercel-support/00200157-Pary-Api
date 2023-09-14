@@ -13,14 +13,14 @@ export class NotificationsService {
     ) {}
     async sendNewFollowerNotification(pushToken: string, followerId: string) {
         if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
-            return;
+            return false;
         }
         const follower = await this.prisma.user.findUnique({
             where: {id: followerId},
             select: {name: true, username: true},
         });
 
-        if (follower === null) return;
+        if (follower === null) return false;
 
         const message: ExpoPushMessage = {
             to: pushToken,

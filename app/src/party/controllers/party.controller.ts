@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
+import {Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
 import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
 import {PartyService} from "app/services/party/party.service";
 
@@ -6,15 +6,19 @@ import {PartyService} from "app/services/party/party.service";
 export class PartyController {
     constructor(private readonly partyService: PartyService) {}
 
-    @Get("own-parties")
-    async getOwnParties(@Query("page") page: number, @Query("limit") limit: number, @Req() request: any) {
-        return this.partyService.getOwnParties(page, limit, request.raw.decoded.id);
-    }
-
     @Post("create")
     @UsePipes(new ValidationPipe())
     async createParty(@Body("party") party: CreatePartyDto, @Req() request: any) {
         return this.partyService.createParty(party, request.raw.decoded.id);
+    }
+
+    @Get("own-parties")
+    async getOwnParties(
+        @Query("page", ParseIntPipe) page: number,
+        @Query("limit", ParseIntPipe) limit: number,
+        @Req() request: any,
+    ) {
+        return this.partyService.getOwnParties(page, limit, request.raw.decoded.id);
     }
 
     @Post("upload-party-image")
@@ -24,7 +28,11 @@ export class PartyController {
     }
 
     @Get("invited-parties")
-    async getInvitedParties(@Query("page") page: number, @Query("limit") limit: number, @Req() request: any) {
+    async getInvitedParties(
+        @Query("page", ParseIntPipe) page: number,
+        @Query("limit", ParseIntPipe) limit: number,
+        @Req() request: any,
+    ) {
         return this.partyService.getInvitedParties(page, limit, request.raw.decoded.id);
     }
 

@@ -1,4 +1,17 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    Put,
+    Query,
+    Req,
+    UsePipes,
+    ValidationPipe,
+} from "@nestjs/common";
 import {CreateGroupDto} from "app/dtos/group/CreateGroup.dto";
 import {GroupService} from "app/services/group/group.service";
 
@@ -13,12 +26,20 @@ export class GroupController {
     }
 
     @Get("own-groups")
-    async getOwnGroups(@Query("page") page: number, @Query("limit") limit: number, @Req() request: any) {
+    async getOwnGroups(
+        @Query("page", ParseIntPipe) page: number,
+        @Query("limit", ParseIntPipe) limit: number,
+        @Req() request: any,
+    ) {
         return this.groupService.getOwnGroups(page, limit, request.raw.decoded.id);
     }
 
     @Get("invited-groups")
-    async getInvitedGroups(@Query("page") page: number, @Query("limit") limit: number, @Req() request: any) {
+    async getInvitedGroups(
+        @Query("page", ParseIntPipe) page: number,
+        @Query("limit", ParseIntPipe) limit: number,
+        @Req() request: any,
+    ) {
         return this.groupService.getInvitedGroups(page, limit, request.raw.decoded.id);
     }
 

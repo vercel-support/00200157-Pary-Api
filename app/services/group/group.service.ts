@@ -48,7 +48,7 @@ export class GroupService {
         await this.prisma.groupMember.create({
             data: {
                 groupId: group.id,
-                userId: userId,
+                userId,
             },
         });
 
@@ -84,7 +84,7 @@ export class GroupService {
     }
 
     async getOwnGroups(page: number, limit: number, userId: string) {
-        const skip = (page - 1) * limit;
+        const skip = page * limit;
         const groups = await this.prisma.group.findMany({
             where: {
                 OR: [{members: {some: {userId}}}, {leaderId: userId}, {moderators: {some: {userId}}}],
@@ -405,7 +405,7 @@ export class GroupService {
             where: {id: groupId},
         });
 
-        return;
+        return true;
     }
 
     /* async removePartyFromGroup(groupId: string, userId: string) {} */
@@ -519,7 +519,7 @@ export class GroupService {
             this.notifications.sendNewGroupMemberNotification(expoTokens, userId, groupId);
         }
 
-        return;
+        return true;
     }
 
     async declineInvitation(groupId: string, userId: string) {
@@ -536,7 +536,7 @@ export class GroupService {
             });
         }
 
-        return;
+        return true;
     }
 
     async cancelInvitation(groupId: string, userIdToCancel: string) {
@@ -554,7 +554,7 @@ export class GroupService {
         }
         //TODO: Enviar notificacion al usuario que declino la invitacion
 
-        return;
+        return true;
     }
 
     async leaveGroup(groupId: string, userId: string) {
@@ -583,7 +583,7 @@ export class GroupService {
                 where: {id: groupId},
             });
 
-            return;
+            return true;
         } else {
             // If the user is not the owner but a member of the group
             const isMember = await this.prisma.groupMember.findFirst({
@@ -615,7 +615,7 @@ export class GroupService {
                 },
             });
 
-            return;
+            return true;
         }
     }
 }

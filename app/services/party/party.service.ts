@@ -21,8 +21,115 @@ export class PartyService {
         private notifications: NotificationsService,
     ) {}
 
+    async createParty(partyBody: CreatePartyDto, userId: string) {
+        const {
+            name,
+            description,
+            location,
+            date,
+            type,
+            tags,
+            participants,
+            image,
+            showAddressInFeed,
+            ageRange,
+            isPrivate,
+        } = partyBody;
+        const userParties = await this.prisma.party.count({
+            where: {
+                ownerId: userId,
+                active: true,
+                date: {
+                    gte: new Date(),
+                },
+            },
+        });
+
+        if (userParties >= 15) {
+            throw new BadRequestException("You can only create up to 15 parties.");
+        }
+
+        const inviter = await this.prisma.user.findUnique({
+            where: {id: userId},
+            select: {name: true, username: true, id: true},
+        });
+
+        if (!inviter) {
+            console.log("Error fetching user data.");
+            throw new NotFoundException("User not found");
+        }
+
+        // Resto de la lógica después de una carga exitosa
+
+        const usersToInvite: string[] = participants;
+
+        const users = await this.prisma.user.findMany({
+            where: {
+                username: {
+                    in: usersToInvite,
+                },
+            },
+            select: {
+                id: true,
+                username: true,
+                expoPushToken: true, // asumimos que usarás Expo para notificaciones push
+            },
+        });
+        const party = await this.prisma.party.create({
+            data: {
+                name,
+                description,
+                location,
+                type,
+                tags,
+                advertisement: false,
+                active: true,
+                date: new Date(date),
+                private: isPrivate,
+                ownerId: userId,
+                image,
+                showAddressInFeed,
+                ageRange,
+            },
+        });
+
+        if (!party) {
+            throw new InternalServerErrorException("Error creating party.");
+        }
+        await this.prisma.partyMember.create({
+            data: {
+                partyId: party.id,
+                userId,
+            },
+        });
+
+        for (const user of users) {
+            if (user.id === userId) continue;
+            const response = await this.prisma.partyInvitation.create({
+                data: {
+                    partyId: party.id,
+                    invitedUserId: user.id,
+                    invitingUserId: userId,
+                },
+            });
+            if (response) {
+                this.notifications.sendPartyInviteNotification(
+                    user.expoPushToken,
+                    inviter,
+                    party.name,
+                    party.id,
+                    party.type,
+                );
+            }
+
+            // Aquí podrías enviar una notificación push a cada usuario invitado
+        }
+
+        return party;
+    }
+
     async getOwnParties(page: number, limit: number, userId: string) {
-        const skip = (page - 1) * limit;
+        const skip = page * limit;
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
@@ -164,113 +271,6 @@ export class PartyService {
         };
     }
 
-    async createParty(partyBody: CreatePartyDto, userId: string) {
-        const {
-            name,
-            description,
-            location,
-            date,
-            type,
-            tags,
-            participants,
-            image,
-            showAddressInFeed,
-            ageRange,
-            isPrivate,
-        } = partyBody;
-        const userParties = await this.prisma.party.count({
-            where: {
-                ownerId: userId,
-                active: true,
-                date: {
-                    gte: new Date(),
-                },
-            },
-        });
-
-        if (userParties >= 15) {
-            throw new BadRequestException("You can only create up to 15 parties.");
-        }
-
-        const inviter = await this.prisma.user.findUnique({
-            where: {id: userId},
-            select: {name: true, username: true, id: true},
-        });
-
-        if (!inviter) {
-            console.log("Error fetching user data.");
-            throw new NotFoundException("User not found");
-        }
-
-        // Resto de la lógica después de una carga exitosa
-
-        const usersToInvite: string[] = participants;
-
-        const users = await this.prisma.user.findMany({
-            where: {
-                username: {
-                    in: usersToInvite,
-                },
-            },
-            select: {
-                id: true,
-                username: true,
-                expoPushToken: true, // asumimos que usarás Expo para notificaciones push
-            },
-        });
-        const party = await this.prisma.party.create({
-            data: {
-                name,
-                description,
-                location,
-                type,
-                tags,
-                advertisement: false,
-                active: true,
-                date: new Date(date),
-                private: isPrivate,
-                ownerId: userId,
-                image,
-                showAddressInFeed,
-                ageRange,
-            },
-        });
-
-        if (!party) {
-            throw new InternalServerErrorException("Error creating party.");
-        }
-        await this.prisma.partyMember.create({
-            data: {
-                partyId: party.id,
-                userId,
-            },
-        });
-
-        for (const user of users) {
-            if (user.id === userId) continue;
-            const response = await this.prisma.partyInvitation.create({
-                data: {
-                    partyId: party.id,
-                    invitedUserId: user.id,
-                    invitingUserId: userId,
-                },
-            });
-            if (response) {
-                this.notifications.sendPartyInviteNotification(
-                    user.expoPushToken,
-                    inviter,
-                    party.name,
-                    party.id,
-                    party.type,
-                );
-            }
-
-            // Aquí podrías enviar una notificación push a cada usuario invitado
-        }
-
-        return party;
-    }
-
     async uploadPartyImage(body: any) {
         const imageBase64 = body.image;
 
@@ -311,7 +311,7 @@ export class PartyService {
                 }
             }
         };
-        await uploadImageToS3();
+        return await uploadImageToS3();
     }
 
     async getInvitedParties(limit: number, page: number, userId: string) {
@@ -425,7 +425,7 @@ export class PartyService {
     }
 
     async getParty(partyId: string, userId: string) {
-        await this.prisma.party
+        return await this.prisma.party
             .findUnique({
                 where: {id: partyId},
                 include: {
@@ -549,7 +549,7 @@ export class PartyService {
             await Storage.remove(party.image.amazonId, {level: "public"}).catch(() => {
                 throw new InternalServerErrorException("Error deleting image from S3.");
             });
-            return;
+            return true;
         } else {
             // If the user is not the owner but a member of the group
             const isMember = await this.prisma.partyMember.findFirst({
@@ -580,7 +580,7 @@ export class PartyService {
                     },
                 },
             });
-            return;
+            return true;
         }
     }
 
@@ -628,7 +628,7 @@ export class PartyService {
             );
             this.notifications.sendNewPartyMemberNotification(expoTokens, userId, partyId);
         }
-        return;
+        return true;
     }
 
     async declineInvitation(partyId: string, userId: string) {
@@ -645,6 +645,6 @@ export class PartyService {
             });
         }
         //TODO: Enviar notificacion al usuario que invito
-        return;
+        return true;
     }
 }

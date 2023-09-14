@@ -1,17 +1,18 @@
 import {
     Body,
     Controller,
-    Get,
-    Param,
-    Post,
-    Req,
-    ValidationPipe,
-    UsePipes,
-    NotFoundException,
     Delete,
+    Get,
+    NotFoundException,
+    Param,
+    ParseIntPipe,
+    Post,
     Query,
+    Req,
+    UsePipes,
+    ValidationPipe,
 } from "@nestjs/common";
-import {DeleteProfilePictureDto} from "app/dtos/user/DeleteProfilePicture.dto";
+import {Location} from "@prisma/client";
 import {UpdateUserDto} from "app/dtos/user/UpdateUser.dto";
 import {UserService} from "app/services/user/user.service";
 
@@ -45,8 +46,8 @@ export class UserController {
 
     @Delete("delete-profile-picture")
     @UsePipes(new ValidationPipe())
-    async deleteProfilePicture(@Body() body: DeleteProfilePictureDto, @Req() request: any) {
-        return await this.userService.deleteProfilePicture(body, request.raw.decoded.id);
+    async deleteProfilePicture(@Param("id") id: string, @Param("amazonId") amazonId: string, @Req() request: any) {
+        return await this.userService.deleteProfilePicture(id, amazonId, request.raw.decoded.id);
     }
 
     @Post("/follow/:username")
@@ -74,14 +75,26 @@ export class UserController {
     }
 
     @Get("search-users")
-    async searchUsers(@Query("page") page: number, @Query("limit") limit: number, @Query("search") search: string) {
+    async searchUsers(
+        @Query("page", ParseIntPipe) page: number,
+        @Query("limit", ParseIntPipe) limit: number,
+        @Query("search") search: string,
+    ) {
         return await this.userService.searchUsers(page, limit, search);
     }
 
     @Get(":id")
-    async getUserById(@Param("id") id: string) {
+    async getUserById(
+        @Param("id") id: string,
+        @Param("location") location: Location,
+        @Param("expoPushToken") expoPushToken: string,
+    ) {
         if (!id) {
             throw new NotFoundException("User not found");
+        }
+
+        if (location && expoPushToken) {
+            return await this.userService.updateAndGetUserById(id, location, expoPushToken);
         }
         return await this.userService.getUserById(id);
     }

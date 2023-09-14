@@ -1,11 +1,10 @@
 import {HttpException, Injectable, NestMiddleware} from "@nestjs/common";
 import {JWT_REFRESH_SECRET} from "app/src/main";
-import {FastifyReply, FastifyRequest} from "fastify";
 import {JwtPayload, VerifyErrors, verify} from "jsonwebtoken";
 import {AuthenticatedRequestDecoded} from "types";
 @Injectable()
 export class AuthRefreshTokenMiddleware implements NestMiddleware {
-    use(req: FastifyRequest["raw"], res: FastifyReply["raw"], next: () => void) {
+    use(req: any, res: any, next: () => void) {
         const authHeader = req.headers["authorization"];
         const token = authHeader && authHeader.split(" ")[1];
 

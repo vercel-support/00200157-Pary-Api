@@ -24,4 +24,6 @@ export class CreatePartyDto {
     ageRange: AgeRange;
     @IsBoolean()
     isPrivate: boolean;
+    @IsBoolean()
+    advertisement: boolean;
 }
