@@ -27,6 +27,7 @@ async function bootstrap() {
         AppModule,
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
-    await app.listen(80, "18.229.137.192");
+    app.enableCors();
+    await app.listen(80);
 }
 bootstrap();
