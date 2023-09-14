@@ -27,6 +27,6 @@ async function bootstrap() {
         AppModule,
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
-    await app.listen(80);
+    await app.listen(8080, "localhost");
 }
 bootstrap();
