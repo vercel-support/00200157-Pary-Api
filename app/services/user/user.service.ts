@@ -656,6 +656,7 @@ export class UserService {
                 include: this.utils.getUserFields(),
             })
             .catch(() => {
+                console.log("ERRRRRRRRRRRRRR");
                 throw new InternalServerErrorException("Error fetching user data.");
             });
     }

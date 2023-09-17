@@ -379,6 +379,101 @@ export class UtilsService {
                     },
                 },
             },
+            membershipRequests: {
+                include: {
+                    group: {
+                        select: {
+                            leader: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {take: 1},
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                },
+                            },
+                            members: {
+                                include: {
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                },
+                            },
+                            moderators: {
+                                include: {
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            image: true,
+                            id: true,
+                            location: true,
+                            date: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    user: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: {take: 1},
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                        },
+                    },
+                },
+            },
         };
     }
 }
