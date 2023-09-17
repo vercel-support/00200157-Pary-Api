@@ -187,8 +187,68 @@ export class PartyService {
                         },
                     },
                 },
-                moderators: {
+                invitations: {
                     include: {
+                        invitedUser: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            },
+                        },
+                    },
+                },
+                membershipRequests: {
+                    include: {
+                        group: {
+                            select: {
+                                leader: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                                members: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: {take: 1},
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                            },
+                                        },
+                                    },
+                                },
+                                moderators: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: {take: 1},
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                         user: {
                             select: {
                                 username: true,
@@ -303,37 +363,37 @@ export class PartyService {
             throw new NotFoundException("User not found");
         }
 
-        const invitedParties = await this.prisma.user.findMany({
+        const user = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
                 invitedParties: {
                     select: {
+                        partyId: true,
                         party: {
                             include: {
-                                members: {
-                                    include: {
-                                        user: {
-                                            select: {
-                                                username: true,
-                                                name: true,
-                                                lastName: true,
-                                                profilePictures: {take: 1},
-                                                verified: true,
-                                                isCompany: true,
-                                                gender: true,
-                                            },
-                                        },
-                                    },
-                                },
                                 owner: {
                                     select: {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
-                                        verified: true,
-                                        isCompany: true,
-                                        gender: true,
+                                        profilePictures: {
+                                            take: 1,
+                                        },
+                                    },
+                                },
+                                members: {
+                                    select: {
+                                        userId: true,
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: {
+                                                    take: 1,
+                                                },
+                                            },
+                                        },
                                     },
                                 },
                                 moderators: {
@@ -358,20 +418,13 @@ export class PartyService {
             },
         });
 
-        const parties = invitedParties.flatMap(user => user.invitedParties.map(invitedParty => invitedParty.party));
-
-        const totalGroups = parties.length;
+        const totalGroups = user.invitedParties.length;
 
         const hasNextPage = page * limit < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
 
-        for (let i = 0; i < parties.length; i++) {
-            const party = parties[i];
-            const distance = this.utils.haversineDistance(currentUser.location, party.location);
-            party.distance = distance;
-        }
         return {
-            parties,
+            parties: user.invitedParties,
             hasNextPage,
             nextPage,
         };
@@ -408,8 +461,68 @@ export class PartyService {
                             },
                         },
                     },
-                    moderators: {
+                    invitations: {
                         include: {
+                            invitedUser: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {take: 1},
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                },
+                            },
+                        },
+                    },
+                    membershipRequests: {
+                        include: {
+                            group: {
+                                select: {
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                    members: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    moderators: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                             user: {
                                 select: {
                                     username: true,
@@ -575,7 +688,130 @@ export class PartyService {
                 where: {id: invitation.id},
             });
         }
+
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                partyId,
+                userId,
+            },
+        });
+
+        if (joinRequest) {
+            await this.prisma.membershipRequest.delete({
+                where: {id: joinRequest.id},
+            });
+        }
+
         //TODO: Enviar notificacion al usuario que invito
         return true;
+    }
+
+    async requestJoin(partyId: string, userId: string, groupId?: string) {
+        // Obtenemos la información del party.
+        const party = await this.prisma.party.findUnique({
+            where: {id: partyId},
+        });
+
+        if (!party) {
+            throw new NotFoundException("Party no encontrado");
+        }
+
+        // Chequear si el grupo existe si se proporciona un groupId.
+        if (groupId) {
+            const group = await this.prisma.group.findUnique({
+                where: {id: groupId},
+            });
+
+            if (!group) {
+                throw new NotFoundException("Grupo no encontrado");
+            }
+        }
+
+        // Verificar si el usuario ya es un miembro del party.
+        const isUserMember = await this.prisma.partyMember.findUnique({
+            where: {
+                userId_partyId: {
+                    userId,
+                    partyId,
+                },
+            },
+        });
+
+        if (isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este party");
+        }
+
+        // Verificar si el grupo ya es miembro del party.
+        if (groupId) {
+            const isGroupMember = await this.prisma.partyGroup.findUnique({
+                where: {
+                    partyId_groupId: {
+                        partyId,
+                        groupId,
+                    },
+                },
+            });
+
+            if (isGroupMember) {
+                throw new Error("El grupo ya es miembro de este party");
+            }
+        }
+
+        // Si el party es público
+        if (!party.private) {
+            if (groupId) {
+                // Unir el grupo al party
+                await this.prisma.partyGroup.create({
+                    data: {
+                        partyId,
+                        groupId,
+                    },
+                });
+            } else {
+                // Unir el usuario al party
+                await this.prisma.partyMember.create({
+                    data: {
+                        partyId,
+                        userId,
+                    },
+                });
+            }
+            return true;
+        } else {
+            // Verificar si el usuario o grupo ya ha solicitado unirse al party.
+            const existingRequest = await this.prisma.membershipRequest.findUnique({
+                where: {
+                    userId_partyId: {
+                        userId,
+                        partyId,
+                    },
+                },
+            });
+
+            if (existingRequest) {
+                throw new Error("Ya has solicitado unirte a este party");
+            }
+
+            // Crear una solicitud para unirse al party.
+            if (groupId) {
+                await this.prisma.membershipRequest.create({
+                    data: {
+                        groupId,
+                        partyId,
+                        type: "GROUP",
+                    },
+                });
+            } else {
+                await this.prisma.membershipRequest.create({
+                    data: {
+                        userId,
+                        partyId,
+                        type: "SOLO",
+                    },
+                });
+            }
+
+            return true;
+        }
     }
 }

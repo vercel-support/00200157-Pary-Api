@@ -87,9 +87,16 @@ export class UserService {
                                 select: {
                                     name: true,
                                     description: true,
+                                    image: true,
+                                    id: true,
                                     owner: {
                                         select: {
                                             username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
                                         },
                                     },
                                 },
@@ -103,9 +110,16 @@ export class UserService {
                                 select: {
                                     name: true,
                                     description: true,
+                                    image: true,
+                                    id: true,
                                     owner: {
                                         select: {
                                             username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
                                         },
                                     },
                                 },
@@ -114,7 +128,20 @@ export class UserService {
                     },
                     ownedParties: {
                         select: {
+                            name: true,
+                            description: true,
+                            image: true,
                             id: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
                         },
                     },
                     partiesModerating: {
@@ -135,6 +162,16 @@ export class UserService {
                                     name: true,
                                     description: true,
                                     leaderId: true,
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -147,6 +184,16 @@ export class UserService {
                                     name: true,
                                     description: true,
                                     leaderId: true,
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -159,6 +206,16 @@ export class UserService {
                                     name: true,
                                     description: true,
                                     leaderId: true,
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -422,99 +479,7 @@ export class UserService {
         return await this.prisma.user
             .findUnique({
                 where: {id: userId},
-                include: {
-                    profilePictures: true,
-                    followerUserList: true,
-                    followingUserList: true,
-                    ownedParties: {
-                        select: {
-                            id: true,
-                        },
-                    },
-                    parties: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    invitedParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    invitingParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    partiesModerating: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    groupsModerating: {
-                        select: {
-                            groupId: true,
-                        },
-                    },
-                    groups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitedGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitingGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                },
+                include: this.utils.getUserFields(),
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error al obtener el usuario.");
@@ -685,102 +650,10 @@ export class UserService {
     }
 
     async getUserById(id: string) {
-        return this.prisma.user
+        return await this.prisma.user
             .findFirst({
                 where: {id},
-                include: {
-                    profilePictures: true,
-                    followerUserList: true,
-                    followingUserList: true,
-                    parties: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    invitedParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    invitingParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    ownedParties: {
-                        select: {
-                            id: true,
-                        },
-                    },
-                    partiesModerating: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    groupsModerating: {
-                        select: {
-                            groupId: true,
-                        },
-                    },
-                    groups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitedGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitingGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                },
+                include: this.utils.getUserFields(),
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error fetching user data.");
@@ -788,106 +661,14 @@ export class UserService {
     }
 
     async updateAndGetUserById(id: string, location: Location, expoPushToken: string) {
-        return this.prisma.user
+        return await this.prisma.user
             .update({
                 where: {id},
                 data: {
                     location,
                     expoPushToken,
                 },
-                include: {
-                    profilePictures: true,
-                    followerUserList: true,
-                    followingUserList: true,
-                    parties: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    invitedParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    invitingParties: {
-                        select: {
-                            partyId: true,
-                            party: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    owner: {
-                                        select: {
-                                            username: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    ownedParties: {
-                        select: {
-                            id: true,
-                        },
-                    },
-                    partiesModerating: {
-                        select: {
-                            partyId: true,
-                        },
-                    },
-                    groupsModerating: {
-                        select: {
-                            groupId: true,
-                        },
-                    },
-                    groups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitedGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                    invitingGroups: {
-                        select: {
-                            groupId: true,
-                            group: {
-                                select: {
-                                    name: true,
-                                    description: true,
-                                    leaderId: true,
-                                },
-                            },
-                        },
-                    },
-                },
+                include: this.utils.getUserFields(),
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error fetching user data.");

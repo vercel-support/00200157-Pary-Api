@@ -101,7 +101,7 @@ model Party {
   groups             PartyGroup[]         @relation("PartyToPartyGroup")
   createdAt          DateTime             @default(now())
   membershipRequests MembershipRequest[]
-  partyInvitations   PartyInvitation[]
+  invitations        PartyInvitation[]
 }
 
 enum PartyType {
@@ -215,22 +215,22 @@ model UserGroupModerator {
 
 model MembershipRequest {
   id        String                @id @default(auto()) @map("_id") @db.ObjectId
-  groupId   String                @map("groupId") @db.ObjectId
+  groupId   String?               @map("groupId") @db.ObjectId
   partyId   String?               @map("partyId") @db.ObjectId
-  userId    String                @map("userId") @db.ObjectId
+  userId    String?               @map("userId") @db.ObjectId
   status    InvitationStatus      @default(PENDING)
   type      MembershipRequestType
   createdAt DateTime              @default(now())
   group     Group?                @relation(fields: [groupId], references: [id])
   party     Party?                @relation(fields: [partyId], references: [id])
-  user      User                  @relation(fields: [userId], references: [id])
+  user      User?                 @relation(fields: [userId], references: [id])
 
-  @@unique([userId, groupId, partyId])
+  @@unique([userId, partyId])
 }
 
 enum MembershipRequestType {
   GROUP
-  PARTY
+  SOLO
 }
 
 enum InvitationStatus {

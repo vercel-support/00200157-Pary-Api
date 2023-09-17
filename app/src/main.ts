@@ -8,7 +8,7 @@ export function configureAmazonCognito() {
     Amplify.configure(awsconfig);
 }
 configureAmazonCognito();
-export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN} = process.env;
+export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL} = process.env;
 
 if (JWT_SECRET === undefined) {
     throw new Error("No JWT_SECRET env variable found.");
@@ -28,6 +28,6 @@ async function bootstrap() {
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
     app.enableCors();
-    await app.listen(80, "0.0.0.0");
+    await app.listen(80, "192.168.100.7");
 }
 bootstrap();

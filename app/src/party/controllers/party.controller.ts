@@ -55,4 +55,10 @@ export class PartyController {
     async declineInvitation(@Param("partyId") partyId: string, @Req() request: any) {
         return this.partyService.declineInvitation(partyId, request.raw.decoded.id);
     }
+
+    @Post(":partyId/request-join")
+    async requestJoin(@Param("partyId") partyId: string, @Req() request: any, @Body("groupId") groupId?: string) {
+        console.log(groupId, partyId);
+        return this.partyService.requestJoin(partyId, request.raw.decoded.id, groupId);
+    }
 }

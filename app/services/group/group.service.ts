@@ -144,7 +144,7 @@ export class GroupService {
     }
 
     async getInvitedGroups(page: number, limit: number, userId: string) {
-        const invitedGroups = await this.prisma.user.findMany({
+        const user = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
                 invitedGroups: {
@@ -193,14 +193,12 @@ export class GroupService {
             },
         });
 
-        const groups = invitedGroups.flatMap(user => user.invitedGroups.map(invitedGroup => invitedGroup.group));
-
-        const totalGroups = groups.length;
+        const totalGroups = user.invitedGroups.length;
 
         const hasNextPage = page * limit < totalGroups;
         const nextPage = hasNextPage ? page + 1 : null;
 
-        return {groups, hasNextPage, nextPage};
+        return {groups: user.invitedGroups, hasNextPage, nextPage};
     }
 
     async getGroup(groupId: string) {
@@ -511,6 +509,10 @@ export class GroupService {
 
             // Delete all group members
             await this.prisma.groupMember.deleteMany({
+                where: {groupId: groupId},
+            });
+
+            await this.prisma.partyGroup.deleteMany({
                 where: {groupId: groupId},
             });
 

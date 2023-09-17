@@ -86,15 +86,16 @@ export class UserController {
     @Get(":id")
     async getUserById(
         @Param("id") id: string,
-        @Param("location") location: Location,
-        @Param("expoPushToken") expoPushToken: string,
+        @Query("location") location: string,
+        @Query("expoPushToken") expoPushToken: string,
     ) {
         if (!id) {
             throw new NotFoundException("User not found");
         }
 
         if (location && expoPushToken) {
-            return await this.userService.updateAndGetUserById(id, location, expoPushToken);
+            const newLocation: Location = JSON.parse(location);
+            return await this.userService.updateAndGetUserById(id, newLocation, expoPushToken);
         }
         return await this.userService.getUserById(id);
     }

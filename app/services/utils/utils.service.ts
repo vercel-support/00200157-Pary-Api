@@ -7,45 +7,6 @@ export class UtilsService {
     private readonly CACHE_DURATION = 601800;
     private readonly AMAZON_CACHE_DURATION = 604800;
 
-    /* async getFreshImageUrl(amazonId: string, retry: boolean = true): Promise<string> {
-        try {
-            const imageUrl = await Storage.get(amazonId, {
-                level: "public",
-                expires: this.AMAZON_CACHE_DURATION,
-            });
-            return imageUrl as string;
-        } catch (error) {
-            if (retry) {
-                configureAmazonCognito();
-                return this.getFreshImageUrl(amazonId, false);
-            }
-            return "";
-        }
-    }
-
-    async getCachedImageUrl(amazonId: string): Promise<string> {
-        // Comprobar si la URL ya está en el caché y aún es válida
-        const cached = this.imageCache.get(amazonId);
-        if (cached && cached.expiry > Date.now()) {
-            return cached.url;
-        }
-
-        // Si no está en el caché o ha expirado, obtener una nueva URL
-        const newUrl = await this.getFreshImageUrl(amazonId);
-
-        if (newUrl === "") {
-            return "";
-        }
-
-        // Almacenar la nueva URL en el caché con una fecha de caducidad
-        this.imageCache.set(amazonId, {
-            url: newUrl,
-            expiry: Date.now() + this.CACHE_DURATION,
-        });
-
-        return newUrl;
-    } */
-
     haversineDistance(location1: Location, location2: Location): number {
         const R = 6371; // Radio de la Tierra en kilómetros
         const lat1 = (location1.latitude * Math.PI) / 180; // Convertir a radianes
@@ -61,7 +22,363 @@ export class UtilsService {
 
         return distance;
     }
+
     extractToken(bearerToken: string): string {
         return bearerToken.split(" ")[1];
+    }
+
+    getUserFields() {
+        return {
+            profilePictures: true,
+            followerUserList: true,
+            followingUserList: true,
+            parties: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            image: true,
+                            id: true,
+                            location: true,
+                            date: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            invitedParties: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            image: true,
+                            id: true,
+                            location: true,
+                            date: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            invitingParties: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            image: true,
+                            id: true,
+                            location: true,
+                            date: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            ownedParties: {
+                select: {
+                    name: true,
+                    description: true,
+                    image: true,
+                    id: true,
+                    location: true,
+                    date: true,
+                    owner: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: {
+                                take: 1,
+                            },
+                        },
+                    },
+                    members: {
+                        select: {
+                            userId: true,
+                            user: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            partiesModerating: {
+                select: {
+                    partyId: true,
+                    party: {
+                        select: {
+                            name: true,
+                            description: true,
+                            image: true,
+                            id: true,
+                            location: true,
+                            date: true,
+                            owner: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            groupsModerating: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            id: true,
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                            leader: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            groups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            id: true,
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                            leader: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            invitedGroups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            id: true,
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                            leader: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            invitingGroups: {
+                select: {
+                    groupId: true,
+                    group: {
+                        select: {
+                            id: true,
+                            name: true,
+                            description: true,
+                            leaderId: true,
+                            leader: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {
+                                        take: 1,
+                                    },
+                                },
+                            },
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        };
     }
 }

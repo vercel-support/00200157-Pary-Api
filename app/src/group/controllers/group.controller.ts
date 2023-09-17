@@ -69,6 +69,7 @@ export class GroupController {
 
     @Post(":groupId/accept-invitation")
     async acceptInvitation(@Param("groupId") groupId: string, @Req() request: any) {
+        console.log("acceptInvitation", groupId, request.raw.decoded.id);
         return this.groupService.acceptInvitation(groupId, request.raw.decoded.id);
     }
 
