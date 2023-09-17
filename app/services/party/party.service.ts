@@ -430,6 +430,132 @@ export class PartyService {
         };
     }
 
+    async getJoinRequests(userId: string) {
+        return await this.prisma.membershipRequest.findMany({
+            where: {
+                OR: [
+                    {
+                        party: {
+                            ownerId: userId,
+                        },
+                    },
+                    {
+                        party: {
+                            moderators: {
+                                some: {
+                                    userId: userId,
+                                },
+                            },
+                        },
+                    },
+                ],
+                status: "PENDING",
+            },
+            include: {
+                party: {
+                    include: {
+                        owner: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                },
+                            },
+                        },
+                        members: {
+                            select: {
+                                userId: true,
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {
+                                            take: 1,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                user: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    },
+                },
+                group: {
+                    select: {
+                        leader: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            },
+                        },
+                        members: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
     async getParty(partyId: string, userId: string) {
         return await this.prisma.party
             .findUnique({
@@ -703,6 +829,78 @@ export class PartyService {
         }
 
         //TODO: Enviar notificacion al usuario que invito
+        return true;
+    }
+
+    async acceptJoinRequest(partyId: string, userId: string, requesterUserId: string) {
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+            },
+        });
+        if (!party) {
+            throw new NotFoundException("Party not found");
+        }
+
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                partyId,
+                userId: requesterUserId,
+            },
+        });
+
+        if (!joinRequest) {
+            throw new NotFoundException("Join request not found");
+        }
+
+        await this.prisma.membershipRequest.update({
+            where: {
+                id: joinRequest.id,
+            },
+            data: {
+                status: "ACCEPTED",
+            },
+        });
+
+        await this.prisma.partyMember.create({
+            data: {
+                partyId,
+                userId: requesterUserId,
+            },
+        });
+
+        return true;
+    }
+
+    async declineJoinRequest(partyId: string, userId: string, requesterUserId: string) {
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+            },
+        });
+        if (!party) {
+            throw new NotFoundException("Party not found");
+        }
+
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                partyId,
+                userId: requesterUserId,
+            },
+        });
+
+        if (!joinRequest) {
+            throw new NotFoundException("Join request not found");
+        }
+
+        await this.prisma.membershipRequest.update({
+            where: {
+                id: joinRequest.id,
+            },
+            data: {
+                status: "DECLINED",
+            },
+        });
         return true;
     }
 

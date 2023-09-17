@@ -417,8 +417,9 @@ export class GroupService {
         });
 
         if (invitation) {
-            await this.prisma.groupInvitation.delete({
+            await this.prisma.groupInvitation.update({
                 where: {id: invitation.id},
+                data: {status: "ACCEPTED"},
             });
         }
 
@@ -555,5 +556,129 @@ export class GroupService {
 
             return true;
         }
+    }
+
+    async getJoinRequests(userId: string) {
+        return await this.prisma.membershipRequest.findMany({
+            where: {
+                OR: [
+                    {
+                        group: {
+                            leaderId: userId,
+                        },
+                    },
+                    {
+                        group: {
+                            moderators: {
+                                some: {
+                                    userId: userId,
+                                },
+                            },
+                        },
+                    },
+                ],
+                status: "PENDING",
+            },
+            include: {
+                group: {
+                    include: {
+                        leader: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                description: true,
+                                birthDate: true,
+                                gender: true,
+                                musicInterest: true,
+                                deportsInterest: true,
+                                artAndCultureInterest: true,
+                                techInterest: true,
+                                hobbiesInterest: true,
+                                verified: true,
+                                location: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                                createdAt: true,
+                                lastLogin: true,
+                                isCompany: true,
+                            },
+                        },
+                        members: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        description: true,
+                                        birthDate: true,
+                                        gender: true,
+                                        musicInterest: true,
+                                        deportsInterest: true,
+                                        artAndCultureInterest: true,
+                                        techInterest: true,
+                                        hobbiesInterest: true,
+                                        verified: true,
+                                        location: {
+                                            select: {
+                                                name: true,
+                                            },
+                                        },
+                                        createdAt: true,
+                                        lastLogin: true,
+                                        isCompany: true,
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        description: true,
+                                        birthDate: true,
+                                        gender: true,
+                                        musicInterest: true,
+                                        deportsInterest: true,
+                                        artAndCultureInterest: true,
+                                        techInterest: true,
+                                        hobbiesInterest: true,
+                                        verified: true,
+                                        location: {
+                                            select: {
+                                                name: true,
+                                            },
+                                        },
+                                        createdAt: true,
+                                        lastLogin: true,
+                                        isCompany: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                user: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    },
+                },
+            },
+        });
     }
 }

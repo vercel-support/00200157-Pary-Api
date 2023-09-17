@@ -43,6 +43,13 @@ export class GroupController {
         return this.groupService.getInvitedGroups(page, limit, request.raw.decoded.id);
     }
 
+    @Get("join-requests")
+    async getJoinRequests(@Req() request: any) {
+        const response = await this.groupService.getJoinRequests(request.raw.decoded.id);
+        console.log("getJoinRequests", response);
+        return response;
+    }
+
     @Get(":groupId")
     async getGroup(@Param("groupId") groupId: string) {
         return this.groupService.getGroup(groupId);

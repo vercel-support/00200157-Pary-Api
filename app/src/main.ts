@@ -28,6 +28,6 @@ async function bootstrap() {
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
     app.enableCors();
-    await app.listen(80, "0.0.0.0");
+    await app.listen(80, PUBLIC_API_URL);
 }
 bootstrap();

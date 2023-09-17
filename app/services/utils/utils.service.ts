@@ -382,7 +382,7 @@ export class UtilsService {
             membershipRequests: {
                 include: {
                     group: {
-                        select: {
+                        include: {
                             leader: {
                                 select: {
                                     username: true,

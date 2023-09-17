@@ -36,6 +36,11 @@ export class PartyController {
         return this.partyService.getInvitedParties(page, limit, request.raw.decoded.id);
     }
 
+    @Get("join-requests")
+    async getJoinRequests(@Req() request: any) {
+        return this.partyService.getJoinRequests(request.raw.decoded.id);
+    }
+
     @Get(":partyId")
     async getParty(@Param("partyId") partyId: string, @Req() request: any) {
         return this.partyService.getParty(partyId, request.raw.decoded.id);
@@ -54,6 +59,16 @@ export class PartyController {
     @Post(":partyId/decline-invitation")
     async declineInvitation(@Param("partyId") partyId: string, @Req() request: any) {
         return this.partyService.declineInvitation(partyId, request.raw.decoded.id);
+    }
+
+    @Post(":partyId/accept-join-request")
+    async acceptJoinRequest(@Param("partyId") partyId: string, @Body("userId") userId: string, @Req() request: any) {
+        return this.partyService.acceptJoinRequest(partyId, request.raw.decoded.id, userId);
+    }
+
+    @Post(":partyId/decline-join-request")
+    async declineJoinRequest(@Param("partyId") partyId: string, @Body("userId") userId: string, @Req() request: any) {
+        return this.partyService.declineJoinRequest(partyId, request.raw.decoded.id, userId);
     }
 
     @Post(":partyId/request-join")
