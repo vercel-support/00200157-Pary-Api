@@ -72,11 +72,10 @@ model UserFollows {
 }
 
 model ProfilePicture {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  url      String
-  amazonId String @unique
-  userId   String @db.ObjectId
-  user     User   @relation(fields: [userId], references: [id])
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  url    String
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Party {
@@ -248,6 +247,5 @@ type Location {
 }
 
 type PartyPicture {
-  amazonId String
-  url      String
+  url String
 }

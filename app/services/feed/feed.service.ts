@@ -435,7 +435,6 @@ export class FeedService {
                     take: 1,
                     select: {
                         url: true,
-                        amazonId: true,
                     },
                 },
             },
@@ -476,7 +475,6 @@ export class FeedService {
                     take: 1,
                     select: {
                         url: true,
-                        amazonId: true,
                     },
                 },
             },

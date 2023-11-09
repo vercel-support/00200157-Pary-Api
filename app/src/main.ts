@@ -1,13 +1,7 @@
 import {NestFactory} from "@nestjs/core";
 import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
-import {Amplify} from "aws-amplify";
 import {AppModule} from "./app.module";
-import awsconfig from "./aws-exports";
 
-export function configureAmazonCognito() {
-    Amplify.configure(awsconfig);
-}
-configureAmazonCognito();
 export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL} = process.env;
 
 if (JWT_SECRET === undefined) {

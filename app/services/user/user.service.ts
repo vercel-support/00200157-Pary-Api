@@ -1,13 +1,12 @@
 import {Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
+import {Location} from "@prisma/client";
 import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
+import {del, put} from "@vercel/blob";
 import {UpdateUserDto} from "app/dtos/user/UpdateUser.dto";
-import {configureAmazonCognito} from "app/src/main";
-import {Amplify, Storage} from "aws-amplify";
 import {randomUUID} from "crypto";
 import {PrismaService} from "../db/prisma.service";
 import {NotificationsService} from "../notifications/notifications.service";
 import {UtilsService} from "../utils/utils.service";
-import {Location} from "@prisma/client";
 
 @Injectable()
 export class UserService {
@@ -363,42 +362,33 @@ export class UserService {
 
         const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
         const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1];
-        const uploadImageToS3 = async (retry = true) => {
+        const uploadImageToVercel = async (retry = true) => {
             try {
-                const result = await Storage.put(`profile-${randomUUID()}.` + fileType, imageBuffer, {
-                    contentType: "image/" + fileType,
-                    level: "public",
+                const {url} = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
+                    access: "public",
                 });
 
-                // Resto de la lógica después de una carga exitosa
-                const imageUrl = `https://parystorage-001125056-staging.s3.sa-east-1.amazonaws.com/public/${result.key}`;
-
-                if (imageUrl === "") {
-                    throw new InternalServerErrorException("Error uploading image, imageUrl === empty.");
+                if (!url || url === "") {
+                    console.log("Error uploading image.2");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
 
                 this.prisma.profilePicture
                     .create({
                         data: {
-                            url: imageUrl,
+                            url,
                             user: {
                                 connect: {
                                     id: userId,
                                 },
                             },
-                            amazonId: result.key,
                         },
                     })
                     .catch(() => {
                         throw new InternalServerErrorException("Error uploading image into the db.");
                     })
                     .then(async profilePicture => {
-                        if (
-                            "id" in profilePicture &&
-                            "url" in profilePicture &&
-                            "amazonId" in profilePicture &&
-                            "userId" in profilePicture
-                        ) {
+                        if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
                             const user = await this.prisma.user
                                 .findUnique({
                                     where: {id: userId},
@@ -450,21 +440,17 @@ export class UserService {
                     });
             } catch (error) {
                 if (retry) {
-                    configureAmazonCognito();
-                    uploadImageToS3(false);
+                    uploadImageToVercel(false);
                 } else {
                     throw new InternalServerErrorException("Error uploading image.");
                 }
             }
         };
-        await uploadImageToS3();
+        await uploadImageToVercel();
     }
 
-    async deleteProfilePicture(amazonId: string, id: string, userId: string) {
-        await Storage.remove(amazonId, {level: "public"}).catch(() => {
-            Amplify.Auth.currentAuthenticatedUser();
-            throw new InternalServerErrorException("Error al eliminar la imagen de S3.");
-        });
+    async deleteProfilePicture(id: string, url: string, userId: string) {
+        await del(url);
 
         await this.prisma.profilePicture
             .delete({

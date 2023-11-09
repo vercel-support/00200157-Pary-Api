@@ -6,12 +6,11 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
-import {configureAmazonCognito} from "app/src/main";
-import {Storage} from "aws-amplify";
 import {randomUUID} from "crypto";
 import {PrismaService} from "../db/prisma.service";
 import {NotificationsService} from "../notifications/notifications.service";
 import {UtilsService} from "../utils/utils.service";
+import {put, del} from "@vercel/blob";
 
 @Injectable()
 export class PartyService {
@@ -318,37 +317,32 @@ export class PartyService {
         const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
         const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
 
-        const uploadImageToS3 = async (retry = true) => {
+        const uploadImageToVercel = async (retry = true) => {
             try {
-                const result = await Storage.put(`party-${randomUUID()}.` + fileType, imageBuffer, {
+                const {url} = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
+                    access: "public",
                     contentType: "image/" + fileType,
-                    level: "public",
                 });
 
-                // Resto de la lógica después de una carga exitosa
-                const imageUrl = `https://parystorage-001125056-staging.s3.sa-east-1.amazonaws.com/public/${result.key}`;
-
-                if (imageUrl === "") {
+                if (!url || url === "") {
                     console.log("Error uploading image.2");
                     throw new InternalServerErrorException("Error uploading image.");
                 }
 
                 const image = {
-                    amazonId: result.key,
-                    url: imageUrl,
+                    url,
                 };
 
                 return image;
             } catch (error) {
                 if (retry) {
-                    configureAmazonCognito();
-                    uploadImageToS3(false);
+                    uploadImageToVercel(false);
                 } else {
                     throw new InternalServerErrorException("Error uploading image.");
                 }
             }
         };
-        return await uploadImageToS3();
+        return await uploadImageToVercel();
     }
 
     async getInvitedParties(limit: number, page: number, userId: string) {
@@ -716,9 +710,7 @@ export class PartyService {
                 where: {id: partyId},
             });
 
-            await Storage.remove(party.image.amazonId, {level: "public"}).catch(() => {
-                throw new InternalServerErrorException("Error deleting image from S3.");
-            });
+            await del(party.image.url);
             return true;
         } else {
             // If the user is not the owner but a member of the group

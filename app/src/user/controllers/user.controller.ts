@@ -46,8 +46,8 @@ export class UserController {
 
     @Delete("delete-profile-picture")
     @UsePipes(new ValidationPipe())
-    async deleteProfilePicture(@Param("id") id: string, @Param("amazonId") amazonId: string, @Req() request: any) {
-        return await this.userService.deleteProfilePicture(id, amazonId, request.raw.decoded.id);
+    async deleteProfilePicture(@Param("id") id: string, @Param("url") url: string, @Req() request: any) {
+        return await this.userService.deleteProfilePicture(id, url, request.raw.decoded.id);
     }
 
     @Post("/follow/:username")

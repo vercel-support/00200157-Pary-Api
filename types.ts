@@ -49,7 +49,6 @@ export interface BasicUserData {
 export interface ProfilePicture {
     id?: string;
     url: string;
-    amazonId: string;
 }
 
 export interface FetchedParty extends Party {
