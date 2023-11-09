@@ -1,6 +1,6 @@
 import {NestFactory} from "@nestjs/core";
 import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
-import {AppModule} from "./app.module";
+import {AppModule} from "./src/app.module";
 
 export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL} = process.env;
 
