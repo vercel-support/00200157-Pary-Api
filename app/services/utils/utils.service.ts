@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {Location} from "types";
+import {Location} from "app/types";
 
 @Injectable()
 export class UtilsService {

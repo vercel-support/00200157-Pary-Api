@@ -1,7 +1,7 @@
 import {HttpException, Injectable, NestMiddleware} from "@nestjs/common";
-import {JWT_SECRET} from "app/src/main";
+import {JWT_SECRET} from "app/main";
 import {JwtPayload, VerifyErrors, verify} from "jsonwebtoken";
-import {AuthenticatedRequestDecoded} from "types";
+import {AuthenticatedRequestDecoded} from "app/types";
 
 @Injectable()
 export class AuthTokenMiddleware implements NestMiddleware {

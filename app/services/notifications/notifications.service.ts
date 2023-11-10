@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import Expo, {ExpoPushMessage} from "expo-server-sdk";
-import {User} from "types";
+import {User} from "app/types";
 import {PrismaService} from "../db/prisma.service";
 import {ExpoService} from "../expo/expo.service";
 import {PartyType} from "@prisma/client";
