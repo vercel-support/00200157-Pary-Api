@@ -1,5 +1,5 @@
 import {Injectable, InternalServerErrorException} from "@nestjs/common";
-import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/main";
+import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/src/main";
 import {sign} from "jsonwebtoken";
 import {GoogleUser, User} from "app/types";
 import {OAuth2Client} from "google-auth-library";
