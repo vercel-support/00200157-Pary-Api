@@ -12,7 +12,7 @@
         "start": "nest start",
         "start:dev": "nest start --watch",
         "start:debug": "nest start --debug --watch",
-        "start:prod": "node dist/app/main",
+        "start:prod": "bun dist/app/src/main",
         "lint": "eslint \"{app,apps,libs,test}/**/*.ts\" --fix",
         "test": "jest",
         "prisma:generate": "prisma db push",

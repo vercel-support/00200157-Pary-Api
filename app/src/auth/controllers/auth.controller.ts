@@ -12,7 +12,7 @@ import {
 import {GoogleUserDto} from "app/dtos/auth/SignIn.dto";
 import {AuthService} from "app/services/auth/auth.service";
 import {UtilsService} from "app/services/utils/utils.service";
-import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/main";
+import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/src/main";
 import {verify} from "jsonwebtoken";
 
 @Controller("auth")
