@@ -9,12 +9,9 @@ import {ExpoService} from "app/services/expo/expo.service";
 import {PrismaService} from "app/services/db/prisma.service";
 import {UtilsService} from "../services/utils/utils.service";
 import {AuthService} from "app/services/auth/auth.service";
-import {AppController} from "./app.controller";
-import {AppService} from "./app.service";
 
 @Module({
     imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule],
-    providers: [AppService, PrismaService, UtilsService, ExpoService, NotificationsService, AuthService],
-    controllers: [AppController],
+    providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService],
 })
 export class AppModule {}
