@@ -5,7 +5,6 @@
     "author": "",
     "private": true,
     "license": "UNLICENSED",
-    "main": "app/main.js",
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"app/**/*.ts\" \"test/**/*.ts\"",
@@ -26,6 +25,7 @@
         "@nestjs/core": "^10.2.5",
         "@nestjs/platform-express": "^10.2.5",
         "@nestjs/platform-fastify": "^10.2.5",
+        "@nestjs/serve-static": "^4.0.0",
         "@prisma/client": "^5.5.2",
         "@vercel/blob": "^0.15.0",
         "axios": "^1.5.0",
