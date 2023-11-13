@@ -232,6 +232,41 @@ export class FeedService {
         const queryFilters = {
             date: {gte: currentDateTime},
             active: true,
+            private: false,
+            OR: [
+                {
+                    moderators: {
+                        some: {
+                            userId: userId,
+                        },
+
+                    },
+                },
+                {
+                    ownerId: userId,
+                },
+                {
+                    members: {
+                        some: {
+                            userId: userId,
+                        },
+                    },
+                },
+                {
+                    invitations: {
+                        some: {
+                            invitedUserId: userId,
+                        },
+                    },
+                },
+                {
+                    membershipRequests: {
+                        some: {
+                            userId: userId,
+                        },
+                    },
+                },
+            ]
         };
 
         const totalParties = await this.prisma.party.count({where: queryFilters});
@@ -356,7 +391,55 @@ export class FeedService {
                                 },
                             },
                         },
-                    },
+                    },groups: {
+                        include:{
+                            group: {
+                                select: {
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                    members: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    moderators: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    }
                 },
             });
 

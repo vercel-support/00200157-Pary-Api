@@ -18,7 +18,8 @@ import {UserService} from "app/services/user/user.service";
 
 @Controller("user")
 export class UserController {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UserService) {
+    }
 
     @Get("check-username/:username")
     async checkUsername(@Param("username") username: string) {
@@ -46,7 +47,8 @@ export class UserController {
 
     @Delete("delete-profile-picture")
     @UsePipes(new ValidationPipe())
-    async deleteProfilePicture(@Param("id") id: string, @Param("url") url: string, @Req() request: any) {
+    async deleteProfilePicture(@Query('url') url: string, @Query('id') id: string, @Req() request: any) {
+        console.log("deleteProfilePicture", id, url, request.raw.decoded.id)
         return await this.userService.deleteProfilePicture(id, url, request.raw.decoded.id);
     }
 
@@ -63,7 +65,7 @@ export class UserController {
         if (!username) {
             throw new NotFoundException("User not found");
         }
-        return await this.userService.followUser(username, request.raw.decoded.id);
+        return await this.userService.unFollowUser(username, request.raw.decoded.id);
     }
 
     @Get("follower-user-info/:username")

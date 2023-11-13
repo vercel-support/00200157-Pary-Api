@@ -10,7 +10,7 @@ import {randomUUID} from "crypto";
 import {PrismaService} from "../db/prisma.service";
 import {NotificationsService} from "../notifications/notifications.service";
 import {UtilsService} from "../utils/utils.service";
-import {put, del} from "@vercel/blob";
+import {del, put} from "@vercel/blob";
 
 @Injectable()
 export class PartyService {
@@ -549,6 +549,131 @@ export class PartyService {
             },
         });
     }
+async getPartyInvitations(userId: string) {
+        return await this.prisma.membershipRequest.findMany({
+            where: {
+                OR: [
+                    {
+                        party: {
+                            ownerId: userId,
+                        },
+                    },
+                    {
+                        party: {
+                            moderators: {
+                                some: {
+                                    userId: userId,
+                                },
+                            },
+                        },
+                    },
+                ],
+                status: "PENDING",
+            },
+            include: {
+                party: {
+                    include: {
+                        owner: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                },
+                            },
+                        },
+                        members: {
+                            select: {
+                                userId: true,
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {
+                                            take: 1,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                user: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    },
+                },
+                group: {
+                    select: {
+                        leader: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            },
+                        },
+                        members: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
 
     async getParty(partyId: string, userId: string) {
         return await this.prisma.party
@@ -656,6 +781,56 @@ export class PartyService {
                             },
                         },
                     },
+                    groups: {
+                        include: {
+                            group: {
+                                select: {
+                                    id: true,
+                                    leader: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                    members: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    moderators: {
+                                        include: {
+                                            user: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {take: 1},
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    }
                 },
             })
             .then(async party => {
@@ -824,43 +999,104 @@ export class PartyService {
         return true;
     }
 
-    async acceptJoinRequest(partyId: string, userId: string, requesterUserId: string) {
+    async acceptJoinRequest(partyId: string, userId: string , type: string , requesterUserId?: string, groupId?: string) {
+        if (type !== "SOLO" && type !== "GROUP") {
+            throw new BadRequestException("Invalid type");
+        }
+        if (type === "SOLO" && requesterUserId) {
+            throw new BadRequestException("Requester user id is required");
+        } else if (type === "GROUP" && !groupId) {
+            throw new BadRequestException("Group id is required");
+        }
+
         const party = await this.prisma.party.findUnique({
             where: {
                 id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
             },
+            include: {
+                moderators: {
+                    select: {
+                        user: {
+                            select: {
+                                expoPushToken: true,
+                            },
+                        },
+                    },
+                }
+            }
         });
         if (!party) {
             throw new NotFoundException("Party not found");
         }
+        if (type === "SOLO") {
+            const joinRequest = await this.prisma.membershipRequest.findFirst({
+                where: {
+                    partyId,
+                    userId: requesterUserId,
+                },
+            });
 
-        const joinRequest = await this.prisma.membershipRequest.findFirst({
-            where: {
-                partyId,
-                userId: requesterUserId,
-            },
-        });
+            if (!joinRequest) {
+                throw new NotFoundException("Join request not found");
+            }
 
-        if (!joinRequest) {
-            throw new NotFoundException("Join request not found");
+            await this.prisma.membershipRequest.update({
+                where: {
+                    id: joinRequest.id,
+                },
+                data: {
+                    status: "ACCEPTED",
+                },
+            });
+
+            await this.prisma.partyMember.create({
+                data: {
+                    partyId,
+                    userId: requesterUserId,
+                },
+            });
+            this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party);
+        } else {
+            const joinRequest = await this.prisma.membershipRequest.findFirst({
+                where: {
+                    partyId,
+                    groupId,
+                },
+            });
+
+            if (!joinRequest) {
+                throw new NotFoundException("Join request not found");
+            }
+
+            await this.prisma.membershipRequest.update({
+                where: {
+                    id: joinRequest.id,
+                },
+                data: {
+                    status: "ACCEPTED",
+                },
+            });
+
+            await this.prisma.partyGroup.create({
+                data: {
+                    partyId,
+                    groupId,
+                },
+            });
+            this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
         }
-
-        await this.prisma.membershipRequest.update({
-            where: {
-                id: joinRequest.id,
-            },
-            data: {
-                status: "ACCEPTED",
-            },
-        });
-
-        await this.prisma.partyMember.create({
-            data: {
-                partyId,
-                userId: requesterUserId,
-            },
-        });
-
         return true;
     }
 

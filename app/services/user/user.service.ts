@@ -405,7 +405,7 @@ export class UserService {
                                 const profilePictures = [...user.profilePictures];
 
                                 profilePictures.push(profilePicture);
-                                this.prisma.user
+                                await this.prisma.user
                                     .update({
                                         where: {id: userId},
                                         data: {
@@ -440,7 +440,7 @@ export class UserService {
                     });
             } catch (error) {
                 if (retry) {
-                    uploadImageToVercel(false);
+                    await uploadImageToVercel(false);
                 } else {
                     throw new InternalServerErrorException("Error uploading image.");
                 }
@@ -450,6 +450,7 @@ export class UserService {
     }
 
     async deleteProfilePicture(id: string, url: string, userId: string) {
+        console.log(id, url, userId);
         await del(url);
 
         await this.prisma.profilePicture
@@ -508,7 +509,7 @@ export class UserService {
             throw new InternalServerErrorException("You are already following this user.");
         }
 
-        await this.prisma.userFollows
+        return await this.prisma.userFollows
             .create({
                 data: {
                     followerUserId,
@@ -520,9 +521,11 @@ export class UserService {
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error following user.");
-            });
+            }).then(()=>{
+                this.notifications.sendNewFollowerNotification(expoPushToken, followerUserId);
+                return true;
+            })
 
-        this.notifications.sendNewFollowerNotification(expoPushToken, followerUserId);
     }
 
     async unFollowUser(unFollowedUsername: string, followerUserId: string) {
@@ -548,7 +551,7 @@ export class UserService {
             throw new InternalServerErrorException("You are not following this user.");
         }
 
-        await this.prisma.userFollows
+        return await this.prisma.userFollows
             .delete({
                 where: {
                     followerUserId_followedUserId: {
@@ -559,7 +562,7 @@ export class UserService {
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error un following user.");
-            });
+            }).then(() => true);
     }
 
     async getFollowerUserInfo(username: string) {

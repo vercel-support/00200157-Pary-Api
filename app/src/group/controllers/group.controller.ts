@@ -22,7 +22,7 @@ export class GroupController {
     @Post("create")
     @UsePipes(new ValidationPipe())
     async createGroup(@Body("group") group: CreateGroupDto, @Req() request: any) {
-        return this.groupService.createGroup(group, request.raw.decoded.id);
+        return await this.groupService.createGroup(group, request.raw.decoded.id);
     }
 
     @Get("own-groups")
@@ -31,7 +31,7 @@ export class GroupController {
         @Query("limit", ParseIntPipe) limit: number,
         @Req() request: any,
     ) {
-        return this.groupService.getOwnGroups(page, limit, request.raw.decoded.id);
+        return await this.groupService.getOwnGroups(page, limit, request.raw.decoded.id);
     }
 
     @Get("invited-groups")
@@ -45,24 +45,22 @@ export class GroupController {
 
     @Get("join-requests")
     async getJoinRequests(@Req() request: any) {
-        const response = await this.groupService.getJoinRequests(request.raw.decoded.id);
-        console.log("getJoinRequests", response);
-        return response;
+        return await this.groupService.getJoinRequests(request.raw.decoded.id);
     }
 
     @Get(":groupId")
     async getGroup(@Param("groupId") groupId: string) {
-        return this.groupService.getGroup(groupId);
+        return await this.groupService.getGroup(groupId);
     }
 
     @Put(":groupId")
     async updateGroup(@Param("groupId") groupId: string, @Body("group") group: CreateGroupDto, @Req() request: any) {
-        return this.groupService.updateGroup(groupId, group, request.raw.decoded.id);
+        return await this.groupService.updateGroup(groupId, group, request.raw.decoded.id);
     }
 
     @Delete(":groupId")
     async deleteGroup(@Param("groupId") groupId: string, @Req() request: any) {
-        return this.groupService.deleteGroup(groupId, request.raw.decoded.id);
+        return await this.groupService.deleteGroup(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/invite")
@@ -71,27 +69,27 @@ export class GroupController {
         @Body("userIdToInvite") userIdToInvite: string,
         @Req() request: any,
     ) {
-        return this.groupService.inviteToGroup(groupId, userIdToInvite, request.raw.decoded.id);
+        return await this.groupService.inviteToGroup(groupId, userIdToInvite, request.raw.decoded.id);
     }
 
     @Post(":groupId/accept-invitation")
     async acceptInvitation(@Param("groupId") groupId: string, @Req() request: any) {
         console.log("acceptInvitation", groupId, request.raw.decoded.id);
-        return this.groupService.acceptInvitation(groupId, request.raw.decoded.id);
+        return await this.groupService.acceptInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/decline-invitation")
     async declineInvitation(@Param("groupId") groupId: string, @Req() request: any) {
-        return this.groupService.declineInvitation(groupId, request.raw.decoded.id);
+        return await this.groupService.declineInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/cancel-invitation")
     async cancelInvitation(@Param("groupId") groupId: string, @Req() request: any) {
-        return this.groupService.cancelInvitation(groupId, request.raw.decoded.id);
+        return await this.groupService.cancelInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/leave")
     async leaveGroup(@Param("groupId") groupId: string, @Req() request: any) {
-        return this.groupService.leaveGroup(groupId, request.raw.decoded.id);
+        return await this.groupService.leaveGroup(groupId, request.raw.decoded.id);
     }
 }

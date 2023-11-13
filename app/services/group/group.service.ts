@@ -559,24 +559,9 @@ export class GroupService {
     }
 
     async getJoinRequests(userId: string) {
-        return await this.prisma.membershipRequest.findMany({
+        return await this.prisma.groupInvitation.findMany({
             where: {
-                OR: [
-                    {
-                        group: {
-                            leaderId: userId,
-                        },
-                    },
-                    {
-                        group: {
-                            moderators: {
-                                some: {
-                                    userId: userId,
-                                },
-                            },
-                        },
-                    },
-                ],
+                invitedUserId: userId,
                 status: "PENDING",
             },
             include: {
@@ -666,18 +651,7 @@ export class GroupService {
                             },
                         },
                     },
-                },
-                user: {
-                    select: {
-                        username: true,
-                        name: true,
-                        lastName: true,
-                        profilePictures: {take: 1},
-                        verified: true,
-                        isCompany: true,
-                        gender: true,
-                    },
-                },
+                }
             },
         });
     }
