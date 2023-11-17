@@ -11,6 +11,7 @@ import {PrismaService} from "../db/prisma.service";
 import {NotificationsService} from "../notifications/notifications.service";
 import {UtilsService} from "../utils/utils.service";
 import {del, put} from "@vercel/blob";
+import {PARTY_REQUEST} from "../../src/db/Requests";
 
 @Injectable()
 export class PartyService {
@@ -159,109 +160,7 @@ export class PartyService {
                     },
                 ],
             },
-            include: {
-                owner: {
-                    select: {
-                        username: true,
-                        name: true,
-                        lastName: true,
-                        profilePictures: {take: 1},
-                        verified: true,
-                        isCompany: true,
-                        gender: true,
-                    },
-                },
-                members: {
-                    include: {
-                        user: {
-                            select: {
-                                username: true,
-                                name: true,
-                                lastName: true,
-                                profilePictures: {take: 1},
-                                verified: true,
-                                isCompany: true,
-                                gender: true,
-                            },
-                        },
-                    },
-                },
-                invitations: {
-                    include: {
-                        invitedUser: {
-                            select: {
-                                username: true,
-                                name: true,
-                                lastName: true,
-                                profilePictures: {take: 1},
-                                verified: true,
-                                isCompany: true,
-                                gender: true,
-                            },
-                        },
-                    },
-                },
-                membershipRequests: {
-                    include: {
-                        group: {
-                            select: {
-                                leader: {
-                                    select: {
-                                        username: true,
-                                        name: true,
-                                        lastName: true,
-                                        profilePictures: {take: 1},
-                                        verified: true,
-                                        isCompany: true,
-                                        gender: true,
-                                    },
-                                },
-                                members: {
-                                    include: {
-                                        user: {
-                                            select: {
-                                                username: true,
-                                                name: true,
-                                                lastName: true,
-                                                profilePictures: {take: 1},
-                                                verified: true,
-                                                isCompany: true,
-                                                gender: true,
-                                            },
-                                        },
-                                    },
-                                },
-                                moderators: {
-                                    include: {
-                                        user: {
-                                            select: {
-                                                username: true,
-                                                name: true,
-                                                lastName: true,
-                                                profilePictures: {take: 1},
-                                                verified: true,
-                                                isCompany: true,
-                                                gender: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                        user: {
-                            select: {
-                                username: true,
-                                name: true,
-                                lastName: true,
-                                profilePictures: {take: 1},
-                                verified: true,
-                                isCompany: true,
-                                gender: true,
-                            },
-                        },
-                    },
-                },
-            },
+            include: PARTY_REQUEST,
             take: limit,
             skip: skip,
             orderBy: {date: "asc"},
@@ -329,11 +228,9 @@ export class PartyService {
                     throw new InternalServerErrorException("Error uploading image.");
                 }
 
-                const image = {
+                return {
                     url,
                 };
-
-                return image;
             } catch (error) {
                 if (retry) {
                     uploadImageToVercel(false);
@@ -679,159 +576,7 @@ async getPartyInvitations(userId: string) {
         return await this.prisma.party
             .findUnique({
                 where: {id: partyId},
-                include: {
-                    owner: {
-                        select: {
-                            username: true,
-                            name: true,
-                            lastName: true,
-                            profilePictures: {take: 1},
-                            verified: true,
-                            isCompany: true,
-                            gender: true,
-                        },
-                    },
-                    members: {
-                        include: {
-                            user: {
-                                select: {
-                                    username: true,
-                                    name: true,
-                                    lastName: true,
-                                    profilePictures: {take: 1},
-                                    verified: true,
-                                    isCompany: true,
-                                    gender: true,
-                                },
-                            },
-                        },
-                    },
-                    invitations: {
-                        include: {
-                            invitedUser: {
-                                select: {
-                                    username: true,
-                                    name: true,
-                                    lastName: true,
-                                    profilePictures: {take: 1},
-                                    verified: true,
-                                    isCompany: true,
-                                    gender: true,
-                                },
-                            },
-                        },
-                    },
-                    membershipRequests: {
-                        include: {
-                            group: {
-                                select: {
-                                    leader: {
-                                        select: {
-                                            username: true,
-                                            name: true,
-                                            lastName: true,
-                                            profilePictures: {take: 1},
-                                            verified: true,
-                                            isCompany: true,
-                                            gender: true,
-                                        },
-                                    },
-                                    members: {
-                                        include: {
-                                            user: {
-                                                select: {
-                                                    username: true,
-                                                    name: true,
-                                                    lastName: true,
-                                                    profilePictures: {take: 1},
-                                                    verified: true,
-                                                    isCompany: true,
-                                                    gender: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    moderators: {
-                                        include: {
-                                            user: {
-                                                select: {
-                                                    username: true,
-                                                    name: true,
-                                                    lastName: true,
-                                                    profilePictures: {take: 1},
-                                                    verified: true,
-                                                    isCompany: true,
-                                                    gender: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            user: {
-                                select: {
-                                    username: true,
-                                    name: true,
-                                    lastName: true,
-                                    profilePictures: {take: 1},
-                                    verified: true,
-                                    isCompany: true,
-                                    gender: true,
-                                },
-                            },
-                        },
-                    },
-                    groups: {
-                        include: {
-                            group: {
-                                select: {
-                                    id: true,
-                                    leader: {
-                                        select: {
-                                            username: true,
-                                            name: true,
-                                            lastName: true,
-                                            profilePictures: {take: 1},
-                                            verified: true,
-                                            isCompany: true,
-                                            gender: true,
-                                        },
-                                    },
-                                    members: {
-                                        include: {
-                                            user: {
-                                                select: {
-                                                    username: true,
-                                                    name: true,
-                                                    lastName: true,
-                                                    profilePictures: {take: 1},
-                                                    verified: true,
-                                                    isCompany: true,
-                                                    gender: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                    moderators: {
-                                        include: {
-                                            user: {
-                                                select: {
-                                                    username: true,
-                                                    name: true,
-                                                    lastName: true,
-                                                    profilePictures: {take: 1},
-                                                    verified: true,
-                                                    isCompany: true,
-                                                    gender: true,
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            }
-                        }
-                    }
-                },
+                include: PARTY_REQUEST,
             })
             .then(async party => {
                 if (!party) {
@@ -849,8 +594,7 @@ async getPartyInvitations(userId: string) {
                     throw new NotFoundException("User not found");
                 }
 
-                const distance = this.utils.haversineDistance(currentUser.location, party.location);
-                party.distance = distance;
+                party.distance = this.utils.haversineDistance(currentUser.location, party.location);
 
                 return party;
             })
