@@ -148,7 +148,7 @@ export class GroupService {
             where: {id: userId},
             select: {
                 invitedGroups: {
-                    select: {
+                    include: {
                         group: {
                             include: {
                                 members: {

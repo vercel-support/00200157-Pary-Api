@@ -256,7 +256,7 @@ export class PartyService {
 
         const user = await this.prisma.user.findUnique({
             where: {id: userId},
-            select: {
+            include: {
                 invitedParties: {
                     select: {
                         partyId: true,
