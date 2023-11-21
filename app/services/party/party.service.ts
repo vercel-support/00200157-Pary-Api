@@ -446,7 +446,8 @@ export class PartyService {
             },
         });
     }
-async getPartyInvitations(userId: string) {
+
+    async getPartyInvitations(userId: string) {
         return await this.prisma.membershipRequest.findMany({
             where: {
                 OR: [
@@ -743,7 +744,7 @@ async getPartyInvitations(userId: string) {
         return true;
     }
 
-    async acceptJoinRequest(partyId: string, userId: string , type: string , requesterUserId?: string, groupId?: string) {
+    async acceptJoinRequest(partyId: string, userId: string, type: string, requesterUserId?: string, groupId?: string) {
         if (type !== "SOLO" && type !== "GROUP") {
             throw new BadRequestException("Invalid type");
         }
@@ -778,8 +779,8 @@ async getPartyInvitations(userId: string) {
                             },
                         },
                     },
-                }
-            }
+                },
+            },
         });
         if (!party) {
             throw new NotFoundException("Party not found");

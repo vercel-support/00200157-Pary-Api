@@ -75,6 +75,7 @@ export class UtilsService {
             invitedParties: {
                 select: {
                     partyId: true,
+                    status: true,
                     party: {
                         select: {
                             name: true,
@@ -306,6 +307,7 @@ export class UtilsService {
             invitedGroups: {
                 select: {
                     groupId: true,
+                    status: true,
                     group: {
                         select: {
                             id: true,

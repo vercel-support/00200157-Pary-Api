@@ -40,6 +40,7 @@ export class PartyController {
     async getJoinRequests(@Req() request: any) {
         return this.partyService.getJoinRequests(request.raw.decoded.id);
     }
+
     @Get("invitations")
     async getRequests(@Req() request: any) {
         return this.partyService.getPartyInvitations(request.raw.decoded.id);
@@ -66,8 +67,14 @@ export class PartyController {
     }
 
     @Post(":partyId/accept-join-request")
-    async acceptJoinRequest(@Param("partyId") partyId: string, @Body("userId") userId: string,@Body("groupId") groupId: string,@Body("type") type: string, @Req() request: any) {
-        return this.partyService.acceptJoinRequest(partyId, request.raw.decoded.id, type,userId,groupId);
+    async acceptJoinRequest(
+        @Param("partyId") partyId: string,
+        @Body("userId") userId: string,
+        @Body("groupId") groupId: string,
+        @Body("type") type: string,
+        @Req() request: any,
+    ) {
+        return this.partyService.acceptJoinRequest(partyId, request.raw.decoded.id, type, userId, groupId);
     }
 
     @Post(":partyId/decline-join-request")

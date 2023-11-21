@@ -2,7 +2,7 @@ import {NestFactory} from "@nestjs/core";
 import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
 import {AppModule} from "./src/app.module";
 
-export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN,PUBLIC_API_URL,PUBLIC_API_PORT} = process.env;
+export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL, PUBLIC_API_PORT} = process.env;
 
 if (JWT_SECRET === undefined) {
     throw new Error("No JWT_SECRET env variable found.");
@@ -24,4 +24,5 @@ async function bootstrap() {
     app.enableCors();
     await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
 }
+
 bootstrap();

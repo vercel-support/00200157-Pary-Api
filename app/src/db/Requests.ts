@@ -1,4 +1,4 @@
-export const PARTY_REQUEST  = {
+export const PARTY_REQUEST = {
     owner: {
         select: {
             username: true,
@@ -162,7 +162,7 @@ export const PARTY_REQUEST  = {
                         },
                     },
                 },
-            }
-        }
-    }
-}
+            },
+        },
+    },
+};

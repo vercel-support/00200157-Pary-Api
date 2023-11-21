@@ -651,7 +651,7 @@ export class GroupService {
                             },
                         },
                     },
-                }
+                },
             },
         });
     }

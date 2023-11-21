@@ -10,8 +10,7 @@ export class NotificationsService {
     constructor(
         private prisma: PrismaService,
         private expo: ExpoService,
-    ) {
-    }
+    ) {}
 
     async sendNewFollowerNotification(pushToken: string, followerId: string) {
         if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
@@ -198,7 +197,10 @@ export class NotificationsService {
     }
 
     async sendPartyJoinAcceptedSoloNotification(userId: string, party) {
-        const user = await this.prisma.user.findUnique({where: {id: userId}, select: {expoPushToken: true, username: true}});
+        const user = await this.prisma.user.findUnique({
+            where: {id: userId},
+            select: {expoPushToken: true, username: true},
+        });
         if (user === null) return;
         const pushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
         const userMessage: ExpoPushMessage = {
@@ -239,7 +241,11 @@ export class NotificationsService {
     }
 
     async sendPartyJoinAcceptedGroupNotification(groupId: string, party) {
-        const group = await this.prisma.group.findUnique({where: {id: groupId}, select: {name: true, members: {
+        const group = await this.prisma.group.findUnique({
+            where: {id: groupId},
+            select: {
+                name: true,
+                members: {
                     select: {
                         user: {
                             select: {
@@ -247,7 +253,9 @@ export class NotificationsService {
                             },
                         },
                     },
-                }}});
+                },
+            },
+        });
         if (group === null) return;
         const messageToGroup: ExpoPushMessage = {
             to: group.members.map(member => member.user.expoPushToken),

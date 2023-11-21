@@ -138,7 +138,6 @@ export class FeedService {
                         some: {
                             userId: userId,
                         },
-
                     },
                 },
                 {
@@ -165,7 +164,7 @@ export class FeedService {
                         },
                     },
                 },
-            ]
+            ],
         };
 
         const totalParties = await this.prisma.party.count({where: queryFilters});

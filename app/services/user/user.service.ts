@@ -521,11 +521,11 @@ export class UserService {
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error following user.");
-            }).then(()=>{
+            })
+            .then(() => {
                 this.notifications.sendNewFollowerNotification(expoPushToken, followerUserId);
                 return true;
-            })
-
+            });
     }
 
     async unFollowUser(unFollowedUsername: string, followerUserId: string) {
@@ -562,7 +562,8 @@ export class UserService {
             })
             .catch(() => {
                 throw new InternalServerErrorException("Error un following user.");
-            }).then(() => true);
+            })
+            .then(() => true);
     }
 
     async getFollowerUserInfo(username: string) {
