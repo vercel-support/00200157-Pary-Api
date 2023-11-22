@@ -3,6 +3,9 @@ import {PrismaService} from "../../db/services/prisma.service";
 import {UtilsService} from "../../utils/services/utils.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
 import {PARTY_REQUEST} from "../../db/Requests";
+import {SearchDto} from "../dto/Search.dto";
+import {PersonalizedPartiesDto} from "../dto/PersonalizedParties.dto";
+import {FollowersFollowingDto} from "../dto/FollowersFollowing.dto";
 
 @Injectable()
 export class FeedService {
@@ -14,7 +17,8 @@ export class FeedService {
         private notifications: NotificationsService,
     ) {}
 
-    async search(page: number, limit: number, search: string, userId: string) {
+    async search(searchDto: SearchDto, userId: string) {
+        const {page, limit, search} = searchDto;
         const skip = page * limit;
 
         const currentUser = await this.prisma.user.findUnique({
@@ -86,8 +90,7 @@ export class FeedService {
 
         const partiesToReturn = await Promise.all(
             parties.map(async party => {
-                const distance = this.utils.haversineDistance(currentUser.location, party.location);
-                party.distance = distance;
+                party.distance = this.utils.haversineDistance(currentUser.location, party.location);
                 return party;
             }),
         );
@@ -95,15 +98,10 @@ export class FeedService {
         return {users, parties: partiesToReturn};
     }
 
-    async getPersonalizedParties(
-        page: number,
-        limit: number,
-        maxAge: number,
-        minAge: number,
-        distanceLimit: number,
-        showGroups: boolean,
-        userId: string,
-    ) {
+    async getPersonalizedParties(personalizedParties: PersonalizedPartiesDto, userId: string) {
+        const {limit, maxAge, minAge, distanceLimit, showGroups} = personalizedParties;
+        let {page} = personalizedParties;
+        const groups = [];
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
@@ -128,6 +126,61 @@ export class FeedService {
 
         const followedUsers = currentUser.followingUserList.map(follow => follow.followedUserId);
         const currentDateTime = new Date();
+
+        if (showGroups) {
+            const groupQueryFilters = {
+                private: false,
+            };
+
+            const availableGroups = await this.prisma.group.findMany({
+                where: groupQueryFilters,
+                include: {
+                    leader: {
+                        select: {
+                            username: true,
+                            name: true,
+                            lastName: true,
+                            profilePictures: {take: 1},
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                        },
+                    },
+                    members: {
+                        include: {
+                            user: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {take: 1},
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                },
+                            },
+                        },
+                    },
+                    moderators: {
+                        include: {
+                            user: {
+                                select: {
+                                    username: true,
+                                    name: true,
+                                    lastName: true,
+                                    profilePictures: {take: 1},
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            groups.push(...availableGroups);
+        }
 
         const queryFilters = {
             date: {gte: currentDateTime},
@@ -212,17 +265,18 @@ export class FeedService {
                     })
                     .sort((a, b) => b!.relevanceScore - a!.relevanceScore),
             );
-
             page++;
         }
         return {
             parties: foundedParties,
             step: page,
+            groups,
             reachedMaxItemsInDB: page * limit >= totalParties,
         };
     }
 
-    async getFollowers(page: number, limit: number, username: string) {
+    async getFollowers(followerDto: FollowersFollowingDto) {
+        const {page, limit, username} = followerDto;
         const skip = page * 10;
         const user = await this.prisma.user.findUnique({
             where: {username: username},
@@ -235,7 +289,7 @@ export class FeedService {
         }
         const followers = user?.followerUserList.map(follower => follower.followerUserId);
 
-        const followerUsers = await this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             take: limit,
             skip,
             where: {
@@ -259,10 +313,10 @@ export class FeedService {
                 },
             },
         });
-        return followerUsers;
     }
 
-    async getFollowing(page: number, limit: number, username: string) {
+    async getFollowing(followingDto: FollowersFollowingDto) {
+        const {page, limit, username} = followingDto;
         const skip = page * 10;
         const user = await this.prisma.user.findUnique({
             where: {username: username},
@@ -275,7 +329,7 @@ export class FeedService {
         }
         const followers = user?.followingUserList.map(follower => follower.followedUserId);
 
-        const followerUsers = await this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             take: limit,
             skip,
             where: {
@@ -299,7 +353,5 @@ export class FeedService {
                 },
             },
         });
-
-        return followerUsers;
     }
 }
