@@ -15,6 +15,8 @@ export class FeedController {
     @UsePipes(
         new ValidationPipe({
             transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
         }),
     )
     async search(@Query() searchDto: SearchDto, @Req() request: any) {
@@ -34,13 +36,25 @@ export class FeedController {
     }
 
     @Get("followers")
-    @UsePipes(new ValidationPipe())
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async getFollowers(@Query() followerDto: FollowersFollowingDto) {
         return await this.feedService.getFollowers(followerDto);
     }
 
     @Get("following")
-    @UsePipes(new ValidationPipe())
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async getFollowing(@Query() followingDto: FollowersFollowingDto) {
         return await this.feedService.getFollowing(followingDto);
     }

@@ -5,7 +5,7 @@ export class FollowersFollowingDto {
     @IsInt()
     @Min(0)
     @Type(() => Number)
-    page: number = 0;
+    page: number = 1;
 
     @IsInt()
     @Min(1)
