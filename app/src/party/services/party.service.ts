@@ -5,13 +5,13 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from "@nestjs/common";
-import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
+import {CreatePartyDto} from "app/src/party/dto/CreateParty.dto";
 import {randomUUID} from "crypto";
-import {PrismaService} from "../db/prisma.service";
-import {NotificationsService} from "../notifications/notifications.service";
-import {UtilsService} from "../utils/utils.service";
+import {PrismaService} from "../../db/services/prisma.service";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {UtilsService} from "../../utils/services/utils.service";
 import {del, put} from "@vercel/blob";
-import {PARTY_REQUEST} from "../../src/db/Requests";
+import {PARTY_REQUEST} from "../../db/Requests";
 
 @Injectable()
 export class PartyService {

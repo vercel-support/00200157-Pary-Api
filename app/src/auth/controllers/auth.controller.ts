@@ -9,12 +9,15 @@ import {
     UsePipes,
     ValidationPipe,
 } from "@nestjs/common";
-import {GoogleUserDto} from "app/dtos/auth/SignIn.dto";
-import {AuthService} from "app/services/auth/auth.service";
-import {UtilsService} from "app/services/utils/utils.service";
+import {GoogleUserDto} from "app/src/auth/dto/SignIn.dto";
+import {AuthService} from "app/src/auth/services/auth.service";
 import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/main";
 import {verify} from "jsonwebtoken";
+import {UtilsService} from "../../utils/services/utils.service";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 
+@ApiTags("Auth")
+@ApiBearerAuth()
 @Controller("auth")
 export class AuthController {
     constructor(

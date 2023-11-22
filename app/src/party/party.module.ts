@@ -1,10 +1,10 @@
 import {MiddlewareConsumer, Module, NestModule} from "@nestjs/common";
 import {PartyController} from "./controllers/party.controller";
 import {AuthTokenMiddleware} from "app/middlewares/auth-token/auth-token.middleware";
-import {PartyService} from "app/services/party/party.service";
-import {PrismaModule} from "app/controllers/prisma/prisma.module";
-import {UtilsModule} from "app/controllers/utils/utils.module";
-import {NotificationsModule} from "app/controllers/notifications/notifications.module";
+import {PartyService} from "app/src/party/services/party.service";
+import {PrismaModule} from "app/src/prisma/prisma.module";
+import {UtilsModule} from "app/src/utils/utils.module";
+import {NotificationsModule} from "app/src/notifications/notifications.module";
 
 @Module({
     controllers: [PartyController],

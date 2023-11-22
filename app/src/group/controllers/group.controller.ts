@@ -12,9 +12,12 @@ import {
     UsePipes,
     ValidationPipe,
 } from "@nestjs/common";
-import {CreateGroupDto} from "app/dtos/group/CreateGroup.dto";
-import {GroupService} from "app/services/group/group.service";
+import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
+import {GroupService} from "app/src/group/services/group.service";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 
+@ApiTags("Group")
+@ApiBearerAuth()
 @Controller("group")
 export class GroupController {
     constructor(private readonly groupService: GroupService) {}

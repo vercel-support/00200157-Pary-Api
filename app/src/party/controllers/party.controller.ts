@@ -1,7 +1,10 @@
 import {Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
-import {CreatePartyDto} from "app/dtos/party/CreateParty.dto";
-import {PartyService} from "app/services/party/party.service";
+import {CreatePartyDto} from "app/src/party/dto/CreateParty.dto";
+import {PartyService} from "app/src/party/services/party.service";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 
+@ApiTags("Party")
+@ApiBearerAuth()
 @Controller("party")
 export class PartyController {
     constructor(private readonly partyService: PartyService) {}

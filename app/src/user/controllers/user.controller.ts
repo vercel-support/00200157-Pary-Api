@@ -13,9 +13,12 @@ import {
     ValidationPipe,
 } from "@nestjs/common";
 import {Location} from "@prisma/client";
-import {UpdateUserDto} from "app/dtos/user/UpdateUser.dto";
-import {UserService} from "app/services/user/user.service";
+import {UpdateUserDto} from "app/src/user/dto/UpdateUser.dto";
+import {UserService} from "app/src/user/services/user.service";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 
+@ApiTags("User")
+@ApiBearerAuth()
 @Controller("user")
 export class UserController {
     constructor(private readonly userService: UserService) {}

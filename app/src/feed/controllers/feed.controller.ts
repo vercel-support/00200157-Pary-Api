@@ -1,5 +1,9 @@
 import {Controller, Get, ParseIntPipe, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
-import {FeedService} from "app/services/feed/feed.service";
+import {FeedService} from "app/src/feed/services/feed.service";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+
+@ApiTags("Feed")
+@ApiBearerAuth()
 @Controller("feed")
 export class FeedController {
     constructor(private readonly feedService: FeedService) {}
@@ -46,6 +50,7 @@ export class FeedController {
     ) {
         return await this.feedService.getFollowers(page, limit, username);
     }
+
     @Get("following")
     @UsePipes(new ValidationPipe())
     async getFollowing(

@@ -1,5 +1,5 @@
 import {Module} from "@nestjs/common";
-import {PrismaService} from "app/services/db/prisma.service";
+import {PrismaService} from "app/src/db/services/prisma.service";
 import {UtilsModule} from "../utils/utils.module";
 
 @Module({

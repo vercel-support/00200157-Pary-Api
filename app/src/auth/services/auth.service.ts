@@ -3,8 +3,9 @@ import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/main";
 import {sign} from "jsonwebtoken";
 import {GoogleUser, User} from "app/types";
 import {OAuth2Client} from "google-auth-library";
-import {PrismaService} from "../db/prisma.service";
-import {UtilsService} from "../utils/utils.service";
+import {PrismaService} from "../../db/services/prisma.service";
+import {UtilsService} from "../../utils/services/utils.service";
+
 const client = new OAuth2Client();
 
 @Injectable()
@@ -13,6 +14,7 @@ export class AuthService {
         private prisma: PrismaService,
         private utils: UtilsService,
     ) {}
+
     async signInUser(googleUser: GoogleUser) {
         const {idToken} = googleUser;
 

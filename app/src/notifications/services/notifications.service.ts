@@ -1,9 +1,9 @@
 import {Injectable} from "@nestjs/common";
 import Expo, {ExpoPushMessage} from "expo-server-sdk";
 import {User} from "app/types";
-import {PrismaService} from "../db/prisma.service";
-import {ExpoService} from "../expo/expo.service";
+import {PrismaService} from "../../db/services/prisma.service";
 import {PartyType} from "@prisma/client";
+import {ExpoService} from "../../expo/services/expo.service";
 
 @Injectable()
 export class NotificationsService {

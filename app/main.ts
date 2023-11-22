@@ -1,6 +1,7 @@
 import {NestFactory} from "@nestjs/core";
 import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
 import {AppModule} from "./src/app.module";
+import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 
 export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL, PUBLIC_API_PORT} = process.env;
 
@@ -22,6 +23,16 @@ async function bootstrap() {
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
     app.enableCors();
+    app.setGlobalPrefix("api/v1");
+
+    const config = new DocumentBuilder()
+        .setTitle("Pary Api")
+        .setDescription("La api oficial de Pary.")
+        .addBearerAuth()
+        .setVersion("1.0")
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("docs", app, document);
     await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
 }
 

@@ -1,12 +1,13 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
-import {PrismaService} from "../db/prisma.service";
-import {UtilsService} from "../utils/utils.service";
-import {NotificationsService} from "../notifications/notifications.service";
-import {PARTY_REQUEST} from "../../src/db/Requests";
+import {PrismaService} from "../../db/services/prisma.service";
+import {UtilsService} from "../../utils/services/utils.service";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {PARTY_REQUEST} from "../../db/Requests";
 
 @Injectable()
 export class FeedService {
     private readonly MAX_DISTANCE = 999999;
+
     constructor(
         private prisma: PrismaService,
         private utils: UtilsService,

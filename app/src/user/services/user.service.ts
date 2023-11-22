@@ -2,11 +2,11 @@ import {Injectable, InternalServerErrorException, NotFoundException} from "@nest
 import {Location} from "@prisma/client";
 import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
 import {del, put} from "@vercel/blob";
-import {UpdateUserDto} from "app/dtos/user/UpdateUser.dto";
+import {UpdateUserDto} from "app/src/user/dto/UpdateUser.dto";
 import {randomUUID} from "crypto";
-import {PrismaService} from "../db/prisma.service";
-import {NotificationsService} from "../notifications/notifications.service";
-import {UtilsService} from "../utils/utils.service";
+import {PrismaService} from "../../db/services/prisma.service";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {UtilsService} from "../../utils/services/utils.service";
 
 @Injectable()
 export class UserService {

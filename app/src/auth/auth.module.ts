@@ -1,10 +1,10 @@
 import {MiddlewareConsumer, Module, NestModule, RequestMethod} from "@nestjs/common";
-import {AuthService} from "../../services/auth/auth.service";
+import {AuthService} from "./services/auth.service";
 import {AuthTokenMiddleware} from "app/middlewares/auth-token/auth-token.middleware";
 import {AuthRefreshTokenMiddleware} from "app/middlewares/auth-refresh-token/auth-refresh-token.middleware";
 import {AuthController} from "./controllers/auth.controller";
-import {PrismaModule} from "../../controllers/prisma/prisma.module";
-import {UtilsModule} from "../../controllers/utils/utils.module";
+import {PrismaModule} from "../prisma/prisma.module";
+import {UtilsModule} from "../utils/utils.module";
 
 @Module({
     controllers: [AuthController],

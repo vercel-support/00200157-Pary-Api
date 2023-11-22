@@ -1,8 +1,8 @@
 import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
-import {UtilsService} from "../utils/utils.service";
-import {PrismaService} from "../db/prisma.service";
-import {NotificationsService} from "../notifications/notifications.service";
-import {CreateGroupDto} from "app/dtos/group/CreateGroup.dto";
+import {UtilsService} from "../../utils/services/utils.service";
+import {PrismaService} from "../../db/services/prisma.service";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 
 @Injectable()
 export class GroupService {
