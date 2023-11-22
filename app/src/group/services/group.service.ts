@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
 import {UtilsService} from "../../utils/services/utils.service";
 import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
@@ -471,6 +471,19 @@ export class GroupService {
             });
         }
 
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                groupId,
+                userId,
+            },
+        });
+
+        if (joinRequest) {
+            await this.prisma.membershipRequest.delete({
+                where: {id: joinRequest.id},
+            });
+        }
+
         return true;
     }
 
@@ -654,5 +667,65 @@ export class GroupService {
                 },
             },
         });
+    }
+
+    async requestJoin(groupId: string, userId: string) {
+        // Obtenemos la información del group.
+        const group = await this.prisma.group.findUnique({
+            where: {id: groupId},
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.groupMember.findUnique({
+            where: {
+                userId_groupId: {
+                    userId,
+                    groupId,
+                },
+            },
+        });
+
+        if (isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
+        }
+
+        // Si el group es público
+        if (!group.private) {
+            // Unir el usuario al group
+            await this.prisma.groupMember.create({
+                data: {
+                    groupId,
+                    userId,
+                },
+            });
+            return true;
+        } else {
+            // Verificar si el usuario o grupo ya ha solicitado unirse al grupo.
+            const existingRequest = await this.prisma.membershipRequest.findUnique({
+                where: {
+                    userId_groupId: {
+                        userId,
+                        groupId,
+                    },
+                },
+            });
+
+            if (existingRequest) {
+                throw new Error("Ya has solicitado unirte a este grupo");
+            }
+            await this.prisma.membershipRequest.create({
+                data: {
+                    userId,
+                    groupId,
+                    type: "SOLO",
+                },
+            });
+
+            return true;
+        }
     }
 }

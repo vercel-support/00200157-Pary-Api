@@ -1,5 +1,5 @@
-import {AgeRange} from "@prisma/client";
 import {IsArray, IsBoolean, IsNotEmpty} from "class-validator";
+import {AgeRange} from "@prisma/client";
 
 export class CreateGroupDto {
     @IsNotEmpty()

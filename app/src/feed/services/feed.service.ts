@@ -176,13 +176,13 @@ export class FeedService {
 
             totalGroups = await this.prisma.group.count({
                 where: {
-                    private: false,
+                    showInFeed: true,
                 },
             });
             while (foundedGroups.length < groupLimit && groupPage * groupLimit < totalGroups) {
                 const groups = await this.prisma.group.findMany({
                     where: {
-                        private: false,
+                        showInFeed: true,
                     },
                     include: queryFilters,
                     skip: groupPage * groupLimit,

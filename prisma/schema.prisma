@@ -224,6 +224,7 @@ model MembershipRequest {
   party     Party?                @relation(fields: [partyId], references: [id])
   user      User?                 @relation(fields: [userId], references: [id])
 
+  @@unique([userId, groupId])
   @@unique([userId, partyId])
 }
 

@@ -95,4 +95,9 @@ export class GroupController {
     async leaveGroup(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.leaveGroup(groupId, request.raw.decoded.id);
     }
+
+    @Post(":groupId/request-join")
+    async requestJoin(@Param("groupId") groupId: string, @Req() request: any) {
+        return this.groupService.requestJoin(groupId, request.raw.decoded.id);
+    }
 }
