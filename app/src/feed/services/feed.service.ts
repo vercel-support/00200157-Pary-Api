@@ -99,9 +99,11 @@ export class FeedService {
     }
 
     async getPersonalizedParties(personalizedParties: PersonalizedPartiesDto, userId: string) {
-        const {limit, maxAge, minAge, distanceLimit, showGroups} = personalizedParties;
-        let {page} = personalizedParties;
-        const groups = [];
+        const {partyLimit, groupLimit, distanceLimit, maxAge, minAge, showGroups} = personalizedParties;
+        let {partyPage, groupPage} = personalizedParties;
+        const foundedGroups = [];
+        const foundedParties = [];
+        let totalGroups = 0;
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
@@ -128,58 +130,68 @@ export class FeedService {
         const currentDateTime = new Date();
 
         if (showGroups) {
-            const groupQueryFilters = {
-                private: false,
-            };
-
-            const availableGroups = await this.prisma.group.findMany({
-                where: groupQueryFilters,
-                include: {
-                    leader: {
-                        select: {
-                            username: true,
-                            name: true,
-                            lastName: true,
-                            profilePictures: {take: 1},
-                            verified: true,
-                            isCompany: true,
-                            gender: true,
-                        },
+            const queryFilters = {
+                leader: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
                     },
-                    members: {
-                        include: {
-                            user: {
-                                select: {
-                                    username: true,
-                                    name: true,
-                                    lastName: true,
-                                    profilePictures: {take: 1},
-                                    verified: true,
-                                    isCompany: true,
-                                    gender: true,
-                                },
-                            },
-                        },
-                    },
-                    moderators: {
-                        include: {
-                            user: {
-                                select: {
-                                    username: true,
-                                    name: true,
-                                    lastName: true,
-                                    profilePictures: {take: 1},
-                                    verified: true,
-                                    isCompany: true,
-                                    gender: true,
-                                },
+                },
+                members: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
                             },
                         },
                     },
                 },
-            });
+                moderators: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            },
+                        },
+                    },
+                },
+            };
 
-            groups.push(...availableGroups);
+            totalGroups = await this.prisma.group.count({
+                where: {
+                    private: false,
+                },
+            });
+            while (foundedGroups.length < groupLimit && groupPage * groupLimit < totalGroups) {
+                const groups = await this.prisma.group.findMany({
+                    where: {
+                        private: false,
+                    },
+                    include: queryFilters,
+                    skip: groupPage * groupLimit,
+                    take: groupLimit,
+                });
+
+                foundedGroups.push(...groups);
+                groupPage++;
+            }
         }
 
         const queryFilters = {
@@ -223,11 +235,10 @@ export class FeedService {
 
         const totalParties = await this.prisma.party.count({where: queryFilters});
 
-        const foundedParties = [];
-        while (foundedParties.length < limit && page * limit < totalParties) {
+        while (foundedParties.length < partyLimit && partyPage * partyLimit < totalParties) {
             const parties = await this.prisma.party.findMany({
-                skip: page * limit,
-                take: limit,
+                skip: partyPage * partyLimit,
+                take: partyLimit,
                 orderBy: [{date: "asc"}],
                 where: queryFilters,
                 include: PARTY_REQUEST,
@@ -265,13 +276,15 @@ export class FeedService {
                     })
                     .sort((a, b) => b!.relevanceScore - a!.relevanceScore),
             );
-            page++;
+            partyPage++;
         }
         return {
             parties: foundedParties,
-            step: page,
-            groups,
-            reachedMaxItemsInDB: page * limit >= totalParties,
+            groups: foundedGroups,
+            partyPage,
+            groupPage,
+            reachedMaxPartiesInDB: partyPage * partyLimit >= totalParties,
+            reachedMaxGroupsInDB: groupPage * groupLimit >= totalGroups,
         };
     }
 

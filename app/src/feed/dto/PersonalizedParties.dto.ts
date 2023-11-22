@@ -1,16 +1,29 @@
 import {IsBoolean, IsInt, Min} from "class-validator";
 import {Transform, Type} from "class-transformer";
+import {Optional} from "@nestjs/common";
 
 export class PersonalizedPartiesDto {
     @IsInt()
     @Min(0)
     @Type(() => Number)
-    page: number = 0;
+    partyPage: number = 0;
 
     @IsInt()
     @Min(1)
     @Type(() => Number)
-    limit: number = 15;
+    partyLimit: number = 15;
+
+    @Optional()
+    @IsInt()
+    @Min(0)
+    @Type(() => Number)
+    groupPage?: number = 0;
+
+    @Optional()
+    @IsInt()
+    @Min(1)
+    @Type(() => Number)
+    groupLimit?: number = 10;
 
     @IsInt()
     @Min(0)
