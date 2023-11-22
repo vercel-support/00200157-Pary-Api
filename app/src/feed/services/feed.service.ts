@@ -195,40 +195,45 @@ export class FeedService {
         }
 
         const queryFilters = {
-            date: {gte: currentDateTime},
-            active: true,
-            private: false,
-            OR: [
+            AND: [
                 {
-                    moderators: {
-                        some: {
-                            userId: userId,
-                        },
-                    },
+                    date: {gte: currentDateTime},
+                    active: true,
                 },
                 {
-                    ownerId: userId,
-                },
-                {
-                    members: {
-                        some: {
-                            userId: userId,
+                    OR: [
+                        {
+                            private: false,
                         },
-                    },
-                },
-                {
-                    invitations: {
-                        some: {
-                            invitedUserId: userId,
+                        {
+                            private: true,
+                            OR: [
+                                {
+                                    moderators: {
+                                        some: {userId: userId},
+                                    },
+                                },
+                                {
+                                    ownerId: userId,
+                                },
+                                {
+                                    members: {
+                                        some: {userId: userId},
+                                    },
+                                },
+                                {
+                                    invitations: {
+                                        some: {invitedUserId: userId},
+                                    },
+                                },
+                                {
+                                    membershipRequests: {
+                                        some: {userId: userId},
+                                    },
+                                },
+                            ],
                         },
-                    },
-                },
-                {
-                    membershipRequests: {
-                        some: {
-                            userId: userId,
-                        },
-                    },
+                    ],
                 },
             ],
         };
