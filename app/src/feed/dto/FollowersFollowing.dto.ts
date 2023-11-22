@@ -3,9 +3,9 @@ import {Type} from "class-transformer";
 
 export class FollowersFollowingDto {
     @IsInt()
-    @Min(1)
+    @Min(0)
     @Type(() => Number)
-    page: number = 1;
+    page: number = 0;
 
     @IsInt()
     @Min(1)
