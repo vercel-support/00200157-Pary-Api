@@ -296,4 +296,48 @@ export class NotificationsService {
         }
         return true;
     }
+
+    async sendGroupJoinAcceptedNotification(userId: string, group) {
+        const user = await this.prisma.user.findUnique({
+            where: {id: userId},
+            select: {expoPushToken: true, username: true},
+        });
+        if (user === null) return;
+        const pushTokens: string[] = group.moderators.map(moderator => moderator.expoPushToken);
+        const userMessage: ExpoPushMessage = {
+            to: [user.expoPushToken, ...pushTokens],
+            sound: "default",
+            title: "Solicitud aceptada",
+            body: `Tu solicitud para unirte al grupo ha sido aceptada.`,
+            priority: "normal",
+            data: {
+                url: `/feed/group/${group.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
+                params: {
+                    groupId: group.id,
+                },
+                type: "groupNewMember",
+            },
+        };
+        const modMessage: ExpoPushMessage = {
+            to: [user.expoPushToken, ...pushTokens],
+            sound: "default",
+            title: "Nuevo miembr@ en el Grupo!",
+            body: `@${user.username} se ha unido a tu grupo.`,
+            priority: "normal",
+            data: {
+                url: `/feed/group/${group.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
+                params: {
+                    groupId: group.id,
+                },
+                type: "groupNewMember",
+            },
+        };
+
+        try {
+            await this.expo.sendPushNotificationsAsync([userMessage, modMessage]);
+        } catch (error) {
+            console.error("Error sending push notification:", error);
+            return false;
+        }
+    }
 }

@@ -2,8 +2,10 @@ import {
     Body,
     Controller,
     ForbiddenException,
+    Get,
     Headers,
     InternalServerErrorException,
+    Param,
     Post,
     Req,
     UsePipes,
@@ -34,6 +36,7 @@ export class AuthController {
         }),
     )
     async signIn(@Body() googleUser: GoogleUserDto): Promise<User> {
+        console.log("googleUser", googleUser);
         return this.authService.signInUser(googleUser);
     }
 
@@ -83,5 +86,10 @@ export class AuthController {
         } catch (error) {
             throw new InternalServerErrorException("Failed to authenticate token.");
         }
+    }
+
+    @Get("create-token/:id")
+    async createToken(@Param("id") id: string): Promise<any> {
+        return this.authService.createToken(id);
     }
 }

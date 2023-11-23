@@ -3,6 +3,8 @@ import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {GroupService} from "app/src/group/services/group.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {PaginationDto} from "../dto/Pagination.dto";
+import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
+import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 
 @ApiTags("Group")
 @ApiBearerAuth()
@@ -51,6 +53,11 @@ export class GroupController {
         return await this.groupService.getJoinRequests(request.raw.decoded.id);
     }
 
+    @Get("invitations")
+    async getRequests(@Req() request: any) {
+        return this.groupService.getGroupInvitations(request.raw.decoded.id);
+    }
+
     @Get(":groupId")
     @UsePipes(
         new ValidationPipe({
@@ -97,10 +104,10 @@ export class GroupController {
     )
     async inviteToGroup(
         @Param("groupId") groupId: string,
-        @Body("userIdToInvite") userIdToInvite: string,
+        @Body() inviteToGroupDto: InviteToGroupDto,
         @Req() request: any,
     ) {
-        return await this.groupService.inviteToGroup(groupId, userIdToInvite, request.raw.decoded.id);
+        return await this.groupService.inviteToGroup(groupId, inviteToGroupDto, request.raw.decoded.id);
     }
 
     @Post(":groupId/accept-invitation")
@@ -137,6 +144,38 @@ export class GroupController {
     )
     async cancelInvitation(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.cancelInvitation(groupId, request.raw.decoded.id);
+    }
+
+    @Post(":groupId/accept-join-request")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async acceptJoinRequest(
+        @Param("groupId") groupId: string,
+        @Body() joinRequestDto: JoinRequestDto,
+        @Req() request: any,
+    ) {
+        return this.groupService.acceptJoinRequest(groupId, request.raw.decoded.id, joinRequestDto);
+    }
+
+    @Post(":groupId/decline-join-request")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async declineJoinRequest(
+        @Param("groupId") groupId: string,
+        @Body() joinRequestDto: JoinRequestDto,
+        @Req() request: any,
+    ) {
+        return this.groupService.declineJoinRequest(groupId, request.raw.decoded.id, joinRequestDto);
     }
 
     @Post(":groupId/leave")

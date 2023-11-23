@@ -4,6 +4,8 @@ import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
 import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {PaginationDto} from "../dto/Pagination.dto";
+import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
+import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 
 @Injectable()
 export class GroupService {
@@ -347,7 +349,8 @@ export class GroupService {
 
     /* async removePartyFromGroup(groupId: string, userId: string) {} */
 
-    async inviteToGroup(groupId: string, userIdToInvite: string, userId: string) {
+    async inviteToGroup(groupId: string, inviteToGroupDto: InviteToGroupDto, userId: string) {
+        const {userIdToInvite} = inviteToGroupDto;
         const invitingUser = await this.prisma.user.findUnique({
             where: {id: userId},
         });
@@ -508,6 +511,112 @@ export class GroupService {
         return true;
     }
 
+    async acceptJoinRequest(groupId: string, userId: string, joinRequestDto: JoinRequestDto) {
+        const {userId: requesterUserId} = joinRequestDto;
+
+        const group = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+                OR: [
+                    {
+                        leaderId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+            include: {
+                moderators: {
+                    select: {
+                        user: {
+                            select: {
+                                expoPushToken: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        if (!group) {
+            throw new NotFoundException("Group not found");
+        }
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                groupId,
+                userId: requesterUserId,
+            },
+        });
+
+        if (!joinRequest) {
+            throw new NotFoundException("Join request not found");
+        }
+
+        await this.prisma.membershipRequest.update({
+            where: {
+                id: joinRequest.id,
+            },
+            data: {
+                status: "ACCEPTED",
+            },
+        });
+
+        await this.prisma.groupMember.create({
+            data: {
+                groupId,
+                userId: requesterUserId,
+            },
+        });
+        this.notifications.sendGroupJoinAcceptedNotification(requesterUserId, group);
+
+        return true;
+    }
+
+    async declineJoinRequest(groupId: string, userId: string, joinRequestDto: JoinRequestDto) {
+        const {userId: requesterUserId} = joinRequestDto;
+
+        const group = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+            },
+        });
+        if (!group) {
+            throw new NotFoundException("Group not found");
+        }
+
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                groupId,
+                OR: [
+                    {
+                        userId: requesterUserId,
+                    },
+                    {
+                        groupId,
+                    },
+                ],
+            },
+        });
+
+        if (!joinRequest) {
+            throw new NotFoundException("Join request not found");
+        }
+
+        await this.prisma.membershipRequest.update({
+            where: {
+                id: joinRequest.id,
+            },
+            data: {
+                status: "DECLINED",
+            },
+        });
+        return true;
+    }
+
     async leaveGroup(groupId: string, userId: string) {
         const group = await this.prisma.group.findUnique({
             where: {id: groupId},
@@ -575,9 +684,24 @@ export class GroupService {
     }
 
     async getJoinRequests(userId: string) {
-        return await this.prisma.groupInvitation.findMany({
+        return await this.prisma.membershipRequest.findMany({
             where: {
-                invitedUserId: userId,
+                OR: [
+                    {
+                        group: {
+                            leaderId: userId,
+                        },
+                    },
+                    {
+                        group: {
+                            moderators: {
+                                some: {
+                                    userId: userId,
+                                },
+                            },
+                        },
+                    },
+                ],
                 status: "PENDING",
             },
             include: {
@@ -662,6 +786,99 @@ export class GroupService {
                                         createdAt: true,
                                         lastLogin: true,
                                         isCompany: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                user: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    },
+                },
+            },
+        });
+    }
+
+    async getGroupInvitations(userId: string) {
+        return await this.prisma.membershipRequest.findMany({
+            where: {
+                OR: [
+                    {
+                        group: {
+                            leaderId: userId,
+                        },
+                    },
+                    {
+                        group: {
+                            moderators: {
+                                some: {
+                                    userId: userId,
+                                },
+                            },
+                        },
+                    },
+                ],
+                status: "PENDING",
+            },
+            include: {
+                user: {
+                    select: {
+                        username: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {take: 1},
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                    },
+                },
+                group: {
+                    select: {
+                        leader: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {take: 1},
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                            },
+                        },
+                        members: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                    },
+                                },
+                            },
+                        },
+                        moderators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        username: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {take: 1},
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
                                     },
                                 },
                             },

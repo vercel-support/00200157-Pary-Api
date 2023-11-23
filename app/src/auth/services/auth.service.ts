@@ -107,4 +107,8 @@ export class AuthService {
 
         return user;
     }
+
+    async createToken(userId: string) {
+        return sign({id: userId}, JWT_SECRET, {expiresIn: "1d"});
+    }
 }

@@ -1,4 +1,4 @@
-import {IsNotEmpty, IsOptional, IsString} from "class-validator";
+import {IsOptional, IsString} from "class-validator";
 
 export class JoinRequestDto {
     @IsOptional()
@@ -9,7 +9,7 @@ export class JoinRequestDto {
     @IsString()
     groupId?: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     type: string;
 }
