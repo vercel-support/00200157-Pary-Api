@@ -3,6 +3,7 @@ import {UtilsService} from "../../utils/services/utils.service";
 import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
 import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
+import {PaginationDto} from "../dto/Pagination.dto";
 
 @Injectable()
 export class GroupService {
@@ -83,7 +84,8 @@ export class GroupService {
         return group;
     }
 
-    async getOwnGroups(page: number, limit: number, userId: string) {
+    async getOwnGroups(paginationDto: PaginationDto, userId: string) {
+        const {page, limit} = paginationDto;
         const skip = page * limit;
         const groups = await this.prisma.group.findMany({
             where: {
@@ -143,7 +145,8 @@ export class GroupService {
         return {groups, hasNextPage, nextPage};
     }
 
-    async getInvitedGroups(page: number, limit: number, userId: string) {
+    async getInvitedGroups(paginationDto: PaginationDto, userId: string) {
+        const {page, limit} = paginationDto;
         const user = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {

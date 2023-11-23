@@ -12,6 +12,10 @@ import {NotificationsService} from "../../notifications/services/notifications.s
 import {UtilsService} from "../../utils/services/utils.service";
 import {del, put} from "@vercel/blob";
 import {PARTY_REQUEST} from "../../db/Requests";
+import {PaginationDto} from "../../group/dto/Pagination.dto";
+import {UploadImageDto} from "../dto/UploadImageDto";
+import {JoinRequestDto} from "../dto/JoinRequestDto";
+import {OptionalGroupIdDto} from "../dto/Group.dto";
 
 @Injectable()
 export class PartyService {
@@ -128,7 +132,8 @@ export class PartyService {
         return party;
     }
 
-    async getOwnParties(page: number, limit: number, userId: string) {
+    async getOwnParties(paginationDto: PaginationDto, userId: string) {
+        const {limit, page} = paginationDto;
         const skip = page * limit;
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
@@ -206,15 +211,15 @@ export class PartyService {
         };
     }
 
-    async uploadPartyImage(body: any) {
-        const imageBase64 = body.image;
+    async uploadPartyImage(uploadImageDto: UploadImageDto) {
+        const {image} = uploadImageDto;
 
-        if (!imageBase64) {
+        if (!image) {
             throw new BadRequestException("No image provided.");
         }
 
-        const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
-        const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+        const imageBuffer = Buffer.from(image.split(",")[1], "base64");
+        const fileType = image.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
 
         const uploadImageToVercel = async (retry = true) => {
             try {
@@ -233,7 +238,7 @@ export class PartyService {
                 };
             } catch (error) {
                 if (retry) {
-                    uploadImageToVercel(false);
+                    return await uploadImageToVercel(false);
                 } else {
                     throw new InternalServerErrorException("Error uploading image.");
                 }
@@ -242,7 +247,71 @@ export class PartyService {
         return await uploadImageToVercel();
     }
 
-    async getInvitedParties(limit: number, page: number, userId: string) {
+    async replacePartyImage(partId: string, uploadImageDto: UploadImageDto, userId: string) {
+        const {image} = uploadImageDto;
+
+        if (!image) {
+            throw new BadRequestException("No image provided.");
+        }
+
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partId,
+                ownerId: userId,
+            },
+            select: {
+                image: true,
+            },
+        });
+
+        if (!party) {
+            throw new NotFoundException("Party not found / Not authorized.");
+        }
+
+        const imageBuffer = Buffer.from(image.split(",")[1], "base64");
+        const fileType = image.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
+
+        const uploadImageToVercel = async (retry = true) => {
+            try {
+                const {url} = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
+                    access: "public",
+                    contentType: "image/" + fileType,
+                });
+
+                if (!url || url === "") {
+                    console.log("Error uploading image.2");
+                    throw new InternalServerErrorException("Error uploading image.");
+                }
+
+                return {
+                    url,
+                };
+            } catch (error) {
+                if (retry) {
+                    return await uploadImageToVercel(false);
+                } else {
+                    throw new InternalServerErrorException("Error uploading image.");
+                }
+            }
+        };
+        const {url} = await uploadImageToVercel();
+        if (party.image.url) {
+            await del(party.image.url);
+        }
+        return await this.prisma.party.update({
+            where: {
+                id: partId,
+            },
+            data: {
+                image: {
+                    url,
+                },
+            },
+        });
+    }
+
+    async getInvitedParties(paginationDto: PaginationDto, userId: string) {
+        const {limit, page} = paginationDto;
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
@@ -744,7 +813,8 @@ export class PartyService {
         return true;
     }
 
-    async acceptJoinRequest(partyId: string, userId: string, type: string, requesterUserId?: string, groupId?: string) {
+    async acceptJoinRequest(partyId: string, userId: string, acceptJoinRequestDto: JoinRequestDto) {
+        const {type, userId: requesterUserId, groupId} = acceptJoinRequestDto;
         if (type !== "SOLO" && type !== "GROUP") {
             throw new BadRequestException("Invalid type");
         }
@@ -845,7 +915,16 @@ export class PartyService {
         return true;
     }
 
-    async declineJoinRequest(partyId: string, userId: string, requesterUserId: string) {
+    async declineJoinRequest(partyId: string, userId: string, joinRequestDto: JoinRequestDto) {
+        const {userId: requesterUserId, groupId, type} = joinRequestDto;
+        if (type !== "SOLO" && type !== "GROUP") {
+            throw new BadRequestException("Invalid type");
+        }
+        if (type === "SOLO" && requesterUserId) {
+            throw new BadRequestException("Requester user id is required");
+        } else if (type === "GROUP" && !groupId) {
+            throw new BadRequestException("Group id is required");
+        }
         const party = await this.prisma.party.findUnique({
             where: {
                 id: partyId,
@@ -858,7 +937,14 @@ export class PartyService {
         const joinRequest = await this.prisma.membershipRequest.findFirst({
             where: {
                 partyId,
-                userId: requesterUserId,
+                OR: [
+                    {
+                        userId: requesterUserId,
+                    },
+                    {
+                        groupId,
+                    },
+                ],
             },
         });
 
@@ -877,7 +963,8 @@ export class PartyService {
         return true;
     }
 
-    async requestJoin(partyId: string, userId: string, groupId?: string) {
+    async requestJoin(partyId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
+        const {groupId} = optionalGroupIdDto;
         // Obtenemos la información del party.
         const party = await this.prisma.party.findUnique({
             where: {id: partyId},

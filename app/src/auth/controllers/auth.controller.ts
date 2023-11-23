@@ -14,10 +14,10 @@ import {AuthService} from "app/src/auth/services/auth.service";
 import {JWT_REFRESH_SECRET, JWT_SECRET} from "app/main";
 import {verify} from "jsonwebtoken";
 import {UtilsService} from "../../utils/services/utils.service";
-import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {ApiTags} from "@nestjs/swagger";
+import {User} from "../../../types";
 
 @ApiTags("Auth")
-@ApiBearerAuth()
 @Controller("auth")
 export class AuthController {
     constructor(
@@ -26,8 +26,14 @@ export class AuthController {
     ) {}
 
     @Post("signIn")
-    @UsePipes(new ValidationPipe())
-    async signIn(@Body("googleUser") googleUser: GoogleUserDto): Promise<any> {
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async signIn(@Body() googleUser: GoogleUserDto): Promise<User> {
         return this.authService.signInUser(googleUser);
     }
 
@@ -78,10 +84,4 @@ export class AuthController {
             throw new InternalServerErrorException("Failed to authenticate token.");
         }
     }
-
-    /* @Get("test-users")
-    async testUsers(@Res() response: FastifyReply): Promise<any> {
-        const users = await prisma.user.findMany();
-        return response.send(users);
-    } */
 }

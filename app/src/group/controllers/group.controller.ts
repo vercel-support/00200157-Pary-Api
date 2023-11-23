@@ -1,20 +1,8 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    ParseIntPipe,
-    Post,
-    Put,
-    Query,
-    Req,
-    UsePipes,
-    ValidationPipe,
-} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
 import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {GroupService} from "app/src/group/services/group.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {PaginationDto} from "../dto/Pagination.dto";
 
 @ApiTags("Group")
 @ApiBearerAuth()
@@ -23,27 +11,39 @@ export class GroupController {
     constructor(private readonly groupService: GroupService) {}
 
     @Post("create")
-    @UsePipes(new ValidationPipe())
-    async createGroup(@Body("group") group: CreateGroupDto, @Req() request: any) {
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async createGroup(@Body() group: CreateGroupDto, @Req() request: any) {
         return await this.groupService.createGroup(group, request.raw.decoded.id);
     }
 
     @Get("own-groups")
-    async getOwnGroups(
-        @Query("page", ParseIntPipe) page: number,
-        @Query("limit", ParseIntPipe) limit: number,
-        @Req() request: any,
-    ) {
-        return await this.groupService.getOwnGroups(page, limit, request.raw.decoded.id);
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async getOwnGroups(@Query() paginationDto: PaginationDto, @Req() request: any) {
+        return await this.groupService.getOwnGroups(paginationDto, request.raw.decoded.id);
     }
 
     @Get("invited-groups")
-    async getInvitedGroups(
-        @Query("page", ParseIntPipe) page: number,
-        @Query("limit", ParseIntPipe) limit: number,
-        @Req() request: any,
-    ) {
-        return this.groupService.getInvitedGroups(page, limit, request.raw.decoded.id);
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async getInvitedGroups(@Query() paginationDto: PaginationDto, @Req() request: any) {
+        return this.groupService.getInvitedGroups(paginationDto, request.raw.decoded.id);
     }
 
     @Get("join-requests")
@@ -52,21 +52,49 @@ export class GroupController {
     }
 
     @Get(":groupId")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async getGroup(@Param("groupId") groupId: string) {
         return await this.groupService.getGroup(groupId);
     }
 
     @Put(":groupId")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async updateGroup(@Param("groupId") groupId: string, @Body("group") group: CreateGroupDto, @Req() request: any) {
         return await this.groupService.updateGroup(groupId, group, request.raw.decoded.id);
     }
 
     @Delete(":groupId")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async deleteGroup(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.deleteGroup(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/invite")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async inviteToGroup(
         @Param("groupId") groupId: string,
         @Body("userIdToInvite") userIdToInvite: string,
@@ -76,27 +104,61 @@ export class GroupController {
     }
 
     @Post(":groupId/accept-invitation")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async acceptInvitation(@Param("groupId") groupId: string, @Req() request: any) {
-        console.log("acceptInvitation", groupId, request.raw.decoded.id);
         return await this.groupService.acceptInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/decline-invitation")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async declineInvitation(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.declineInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/cancel-invitation")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async cancelInvitation(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.cancelInvitation(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/leave")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async leaveGroup(@Param("groupId") groupId: string, @Req() request: any) {
         return await this.groupService.leaveGroup(groupId, request.raw.decoded.id);
     }
 
     @Post(":groupId/request-join")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async requestJoin(@Param("groupId") groupId: string, @Req() request: any) {
         return this.groupService.requestJoin(groupId, request.raw.decoded.id);
     }

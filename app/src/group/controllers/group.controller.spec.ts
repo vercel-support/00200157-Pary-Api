@@ -16,3 +16,13 @@ describe("GroupController", () => {
         expect(controller).toBeDefined();
     });
 });
+/*
+Group Creation template
+"CreateGroupDto {\n" +
+"  name: 'Los malditos sexo',\n" +
+"  description: 'Naasheeee',\n" +
+"  inviteUserNames: [ 'Nene' ],\n" +
+"  isPrivate: false,\n" +
+"  showInFeed: true,\n" +
+"  ageRange: { min: 18, max: 44 }\n" +
+"}"*/

@@ -5,7 +5,6 @@ import {
     Get,
     NotFoundException,
     Param,
-    ParseIntPipe,
     Post,
     Query,
     Req,
@@ -16,6 +15,9 @@ import {Location} from "@prisma/client";
 import {UpdateUserDto} from "app/src/user/dto/UpdateUser.dto";
 import {UserService} from "app/src/user/services/user.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {SearchDto} from "../../feed/dto/Search.dto";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -24,6 +26,13 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get("check-username/:username")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
     async checkUsername(@Param("username") username: string) {
         if (!username) {
             return false;
@@ -32,8 +41,14 @@ export class UserController {
     }
 
     @Post("update")
-    @UsePipes(new ValidationPipe())
-    async updateUser(@Body("user") user: UpdateUserDto, @Req() request: any) {
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async updateUser(@Body() user: UpdateUserDto, @Req() request: any) {
         return this.userService.updateUser(user, request.raw.decoded.id);
     }
 
@@ -43,15 +58,27 @@ export class UserController {
     }
 
     @Post("upload-profile-picture")
-    async uploadProfilePicture(@Body() body: any, @Req() request: any) {
-        return await this.userService.uploadProfilePicture(body, request.raw.decoded.id);
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async uploadProfilePicture(@Body() uploadImageDto: UploadImageDto, @Req() request: any) {
+        return await this.userService.uploadProfilePicture(uploadImageDto, request.raw.decoded.id);
     }
 
     @Delete("delete-profile-picture")
-    @UsePipes(new ValidationPipe())
-    async deleteProfilePicture(@Query("url") url: string, @Query("id") id: string, @Req() request: any) {
-        console.log("deleteProfilePicture", id, url, request.raw.decoded.id);
-        return await this.userService.deleteProfilePicture(id, url, request.raw.decoded.id);
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteProfilePicture(@Query() deleteUserProfilePictureDto: DeleteUserProfilePictureDto, @Req() request: any) {
+        return await this.userService.deleteProfilePicture(deleteUserProfilePictureDto, request.raw.decoded.id);
     }
 
     @Post("/follow/:username")
@@ -79,12 +106,15 @@ export class UserController {
     }
 
     @Get("search-users")
-    async searchUsers(
-        @Query("page", ParseIntPipe) page: number,
-        @Query("limit", ParseIntPipe) limit: number,
-        @Query("search") search: string,
-    ) {
-        return await this.userService.searchUsers(page, limit, search);
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async searchUsers(@Query() searchDto: SearchDto) {
+        return await this.userService.searchUsers(searchDto);
     }
 
     @Get(":id")

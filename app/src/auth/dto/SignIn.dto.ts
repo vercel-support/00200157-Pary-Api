@@ -1,15 +1,33 @@
-import {IsNotEmpty} from "class-validator";
+import {IsEmail, IsNotEmpty, IsObject, IsOptional, IsString} from "class-validator";
+
+export class UserDto {
+    @IsString()
+    id: string;
+
+    @IsOptional()
+    @IsString()
+    name: string | null;
+
+    @IsEmail()
+    email: string;
+
+    @IsOptional()
+    @IsString()
+    photo: string | null;
+
+    @IsOptional()
+    @IsString()
+    familyName: string | null;
+
+    @IsOptional()
+    @IsString()
+    givenName: string | null;
+}
 
 export class GoogleUserDto {
     @IsNotEmpty()
-    user: {
-        id: string;
-        name: string | null;
-        email: string;
-        photo: string | null;
-        familyName: string | null;
-        givenName: string | null;
-    };
+    @IsObject({message: "Invalid Google user object."})
+    user: UserDto;
     scopes?: string[];
     idToken: string | null;
     /**

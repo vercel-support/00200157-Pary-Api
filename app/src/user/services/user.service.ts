@@ -7,6 +7,9 @@ import {randomUUID} from "crypto";
 import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
 import {UtilsService} from "../../utils/services/utils.service";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {SearchDto} from "../../feed/dto/Search.dto";
 
 @Injectable()
 export class UserService {
@@ -353,15 +356,14 @@ export class UserService {
             });
     }
 
-    async uploadProfilePicture(body: any, userId: string) {
-        const imageBase64 = body.image;
-
-        if (!imageBase64) {
+    async uploadProfilePicture(uploadImageDto: UploadImageDto, userId: string) {
+        const {image} = uploadImageDto;
+        if (!image) {
             throw new InternalServerErrorException("No image provided.");
         }
 
-        const imageBuffer = Buffer.from(imageBase64.split(",")[1], "base64");
-        const fileType = imageBase64.match(/data:image\/(.*?);base64/)?.[1];
+        const imageBuffer = Buffer.from(image.split(",")[1], "base64");
+        const fileType = image.match(/data:image\/(.*?);base64/)?.[1];
         const uploadImageToVercel = async (retry = true) => {
             try {
                 const {url} = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
@@ -449,8 +451,8 @@ export class UserService {
         await uploadImageToVercel();
     }
 
-    async deleteProfilePicture(id: string, url: string, userId: string) {
-        console.log(id, url, userId);
+    async deleteProfilePicture(deleteUserProfilePictureDto: DeleteUserProfilePictureDto, userId: string) {
+        const {url, id} = deleteUserProfilePictureDto;
         await del(url);
 
         await this.prisma.profilePicture
@@ -598,7 +600,8 @@ export class UserService {
         });
     }
 
-    async searchUsers(page: number, limit: number, search: string) {
+    async searchUsers(searchDto: SearchDto) {
+        const {search, page, limit} = searchDto;
         const skip = page * limit;
         return await this.prisma.user.findMany({
             skip: skip,

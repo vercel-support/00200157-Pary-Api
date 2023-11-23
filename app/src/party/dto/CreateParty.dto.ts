@@ -1,5 +1,5 @@
 import {AgeRange, Location, PartyPicture, PartyType} from "@prisma/client";
-import {IsArray, IsBoolean, IsNotEmpty} from "class-validator";
+import {IsArray, IsBoolean, IsEnum, IsNotEmpty} from "class-validator";
 
 export class CreatePartyDto {
     @IsNotEmpty()
@@ -10,7 +10,7 @@ export class CreatePartyDto {
     location: Location;
     @IsNotEmpty()
     date: Date;
-    @IsNotEmpty()
+    @IsEnum(PartyType, {each: true})
     type: PartyType;
     @IsArray()
     tags: string[];
