@@ -1,6 +1,8 @@
 import {
     BadRequestException,
     ForbiddenException,
+    HttpException,
+    HttpStatus,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
@@ -50,7 +52,7 @@ export class PartyService {
         });
 
         if (userParties >= 15) {
-            return new BadRequestException("You can only create up to 15 parties.");
+            throw new BadRequestException("You can only create up to 15 parties.");
         }
 
         const inviter = await this.prisma.user.findUnique({
@@ -60,7 +62,7 @@ export class PartyService {
 
         if (!inviter) {
             console.log("Error fetching user data.");
-            return new NotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         // Resto de la lógica después de una carga exitosa
@@ -98,7 +100,7 @@ export class PartyService {
         });
 
         if (!party) {
-            return new InternalServerErrorException("Error creating party.");
+            throw new InternalServerErrorException("Error creating party.");
         }
         await this.prisma.partyMember.create({
             data: {
@@ -143,7 +145,7 @@ export class PartyService {
         });
 
         if (!currentUser) {
-            return new NotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
         const parties = await this.prisma.party.findMany({
             where: {
@@ -215,7 +217,7 @@ export class PartyService {
         const {image} = uploadImageDto;
 
         if (!image) {
-            return new BadRequestException("No image provided.");
+            throw new BadRequestException("No image provided.");
         }
 
         const imageBuffer = Buffer.from(image.split(",")[1], "base64");
@@ -230,7 +232,7 @@ export class PartyService {
 
                 if (!url || url === "") {
                     console.log("Error uploading image.2");
-                    return new InternalServerErrorException("Error uploading image.");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
 
                 return {
@@ -240,7 +242,7 @@ export class PartyService {
                 if (retry) {
                     return await uploadImageToVercel(false);
                 } else {
-                    return new InternalServerErrorException("Error uploading image.");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
             }
         };
@@ -251,7 +253,7 @@ export class PartyService {
         const {image} = uploadImageDto;
 
         if (!image) {
-            return new BadRequestException("No image provided.");
+            throw new BadRequestException("No image provided.");
         }
 
         const party = await this.prisma.party.findUnique({
@@ -265,7 +267,7 @@ export class PartyService {
         });
 
         if (!party) {
-            return new NotFoundException("Party not found / Not authorized.");
+            throw new NotFoundException("Party not found / Not authorized.");
         }
 
         const imageBuffer = Buffer.from(image.split(",")[1], "base64");
@@ -280,7 +282,7 @@ export class PartyService {
 
                 if (!url || url === "") {
                     console.log("Error uploading image.2");
-                    return new InternalServerErrorException("Error uploading image.");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
 
                 return {
@@ -290,7 +292,7 @@ export class PartyService {
                 if (retry) {
                     return await uploadImageToVercel(false);
                 } else {
-                    return new InternalServerErrorException("Error uploading image.");
+                    throw new InternalServerErrorException("Error uploading image.");
                 }
             }
         };
@@ -320,7 +322,7 @@ export class PartyService {
         });
 
         if (!currentUser) {
-            return new NotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         const user = await this.prisma.user.findUnique({
@@ -650,7 +652,7 @@ export class PartyService {
             })
             .then(async party => {
                 if (!party) {
-                    return new NotFoundException("Party not found");
+                    throw new NotFoundException("Party not found");
                 }
 
                 const currentUser = await this.prisma.user.findUnique({
@@ -661,7 +663,7 @@ export class PartyService {
                 });
 
                 if (!currentUser) {
-                    return new NotFoundException("User not found");
+                    throw new NotFoundException("User not found");
                 }
 
                 party.distance = this.utils.haversineDistance(currentUser.location, party.location);
@@ -669,7 +671,7 @@ export class PartyService {
                 return party;
             })
             .catch(() => {
-                return new NotFoundException("User not found");
+                throw new NotFoundException("User not found");
             });
     }
 
@@ -679,7 +681,7 @@ export class PartyService {
         });
 
         if (!party) {
-            return new NotFoundException("Party not found");
+            throw new NotFoundException("Party not found");
         }
 
         // If the user is the owner of the group
@@ -691,6 +693,10 @@ export class PartyService {
 
             // Delete all group members
             await this.prisma.partyMember.deleteMany({
+                where: {partyId},
+            });
+
+            await this.prisma.membershipRequest.deleteMany({
                 where: {partyId},
             });
 
@@ -711,7 +717,7 @@ export class PartyService {
             });
 
             if (!isMember) {
-                return new ForbiddenException("You are not a member of this group.");
+                throw new ForbiddenException("You are not a member of this group.");
             }
 
             // Delete all group invitations from and to the user related to this group
@@ -729,6 +735,13 @@ export class PartyService {
                         partyId,
                         userId: userId,
                     },
+                },
+            });
+
+            await this.prisma.membershipRequest.deleteMany({
+                where: {
+                    partyId,
+                    userId,
                 },
             });
             return true;
@@ -816,12 +829,12 @@ export class PartyService {
     async acceptJoinRequest(partyId: string, userId: string, acceptJoinRequestDto: JoinRequestDto) {
         const {type, userId: requesterUserId, groupId} = acceptJoinRequestDto;
         if (type !== "SOLO" && type !== "GROUP") {
-            return new BadRequestException("Invalid type");
+            throw new BadRequestException("Invalid type");
         }
         if (type === "SOLO" && !requesterUserId) {
-            return new BadRequestException("Requester user id is required");
+            throw new BadRequestException("Requester user id is required");
         } else if (type === "GROUP" && !groupId) {
-            return new BadRequestException("Group id is required");
+            throw new BadRequestException("Group id is required");
         }
 
         const party = await this.prisma.party.findUnique({
@@ -853,7 +866,7 @@ export class PartyService {
             },
         });
         if (!party) {
-            return new NotFoundException("Party not found");
+            throw new NotFoundException("Party not found");
         }
         if (type === "SOLO") {
             const joinRequest = await this.prisma.membershipRequest.findFirst({
@@ -864,7 +877,7 @@ export class PartyService {
             });
 
             if (!joinRequest) {
-                return new NotFoundException("Join request not found");
+                throw new NotFoundException("Join request not found");
             }
 
             await this.prisma.membershipRequest.update({
@@ -892,7 +905,7 @@ export class PartyService {
             });
 
             if (!joinRequest) {
-                return new NotFoundException("Join request not found");
+                throw new NotFoundException("Join request not found");
             }
 
             await this.prisma.membershipRequest.update({
@@ -918,12 +931,12 @@ export class PartyService {
     async declineJoinRequest(partyId: string, userId: string, joinRequestDto: JoinRequestDto) {
         const {userId: requesterUserId, groupId, type} = joinRequestDto;
         if (type !== "SOLO" && type !== "GROUP") {
-            return new BadRequestException("Invalid type");
+            throw new BadRequestException("Invalid type");
         }
         if (type === "SOLO" && !requesterUserId) {
-            return new BadRequestException("Requester user id is required");
+            throw new BadRequestException("Requester user id is required");
         } else if (type === "GROUP" && !groupId) {
-            return new BadRequestException("Group id is required");
+            throw new BadRequestException("Group id is required");
         }
         const party = await this.prisma.party.findUnique({
             where: {
@@ -931,7 +944,7 @@ export class PartyService {
             },
         });
         if (!party) {
-            return new NotFoundException("Party not found");
+            throw new NotFoundException("Party not found");
         }
 
         const joinRequest = await this.prisma.membershipRequest.findFirst({
@@ -949,7 +962,7 @@ export class PartyService {
         });
 
         if (!joinRequest) {
-            return new NotFoundException("Join request not found");
+            throw new NotFoundException("Join request not found");
         }
 
         await this.prisma.membershipRequest.update({
@@ -971,7 +984,7 @@ export class PartyService {
         });
 
         if (!party) {
-            return new NotFoundException("Party no encontrado");
+            throw new NotFoundException("Party no encontrado");
         }
 
         // Chequear si el grupo existe si se proporciona un groupId.
@@ -981,7 +994,7 @@ export class PartyService {
             });
 
             if (!group) {
-                return new NotFoundException("Grupo no encontrado");
+                throw new NotFoundException("Grupo no encontrado");
             }
         }
 
@@ -996,7 +1009,7 @@ export class PartyService {
         });
 
         if (isUserMember) {
-            return new InternalServerErrorException("El usuario ya es miembro de este party");
+            throw new InternalServerErrorException("El usuario ya es miembro de este party");
         }
 
         // Verificar si el grupo ya es miembro del party.
@@ -1010,8 +1023,16 @@ export class PartyService {
                 },
             });
 
+            console.log(isGroupMember);
+
             if (isGroupMember) {
-                return new Error("El grupo ya es miembro de este party");
+                throw new HttpException(
+                    {
+                        status: HttpStatus.METHOD_NOT_ALLOWED,
+                        error: "El un usuario del grupo ya es miembro de este carrete",
+                    },
+                    HttpStatus.METHOD_NOT_ALLOWED,
+                );
             }
         }
 
@@ -1047,7 +1068,7 @@ export class PartyService {
             });
 
             if (existingRequest) {
-                return new Error("Ya has solicitado unirte a este party");
+                throw new Error("Ya has solicitado unirte a este party");
             }
 
             // Crear una solicitud para unirse al party.
