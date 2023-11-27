@@ -61,7 +61,6 @@ export class PartyService {
         });
 
         if (!inviter) {
-            console.log("Error fetching user data.");
             throw new NotFoundException("User not found");
         }
 
@@ -231,7 +230,7 @@ export class PartyService {
                 });
 
                 if (!url || url === "") {
-                    console.log("Error uploading image.2");
+                    console.log(" uploading image.2");
                     throw new InternalServerErrorException("Error uploading image.");
                 }
 
@@ -281,7 +280,6 @@ export class PartyService {
                 });
 
                 if (!url || url === "") {
-                    console.log("Error uploading image.2");
                     throw new InternalServerErrorException("Error uploading image.");
                 }
 
@@ -405,7 +403,7 @@ export class PartyService {
                         party: {
                             moderators: {
                                 some: {
-                                    userId: userId,
+                                    userId,
                                 },
                             },
                         },
@@ -677,7 +675,26 @@ export class PartyService {
 
     async leaveParty(partyId: string, userId: string) {
         const party = await this.prisma.party.findUnique({
-            where: {id: partyId},
+            where: {
+                id: partyId,
+            },
+            include: {
+                groups: {
+                    include: {
+                        group: {
+                            select: {
+                                id: true,
+                                leaderId: true,
+                                members: {
+                                    select: {
+                                        userId: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         if (!party) {
@@ -700,6 +717,10 @@ export class PartyService {
                 where: {partyId},
             });
 
+            await this.prisma.partyGroup.deleteMany({
+                where: {partyId},
+            });
+
             // Delete the group itself
             await this.prisma.party.delete({
                 where: {id: partyId},
@@ -717,33 +738,63 @@ export class PartyService {
             });
 
             if (!isMember) {
-                throw new ForbiddenException("You are not a member of this group.");
+                console.log("A");
+                if (
+                    party.groups.some(partyGroup => partyGroup.group.members.some(member => member.userId === userId))
+                ) {
+                    console.log("b");
+                    if (party.groups.some(partyGroup => partyGroup.group.leaderId === userId)) {
+                        console.log("c");
+                        const groups = party.groups.filter(partyGroup => partyGroup.group.leaderId === userId);
+                        for (const group of groups) {
+                            console.log("d", group.groupId);
+                            await this.prisma.partyGroup.delete({
+                                where: {
+                                    partyId_groupId: {
+                                        partyId,
+                                        groupId: group.groupId,
+                                    },
+                                },
+                            });
+                        }
+                    } else {
+                        throw new ForbiddenException("No eres el dueño de este grupo para salirte.");
+                    }
+                } else {
+                    throw new ForbiddenException("Ya no formas parte de esta fiesta.");
+                }
             }
 
             // Delete all group invitations from and to the user related to this group
-            await this.prisma.partyInvitation.deleteMany({
-                where: {
-                    partyId,
-                    OR: [{invitedUserId: userId}, {invitingUserId: userId}],
-                },
-            });
+            await this.prisma.partyInvitation
+                .deleteMany({
+                    where: {
+                        partyId,
+                        OR: [{invitedUserId: userId}, {invitingUserId: userId}],
+                    },
+                })
+                .catch(() => {});
 
             // Remove the user from the group
-            await this.prisma.partyMember.delete({
-                where: {
-                    userId_partyId: {
-                        partyId,
-                        userId: userId,
+            await this.prisma.partyMember
+                .delete({
+                    where: {
+                        userId_partyId: {
+                            partyId,
+                            userId: userId,
+                        },
                     },
-                },
-            });
+                })
+                .catch(() => {});
 
-            await this.prisma.membershipRequest.deleteMany({
-                where: {
-                    partyId,
-                    userId,
-                },
-            });
+            await this.prisma.membershipRequest
+                .deleteMany({
+                    where: {
+                        partyId,
+                        userId,
+                    },
+                })
+                .catch(() => {});
             return true;
         }
     }
@@ -977,7 +1028,6 @@ export class PartyService {
     }
 
     async cancelJoinRequest(partyId: string, userId: string) {
-        console.log(partyId, userId);
         const party = await this.prisma.party.findUnique({
             where: {
                 id: partyId,
@@ -1008,6 +1058,7 @@ export class PartyService {
 
     async requestJoin(partyId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
         const {groupId} = optionalGroupIdDto;
+        console.log("groupId", groupId);
         // Obtenemos la información del party.
         const party = await this.prisma.party.findUnique({
             where: {id: partyId},
@@ -1019,11 +1070,11 @@ export class PartyService {
 
         // Chequear si el grupo existe si se proporciona un groupId.
         if (groupId) {
-            const group = await this.prisma.group.findUnique({
+            const group = await this.prisma.group.count({
                 where: {id: groupId},
             });
 
-            if (!group) {
+            if (group <= 0) {
                 throw new NotFoundException("Grupo no encontrado");
             }
         }
@@ -1053,13 +1104,11 @@ export class PartyService {
                 },
             });
 
-            console.log(isGroupMember);
-
             if (isGroupMember) {
                 throw new HttpException(
                     {
                         status: HttpStatus.METHOD_NOT_ALLOWED,
-                        error: "El un usuario del grupo ya es miembro de este carrete",
+                        error: "El grupo ya es miembro de este carrete",
                     },
                     HttpStatus.METHOD_NOT_ALLOWED,
                 );
@@ -1087,30 +1136,45 @@ export class PartyService {
             }
             return true;
         } else {
-            // Verificar si el usuario o grupo ya ha solicitado unirse al party.
-            const existingRequest = await this.prisma.membershipRequest.findUnique({
-                where: {
-                    userId_partyId: {
-                        userId,
-                        partyId,
-                    },
-                },
-            });
-
-            if (existingRequest) {
-                throw new Error("Ya has solicitado unirte a este party");
-            }
-
-            // Crear una solicitud para unirse al party.
             if (groupId) {
+                const existingRequest = await this.prisma.membershipRequest.findUnique({
+                    where: {
+                        partyId_groupId: {
+                            partyId,
+                            groupId,
+                        },
+                        status: "PENDING",
+                    },
+                });
+
+                if (existingRequest) {
+                    throw new Error("El grupo ya ha solicitado unirse al party");
+                }
+
+                // Crear una solicitud para unirse al party.
                 await this.prisma.membershipRequest.create({
                     data: {
                         groupId,
                         partyId,
+                        userId,
                         type: "GROUP",
                     },
                 });
             } else {
+                // Verificar si el usuario o grupo ya ha solicitado unirse al party.
+                const existingRequest = await this.prisma.membershipRequest.findUnique({
+                    where: {
+                        userId_partyId: {
+                            userId,
+                            partyId,
+                        },
+                    },
+                });
+
+                if (existingRequest) {
+                    throw new Error("Ya has solicitado unirte a este party");
+                }
+
                 await this.prisma.membershipRequest.create({
                     data: {
                         userId,
@@ -1119,7 +1183,6 @@ export class PartyService {
                     },
                 });
             }
-
             return true;
         }
     }

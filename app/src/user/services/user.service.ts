@@ -371,7 +371,6 @@ export class UserService {
                 });
 
                 if (!url || url === "") {
-                    console.log("Error uploading image.2");
                     throw new InternalServerErrorException("Error uploading image.");
                 }
 
@@ -649,7 +648,6 @@ export class UserService {
                 include: this.utils.getUserFields(),
             })
             .catch(() => {
-                console.log("ERRRRRRRRRRRRRR");
                 throw new InternalServerErrorException("Error fetching user data.");
             });
     }

@@ -226,6 +226,7 @@ model MembershipRequest {
 
   @@unique([userId, groupId])
   @@unique([userId, partyId])
+  @@unique([partyId, groupId])
 }
 
 enum MembershipRequestType {

@@ -121,6 +121,7 @@ export const PARTY_REQUEST = {
                 select: {
                     id: true,
                     leaderId: true,
+                    name: true,
                     leader: {
                         select: {
                             username: true,

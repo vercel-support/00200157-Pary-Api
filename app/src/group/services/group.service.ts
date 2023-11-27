@@ -599,13 +599,16 @@ export class GroupService {
                         groupId,
                     },
                 ],
+                status: "PENDING",
             },
         });
 
         if (!joinRequest) {
             throw new NotFoundException("Join request not found");
         }
-
+        if (joinRequest.status === "ACCEPTED" || joinRequest.status === "DECLINED") {
+            throw new BadRequestException("Solicitud ya procesada");
+        }
         await this.prisma.membershipRequest.update({
             where: {
                 id: joinRequest.id,
@@ -931,6 +934,7 @@ export class GroupService {
                         userId,
                         groupId,
                     },
+                    status: "PENDING",
                 },
             });
 

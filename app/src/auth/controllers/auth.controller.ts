@@ -36,7 +36,6 @@ export class AuthController {
         }),
     )
     async signIn(@Body() googleUser: GoogleUserDto): Promise<User> {
-        console.log("googleUser", googleUser);
         return this.authService.signInUser(googleUser);
     }
 
