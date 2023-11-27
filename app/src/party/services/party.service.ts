@@ -953,6 +953,22 @@ export class PartyService {
                     partyId,
                     groupId,
                 },
+                include: {
+                    group: {
+                        select: {
+                            members: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            expoPushToken: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             if (!joinRequest) {
@@ -974,6 +990,16 @@ export class PartyService {
                     groupId,
                 },
             });
+            for (const member of joinRequest.group.members) {
+                await this.prisma.partyMember.delete({
+                    where: {
+                        userId_partyId: {
+                            partyId,
+                            userId: member.userId,
+                        },
+                    },
+                });
+            }
             this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
         }
         return true;
@@ -1058,7 +1084,6 @@ export class PartyService {
 
     async requestJoin(partyId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
         const {groupId} = optionalGroupIdDto;
-        console.log("groupId", groupId);
         // Obtenemos la información del party.
         const party = await this.prisma.party.findUnique({
             where: {id: partyId},
@@ -1143,12 +1168,19 @@ export class PartyService {
                             partyId,
                             groupId,
                         },
-                        status: "PENDING",
+                    },
+                    select: {
+                        status: true,
                     },
                 });
 
+                console.log("groupId", groupId, "partyId", partyId, "request:", existingRequest);
                 if (existingRequest) {
-                    throw new Error("El grupo ya ha solicitado unirse al party");
+                    if (existingRequest.status === "PENDING") {
+                        throw new ForbiddenException("El grupo ya ha solicitado unirse al party");
+                    } else if (existingRequest.status === "ACCEPTED") {
+                        throw new ForbiddenException("El grupo ya es miembro de este party");
+                    }
                 }
 
                 // Crear una solicitud para unirse al party.

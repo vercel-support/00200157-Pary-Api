@@ -300,6 +300,46 @@ export class UtilsService {
                                     },
                                 },
                             },
+                            parties: {
+                                select: {
+                                    partyId: true,
+                                    party: {
+                                        select: {
+                                            name: true,
+                                            description: true,
+                                            image: true,
+                                            id: true,
+                                            location: true,
+                                            date: true,
+                                            owner: {
+                                                select: {
+                                                    username: true,
+                                                    name: true,
+                                                    lastName: true,
+                                                    profilePictures: {
+                                                        take: 1,
+                                                    },
+                                                },
+                                            },
+                                            members: {
+                                                select: {
+                                                    userId: true,
+                                                    user: {
+                                                        select: {
+                                                            username: true,
+                                                            name: true,
+                                                            lastName: true,
+                                                            profilePictures: {
+                                                                take: 1,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
