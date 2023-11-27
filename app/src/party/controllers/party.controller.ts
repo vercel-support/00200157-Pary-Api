@@ -123,6 +123,18 @@ export class PartyController {
         return this.partyService.declineJoinRequest(partyId, request.raw.decoded.id, joinRequestDto);
     }
 
+    @Post(":partyId/cancel-join-request")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async cancelJoinRequest(@Param("partyId") partyId: string, @Req() request: any) {
+        return this.partyService.cancelJoinRequest(partyId, request.raw.decoded.id);
+    }
+
     @Post(":partyId/request-join")
     @UsePipes(
         new ValidationPipe({

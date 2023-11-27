@@ -195,47 +195,8 @@ export class FeedService {
         }
 
         const queryFilters = {
-            AND: [
-                {
-                    date: {gte: currentDateTime},
-                    active: true,
-                },
-                {
-                    OR: [
-                        {
-                            private: false,
-                        },
-                        {
-                            private: true,
-                            OR: [
-                                {
-                                    moderators: {
-                                        some: {userId: userId},
-                                    },
-                                },
-                                {
-                                    ownerId: userId,
-                                },
-                                {
-                                    members: {
-                                        some: {userId: userId},
-                                    },
-                                },
-                                {
-                                    invitations: {
-                                        some: {invitedUserId: userId},
-                                    },
-                                },
-                                {
-                                    membershipRequests: {
-                                        some: {userId: userId},
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
+            date: {gte: currentDateTime},
+            active: true,
         };
 
         const totalParties = await this.prisma.party.count({where: queryFilters});

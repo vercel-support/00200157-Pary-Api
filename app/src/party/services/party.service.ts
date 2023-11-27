@@ -267,7 +267,7 @@ export class PartyService {
         });
 
         if (!party) {
-            throw new NotFoundException("Party not found / Not authorized.");
+            throw new NotFoundException("Carrete no encontrado / Not authorized.");
         }
 
         const imageBuffer = Buffer.from(image.split(",")[1], "base64");
@@ -652,7 +652,7 @@ export class PartyService {
             })
             .then(async party => {
                 if (!party) {
-                    throw new NotFoundException("Party not found");
+                    throw new NotFoundException("Carrete no encontrado");
                 }
 
                 const currentUser = await this.prisma.user.findUnique({
@@ -681,7 +681,7 @@ export class PartyService {
         });
 
         if (!party) {
-            throw new NotFoundException("Party not found");
+            throw new NotFoundException("Carrete no encontrado");
         }
 
         // If the user is the owner of the group
@@ -866,7 +866,7 @@ export class PartyService {
             },
         });
         if (!party) {
-            throw new NotFoundException("Party not found");
+            throw new NotFoundException("Carrete no encontrado");
         }
         if (type === "SOLO") {
             const joinRequest = await this.prisma.membershipRequest.findFirst({
@@ -944,7 +944,7 @@ export class PartyService {
             },
         });
         if (!party) {
-            throw new NotFoundException("Party not found");
+            throw new NotFoundException("Carrete no encontrado");
         }
 
         const joinRequest = await this.prisma.membershipRequest.findFirst({
@@ -971,6 +971,36 @@ export class PartyService {
             },
             data: {
                 status: "DECLINED",
+            },
+        });
+        return true;
+    }
+
+    async cancelJoinRequest(partyId: string, userId: string) {
+        console.log(partyId, userId);
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+            },
+        });
+        if (!party) {
+            throw new NotFoundException("Carrete no encontrado");
+        }
+
+        const joinRequest = await this.prisma.membershipRequest.findFirst({
+            where: {
+                partyId,
+                userId,
+            },
+        });
+
+        if (!joinRequest) {
+            throw new NotFoundException("Join request not found");
+        }
+
+        await this.prisma.membershipRequest.delete({
+            where: {
+                id: joinRequest.id,
             },
         });
         return true;
