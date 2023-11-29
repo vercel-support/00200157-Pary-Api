@@ -18,6 +18,7 @@ import {PaginationDto} from "../../group/dto/Pagination.dto";
 import {UploadImageDto} from "../dto/UploadImageDto";
 import {JoinRequestDto} from "../dto/JoinRequestDto";
 import {OptionalGroupIdDto} from "../dto/Group.dto";
+import {UpdatePartyDto} from "../dto/UpdateParty.dto";
 
 @Injectable()
 export class PartyService {
@@ -128,6 +129,56 @@ export class PartyService {
             }
 
             // Aquí podrías enviar una notificación push a cada usuario invitado
+        }
+
+        return party;
+    }
+
+    async updateParty(partyBody: UpdatePartyDto, userId: string) {
+        const {
+            id,
+            name,
+            description,
+            location,
+            date,
+            type,
+            tags,
+            image,
+            oldImage,
+            showAddressInFeed,
+            ageRange,
+            isPrivate,
+        } = partyBody;
+
+        const party = await this.prisma.party.update({
+            where: {
+                id,
+                ownerId: userId,
+            },
+            data: {
+                name,
+                description,
+                location,
+                type,
+                tags,
+                active: true,
+                date: new Date(date),
+                private: isPrivate,
+                image,
+                showAddressInFeed,
+                ageRange,
+            },
+        });
+
+        if (!party) {
+            if (image) {
+                del(image.url);
+            }
+            throw new InternalServerErrorException("Error actualizando carrete.");
+        }
+
+        if (oldImage) {
+            await del(oldImage.url);
         }
 
         return party;

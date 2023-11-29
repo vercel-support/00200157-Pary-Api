@@ -36,13 +36,7 @@ export class UtilsService {
                 select: {
                     partyId: true,
                     party: {
-                        select: {
-                            name: true,
-                            description: true,
-                            image: true,
-                            id: true,
-                            location: true,
-                            date: true,
+                        include: {
                             owner: {
                                 select: {
                                     username: true,

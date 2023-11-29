@@ -6,6 +6,7 @@ import {PaginationDto} from "../../group/dto/Pagination.dto";
 import {UploadImageDto} from "../dto/UploadImageDto";
 import {JoinRequestDto} from "../dto/JoinRequestDto";
 import {OptionalGroupIdDto} from "../dto/Group.dto";
+import {UpdatePartyDto} from "../dto/UpdateParty.dto";
 
 @ApiTags("Party")
 @ApiBearerAuth()
@@ -23,6 +24,18 @@ export class PartyController {
     )
     async createParty(@Body() party: CreatePartyDto, @Req() request: any) {
         return this.partyService.createParty(party, request.raw.decoded.id);
+    }
+
+    @Post("update")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async updateParty(@Body() party: UpdatePartyDto, @Req() request: any) {
+        return this.partyService.updateParty(party, request.raw.decoded.id);
     }
 
     @Get("own-parties")
