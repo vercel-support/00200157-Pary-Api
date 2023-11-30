@@ -264,11 +264,7 @@ export class UtilsService {
                 select: {
                     groupId: true,
                     group: {
-                        select: {
-                            id: true,
-                            name: true,
-                            description: true,
-                            leaderId: true,
+                        include: {
                             leader: {
                                 select: {
                                     username: true,
@@ -290,6 +286,21 @@ export class UtilsService {
                                             profilePictures: {
                                                 take: 1,
                                             },
+                                        },
+                                    },
+                                },
+                            },
+                            moderators: {
+                                include: {
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
                                         },
                                     },
                                 },
@@ -343,11 +354,7 @@ export class UtilsService {
                     groupId: true,
                     status: true,
                     group: {
-                        select: {
-                            id: true,
-                            name: true,
-                            description: true,
-                            leaderId: true,
+                        include: {
                             leader: {
                                 select: {
                                     username: true,
@@ -373,6 +380,21 @@ export class UtilsService {
                                     },
                                 },
                             },
+                            moderators: {
+                                include: {
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -381,11 +403,7 @@ export class UtilsService {
                 select: {
                     groupId: true,
                     group: {
-                        select: {
-                            id: true,
-                            name: true,
-                            description: true,
-                            leaderId: true,
+                        include: {
                             leader: {
                                 select: {
                                     username: true,
@@ -407,6 +425,21 @@ export class UtilsService {
                                             profilePictures: {
                                                 take: 1,
                                             },
+                                        },
+                                    },
+                                },
+                            },
+                            moderators: {
+                                include: {
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {take: 1},
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
                                         },
                                     },
                                 },

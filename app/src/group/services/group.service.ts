@@ -6,6 +6,7 @@ import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {PaginationDto} from "../dto/Pagination.dto";
 import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
+import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
 
 @Injectable()
 export class GroupService {
@@ -83,6 +84,26 @@ export class GroupService {
                 }
             }
         }
+        return group;
+    }
+
+    async updateGroup(groupBody: UpdateGroupDto, userId: string) {
+        const {id, name, description, ageRange, showInFeed, isPrivate} = groupBody;
+
+        const group = await this.prisma.group.update({
+            where: {
+                id,
+                leaderId: userId,
+            },
+            data: {
+                name,
+                description,
+                ageRange,
+                private: isPrivate,
+                showInFeed,
+            },
+        });
+
         return group;
     }
 
@@ -297,31 +318,6 @@ export class GroupService {
         });
 
         return group;
-    }
-
-    async updateGroup(groupId: string, groupBody: CreateGroupDto, userId: string) {
-        const group = await this.prisma.group.findUnique({
-            where: {id: groupId},
-            select: {
-                leaderId: true,
-                moderators: {
-                    select: {
-                        userId: true,
-                    },
-                },
-            },
-        });
-        if (!group) {
-            throw new NotFoundException("Group not found.");
-        }
-
-        if (group.leaderId === userId || group.moderators.some(moderator => moderator.userId === userId)) {
-            return await this.prisma.group.update({
-                where: {id: groupId},
-                data: groupBody,
-            });
-        }
-        throw new BadRequestException("Only the group leader and moderators can update the group.");
     }
 
     async deleteGroup(groupId: string, userId: string) {

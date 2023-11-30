@@ -1,10 +1,11 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Query, Req, UsePipes, ValidationPipe} from "@nestjs/common";
 import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {GroupService} from "app/src/group/services/group.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {PaginationDto} from "../dto/Pagination.dto";
 import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
+import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
 
 @ApiTags("Group")
 @ApiBearerAuth()
@@ -22,6 +23,18 @@ export class GroupController {
     )
     async createGroup(@Body() group: CreateGroupDto, @Req() request: any) {
         return await this.groupService.createGroup(group, request.raw.decoded.id);
+    }
+
+    @Post("update")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async updateGroup(@Body() group: UpdateGroupDto, @Req() request: any) {
+        return await this.groupService.updateGroup(group, request.raw.decoded.id);
     }
 
     @Get("own-groups")
@@ -68,18 +81,6 @@ export class GroupController {
     )
     async getGroup(@Param("groupId") groupId: string) {
         return await this.groupService.getGroup(groupId);
-    }
-
-    @Put(":groupId")
-    @UsePipes(
-        new ValidationPipe({
-            transform: true,
-            forbidNonWhitelisted: true,
-            disableErrorMessages: false,
-        }),
-    )
-    async updateGroup(@Param("groupId") groupId: string, @Body("group") group: CreateGroupDto, @Req() request: any) {
-        return await this.groupService.updateGroup(groupId, group, request.raw.decoded.id);
     }
 
     @Delete(":groupId")
