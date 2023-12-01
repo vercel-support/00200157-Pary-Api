@@ -276,8 +276,7 @@ export class UtilsService {
                                 },
                             },
                             members: {
-                                select: {
-                                    userId: true,
+                                include: {
                                     user: {
                                         select: {
                                             username: true,

@@ -204,10 +204,12 @@ model GroupInvitation {
 }
 
 model UserGroupModerator {
-  groupId String @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String @map("userId") @db.ObjectId
-  user    User   @relation("UserToGroupModerator", fields: [userId], references: [id])
-  group   Group  @relation(fields: [groupId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  groupId   String   @map("groupId") @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  user      User     @relation("UserToGroupModerator", fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
 
   @@unique([userId, groupId])
 }

@@ -6,6 +6,7 @@ import {PaginationDto} from "../dto/Pagination.dto";
 import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
+import {UsernameDto} from "../../party/dto/User.dto";
 
 @ApiTags("Group")
 @ApiBearerAuth()
@@ -201,5 +202,41 @@ export class GroupController {
     )
     async requestJoin(@Param("groupId") groupId: string, @Req() request: any) {
         return this.groupService.requestJoin(groupId, request.raw.decoded.id);
+    }
+
+    @Post(":groupId/delete-member")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteMember(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.groupService.deleteMember(groupId, usernameDto, request.raw.decoded.id);
+    }
+
+    @Post(":groupId/delete-mod")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteMod(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.groupService.deleteMod(groupId, usernameDto, request.raw.decoded.id);
+    }
+
+    @Post(":groupId/add-member-to-mod-list")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async addMemberToModList(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.groupService.addMemberToModList(groupId, usernameDto, request.raw.decoded.id);
     }
 }

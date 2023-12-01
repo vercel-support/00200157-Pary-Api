@@ -7,6 +7,7 @@ import {PaginationDto} from "../dto/Pagination.dto";
 import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
+import {UsernameDto} from "../../party/dto/User.dto";
 
 @Injectable()
 export class GroupService {
@@ -946,6 +947,176 @@ export class GroupService {
             });
 
             return true;
+        }
+    }
+
+    async deleteMember(groupId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const group = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+                OR: [
+                    {
+                        leaderId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.groupMember.delete({
+            where: {
+                userId_groupId: {
+                    userId: targetUser.id,
+                    groupId,
+                },
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        await this.prisma.userGroupModerator.delete({
+            where: {
+                userId_groupId: {
+                    userId: targetUser.id,
+                    groupId,
+                },
+            },
+        });
+
+        await this.prisma.membershipRequest.deleteMany({
+            where: {
+                userId: targetUser.id,
+                groupId,
+            },
+        });
+    }
+
+    async deleteMod(groupId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const group = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+                OR: [
+                    {
+                        leaderId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.userGroupModerator.delete({
+            where: {
+                userId_groupId: {
+                    userId: targetUser.id,
+                    groupId,
+                },
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
+        }
+
+        await this.prisma.membershipRequest.deleteMany({
+            where: {
+                userId: targetUser.id,
+                groupId,
+            },
+        });
+    }
+
+    async addMemberToModList(groupId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const group = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+                leaderId: userId,
+            },
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.userGroupModerator.create({
+            data: {
+                userId: targetUser.id,
+                groupId,
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es mod de este grupo");
         }
     }
 }
