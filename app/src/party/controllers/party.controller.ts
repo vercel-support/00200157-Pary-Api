@@ -7,6 +7,7 @@ import {UploadImageDto} from "../dto/UploadImageDto";
 import {JoinRequestDto} from "../dto/JoinRequestDto";
 import {OptionalGroupIdDto} from "../dto/Group.dto";
 import {UpdatePartyDto} from "../dto/UpdateParty.dto";
+import {UsernameDto} from "../dto/User.dto";
 
 @ApiTags("Party")
 @ApiBearerAuth()
@@ -94,6 +95,34 @@ export class PartyController {
         return this.partyService.leaveParty(partyId, request.raw.decoded.id);
     }
 
+    @Post(":partyId/invite")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async inviteToGroup(@Param("partyId") partyId: string, @Body() inviteToPartyDto: UsernameDto, @Req() request: any) {
+        return await this.partyService.inviteToParty(partyId, inviteToPartyDto, request.raw.decoded.id);
+    }
+
+    @Post(":partyId/cancel-invitation")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async cancelInvitation(
+        @Param("partyId") partyId: string,
+        @Body() inviteToGroupDto: UsernameDto,
+        @Req() request: any,
+    ) {
+        return await this.partyService.cancelInvitation(partyId, inviteToGroupDto, request.raw.decoded.id);
+    }
+
     @Post(":partyId/accept-invitation")
     async acceptInvitation(@Param("partyId") partyId: string, @Req() request: any) {
         return this.partyService.acceptInvitation(partyId, request.raw.decoded.id);
@@ -102,6 +131,30 @@ export class PartyController {
     @Post(":partyId/decline-invitation")
     async declineInvitation(@Param("partyId") partyId: string, @Req() request: any) {
         return this.partyService.declineInvitation(partyId, request.raw.decoded.id);
+    }
+
+    @Post(":partyId/delete-member")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteMember(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.partyService.deleteMember(partyId, usernameDto, request.raw.decoded.id);
+    }
+
+    @Post(":partyId/delete-mod")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteMod(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.partyService.deleteMod(partyId, usernameDto, request.raw.decoded.id);
     }
 
     @Post(":partyId/accept-join-request")
@@ -178,5 +231,17 @@ export class PartyController {
         @Req() request: any,
     ) {
         return this.partyService.replacePartyImage(partyId, uploadImageDto, request.raw.decoded.id);
+    }
+
+    @Post(":partyId/add-member-to-mod-list")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async addMemberToModList(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
+        return this.partyService.addMemberToModList(partyId, usernameDto, request.raw.decoded.id);
     }
 }

@@ -431,8 +431,8 @@ export class GroupService {
 
     /* async removePartyFromGroup(groupId: string, userId: string) {} */
 
-    async inviteToGroup(groupId: string, UsernameDto: UsernameDto, userId: string) {
-        const {username} = UsernameDto;
+    async inviteToGroup(groupId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
 
         const hasPermissions = await this.prisma.group.findUnique({
             where: {
@@ -482,7 +482,6 @@ export class GroupService {
             },
         });
 
-        console.log("Creando la invitacion para", groupId, invitedUser.id, userId);
         const invitation = await this.prisma.groupInvitation.create({
             data: {
                 groupId: groupId,

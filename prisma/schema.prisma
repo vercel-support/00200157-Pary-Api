@@ -148,8 +148,6 @@ model PartyInvitation {
   partyId        String           @map("partyId") @db.ObjectId
   status         InvitationStatus @default(PENDING)
   createdAt      DateTime         @default(now())
-
-  @@unique([partyId, invitedUserId])
 }
 
 model UserPartyModerator {

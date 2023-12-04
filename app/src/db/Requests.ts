@@ -60,6 +60,20 @@ export const PARTY_REQUEST = {
     },
     invitations: {
         include: {
+            invitingUser: {
+                select: {
+                    username: true,
+                    name: true,
+                    lastName: true,
+                    profilePictures: {
+                        take: 1,
+                        select: {
+                            url: true,
+                            id: true,
+                        },
+                    },
+                },
+            },
             invitedUser: {
                 select: {
                     username: true,
@@ -72,9 +86,6 @@ export const PARTY_REQUEST = {
                             id: true,
                         },
                     },
-                    verified: true,
-                    isCompany: true,
-                    gender: true,
                 },
             },
         },

@@ -19,6 +19,7 @@ import {UploadImageDto} from "../dto/UploadImageDto";
 import {JoinRequestDto} from "../dto/JoinRequestDto";
 import {OptionalGroupIdDto} from "../dto/Group.dto";
 import {UpdatePartyDto} from "../dto/UpdateParty.dto";
+import {UsernameDto} from "../dto/User.dto";
 
 @Injectable()
 export class PartyService {
@@ -916,6 +917,136 @@ export class PartyService {
         }
     }
 
+    async inviteToParty(partyId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+
+        const hasPermissions = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!hasPermissions) {
+            throw new BadRequestException("No tienes permisos para invitar.");
+        }
+
+        const invitedUser = await this.prisma.user.findUnique({
+            where: {username},
+            select: {
+                id: true,
+                expoPushToken: true,
+            },
+        });
+
+        if (!invitedUser) {
+            throw new NotFoundException("No se encontró el usuario a invitar.");
+        }
+
+        const party = await this.prisma.party.findUnique({
+            where: {id: partyId},
+            select: {
+                ownerId: true,
+                id: true,
+                name: true,
+                type: true,
+                moderators: {
+                    select: {
+                        userId: true,
+                    },
+                },
+            },
+        });
+
+        const invitation = await this.prisma.partyInvitation.create({
+            data: {
+                partyId,
+                invitedUserId: invitedUser.id,
+                invitingUserId: userId,
+            },
+        });
+
+        const inviter = await this.prisma.user.findUnique({
+            where: {id: userId},
+            select: {
+                username: true,
+                name: true,
+            },
+        });
+
+        this.notifications.sendPartyInviteNotification(
+            invitedUser.expoPushToken,
+            inviter,
+            party.name,
+            party.id,
+            party.type,
+        );
+        return invitation;
+    }
+
+    async cancelInvitation(partyId: string, UsernameDto: UsernameDto, userId: string) {
+        const {username} = UsernameDto;
+
+        const hasPermissions = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!hasPermissions) {
+            throw new BadRequestException("No tienes permisos para invitar.");
+        }
+        const invitedUser = await this.prisma.user.findUnique({
+            where: {username},
+            select: {
+                id: true,
+                expoPushToken: true,
+            },
+        });
+
+        if (!invitedUser) {
+            throw new NotFoundException("No se encontró el usuario a cancelar la invitación.");
+        }
+
+        const invitation = await this.prisma.partyInvitation.findFirst({
+            where: {
+                partyId,
+                invitedUserId: invitedUser.id,
+            },
+        });
+
+        if (invitation) {
+            return this.prisma.partyInvitation.delete({
+                where: {id: invitation.id},
+            });
+        } else {
+            return false;
+        }
+    }
+
     async acceptInvitation(partyId: string, userId: string) {
         const invitation = await this.prisma.partyInvitation.findFirst({
             where: {
@@ -1333,6 +1464,176 @@ export class PartyService {
                 });
             }
             return true;
+        }
+    }
+
+    async deleteMember(partyId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const group = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.partyMember.delete({
+            where: {
+                userId_partyId: {
+                    userId: targetUser.id,
+                    partyId,
+                },
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        await this.prisma.userPartyModerator.delete({
+            where: {
+                userId_partyId: {
+                    userId: targetUser.id,
+                    partyId,
+                },
+            },
+        });
+
+        await this.prisma.membershipRequest.deleteMany({
+            where: {
+                userId: targetUser.id,
+                partyId,
+            },
+        });
+    }
+
+    async deleteMod(partyId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!party) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.userPartyModerator.delete({
+            where: {
+                userId_partyId: {
+                    userId: targetUser.id,
+                    partyId,
+                },
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
+        }
+
+        await this.prisma.membershipRequest.deleteMany({
+            where: {
+                userId: targetUser.id,
+                partyId,
+            },
+        });
+    }
+
+    async addMemberToModList(partyId: string, usernameDto: UsernameDto, userId: string) {
+        const {username} = usernameDto;
+        // Obtenemos la información del group.
+        const party = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                ownerId: userId,
+            },
+        });
+
+        if (!party) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (!targetUser) {
+            throw new NotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar si el usuario ya es un miembro del grupo.
+        const isUserMember = await this.prisma.userPartyModerator.create({
+            data: {
+                userId: targetUser.id,
+                partyId,
+            },
+        });
+
+        if (!isUserMember) {
+            throw new InternalServerErrorException("El usuario ya es mod de este grupo");
         }
     }
 }
