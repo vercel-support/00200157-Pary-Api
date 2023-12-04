@@ -117,12 +117,12 @@ type AgeRange {
 }
 
 model PartyGroup {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  partyId String @map("partyId") @db.ObjectId
-  groupId String @map("groupId") @db.ObjectId
-
-  party Party @relation("PartyToPartyGroup", fields: [partyId], references: [id])
-  group Group @relation("GroupToPartyGroup", fields: [groupId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  partyId   String   @map("partyId") @db.ObjectId
+  groupId   String   @map("groupId") @db.ObjectId
+  party     Party    @relation("PartyToPartyGroup", fields: [partyId], references: [id])
+  group     Group    @relation("GroupToPartyGroup", fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
 
   @@unique([partyId, groupId])
 }
@@ -140,7 +140,6 @@ model PartyMember {
 
 model PartyInvitation {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt      DateTime         @default(now())
   invitingUser   User             @relation("PartyInvitingToInvited", fields: [invitingUserId], references: [id])
   invitingUserId String           @map("invitingUserId") @db.ObjectId
   invitedUser    User             @relation("PartyInvitedToInviting", fields: [invitedUserId], references: [id])
@@ -148,15 +147,18 @@ model PartyInvitation {
   party          Party            @relation(fields: [partyId], references: [id])
   partyId        String           @map("partyId") @db.ObjectId
   status         InvitationStatus @default(PENDING)
+  createdAt      DateTime         @default(now())
 
   @@unique([partyId, invitedUserId])
 }
 
 model UserPartyModerator {
-  partyId String @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String @map("userId") @db.ObjectId
-  user    User   @relation("UserToPartyModerator", fields: [userId], references: [id])
-  party   Party  @relation(fields: [partyId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  partyId   String   @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  user      User     @relation("UserToPartyModerator", fields: [userId], references: [id])
+  party     Party    @relation(fields: [partyId], references: [id])
+  createdAt DateTime @default(now())
 
   @@unique([userId, partyId])
 }
@@ -173,7 +175,7 @@ model Group {
   ageRange           AgeRange
   members            GroupMember[]
   moderators         UserGroupModerator[]
-  groupInvitations   GroupInvitation[]
+  invitations        GroupInvitation[]
   parties            PartyGroup[]         @relation("GroupToPartyGroup")
   membershipRequests MembershipRequest[]
 }
@@ -199,8 +201,6 @@ model GroupInvitation {
   group          Group            @relation(fields: [groupId], references: [id])
   groupId        String           @map("groupId") @db.ObjectId
   status         InvitationStatus @default(PENDING)
-
-  @@unique([groupId, invitedUserId])
 }
 
 model UserGroupModerator {

@@ -53,7 +53,13 @@ export class FeedService {
                 username: true,
                 name: true,
                 lastName: true,
-                profilePictures: {take: 1},
+                profilePictures: {
+                    take: 1,
+                    select: {
+                        url: true,
+                        id: true,
+                    },
+                },
                 description: true,
                 birthDate: true,
                 gender: true,
@@ -136,7 +142,13 @@ export class FeedService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         verified: true,
                         isCompany: true,
                         gender: true,
@@ -149,7 +161,13 @@ export class FeedService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
@@ -164,7 +182,13 @@ export class FeedService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,

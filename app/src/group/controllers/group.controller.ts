@@ -3,7 +3,6 @@ import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {GroupService} from "app/src/group/services/group.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {PaginationDto} from "../dto/Pagination.dto";
-import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
 import {UsernameDto} from "../../party/dto/User.dto";
@@ -104,11 +103,7 @@ export class GroupController {
             disableErrorMessages: false,
         }),
     )
-    async inviteToGroup(
-        @Param("groupId") groupId: string,
-        @Body() inviteToGroupDto: InviteToGroupDto,
-        @Req() request: any,
-    ) {
+    async inviteToGroup(@Param("groupId") groupId: string, @Body() inviteToGroupDto: UsernameDto, @Req() request: any) {
         return await this.groupService.inviteToGroup(groupId, inviteToGroupDto, request.raw.decoded.id);
     }
 
@@ -144,8 +139,12 @@ export class GroupController {
             disableErrorMessages: false,
         }),
     )
-    async cancelInvitation(@Param("groupId") groupId: string, @Req() request: any) {
-        return await this.groupService.cancelInvitation(groupId, request.raw.decoded.id);
+    async cancelInvitation(
+        @Param("groupId") groupId: string,
+        @Body() inviteToGroupDto: UsernameDto,
+        @Req() request: any,
+    ) {
+        return await this.groupService.cancelInvitation(groupId, inviteToGroupDto, request.raw.decoded.id);
     }
 
     @Post(":groupId/accept-join-request")

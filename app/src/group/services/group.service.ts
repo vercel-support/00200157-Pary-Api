@@ -4,7 +4,6 @@ import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
 import {CreateGroupDto} from "app/src/group/dto/CreateGroup.dto";
 import {PaginationDto} from "../dto/Pagination.dto";
-import {InviteToGroupDto} from "../dto/InviteToGroup.dto";
 import {JoinRequestDto} from "../../party/dto/JoinRequestDto";
 import {UpdateGroupDto} from "../dto/UpdateGroup.dto";
 import {UsernameDto} from "../../party/dto/User.dto";
@@ -126,7 +125,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -136,7 +141,13 @@ export class GroupService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                     },
                 },
                 moderators: {
@@ -146,7 +157,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
@@ -185,7 +202,13 @@ export class GroupService {
                                                 username: true,
                                                 name: true,
                                                 lastName: true,
-                                                profilePictures: {take: 1},
+                                                profilePictures: {
+                                                    take: 1,
+                                                    select: {
+                                                        url: true,
+                                                        id: true,
+                                                    },
+                                                },
                                             },
                                         },
                                     },
@@ -195,7 +218,13 @@ export class GroupService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                     },
                                 },
                                 moderators: {
@@ -205,7 +234,13 @@ export class GroupService {
                                                 username: true,
                                                 name: true,
                                                 lastName: true,
-                                                profilePictures: {take: 1},
+                                                profilePictures: {
+                                                    take: 1,
+                                                    select: {
+                                                        url: true,
+                                                        id: true,
+                                                    },
+                                                },
                                                 verified: true,
                                                 isCompany: true,
                                                 gender: true,
@@ -237,7 +272,13 @@ export class GroupService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         description: true,
                         birthDate: true,
                         gender: true,
@@ -264,7 +305,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 description: true,
                                 birthDate: true,
                                 gender: true,
@@ -293,7 +340,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 description: true,
                                 birthDate: true,
                                 gender: true,
@@ -311,6 +364,38 @@ export class GroupService {
                                 createdAt: true,
                                 lastLogin: true,
                                 isCompany: true,
+                            },
+                        },
+                    },
+                },
+                invitations: {
+                    include: {
+                        invitingUser: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
+                            },
+                        },
+                        invitedUser: {
+                            select: {
+                                username: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -346,24 +431,41 @@ export class GroupService {
 
     /* async removePartyFromGroup(groupId: string, userId: string) {} */
 
-    async inviteToGroup(groupId: string, inviteToGroupDto: InviteToGroupDto, userId: string) {
-        const {userIdToInvite} = inviteToGroupDto;
-        const invitingUser = await this.prisma.user.findUnique({
-            where: {id: userId},
-        });
+    async inviteToGroup(groupId: string, UsernameDto: UsernameDto, userId: string) {
+        const {username} = UsernameDto;
 
-        if (!invitingUser) {
-            throw new NotFoundException("User not found.");
-        }
-        const isMember = await this.prisma.groupMember.findFirst({
+        const hasPermissions = await this.prisma.group.findUnique({
             where: {
-                groupId: groupId,
-                userId: userId,
+                id: groupId,
+                OR: [
+                    {
+                        leaderId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
             },
         });
 
-        if (!isMember) {
-            throw new BadRequestException("You are not a member of this group.");
+        if (!hasPermissions) {
+            throw new BadRequestException("No tienes permisos para invitar.");
+        }
+
+        const invitedUser = await this.prisma.user.findUnique({
+            where: {username},
+            select: {
+                id: true,
+                expoPushToken: true,
+            },
+        });
+
+        if (!invitedUser) {
+            throw new NotFoundException("No se encontró el usuario a invitar.");
         }
 
         const group = await this.prisma.group.findUnique({
@@ -380,22 +482,12 @@ export class GroupService {
             },
         });
 
-        if (group.leaderId !== userId && !group.moderators.some(moderator => moderator.userId === userId)) {
-            throw new BadRequestException("Only the group leader and moderators can update the group.");
-        }
-
+        console.log("Creando la invitacion para", groupId, invitedUser.id, userId);
         const invitation = await this.prisma.groupInvitation.create({
             data: {
                 groupId: groupId,
-                invitedUserId: userIdToInvite,
-                invitingUserId: invitingUser.id,
-            },
-        });
-
-        const invitedUser = await this.prisma.user.findUnique({
-            where: {id: userIdToInvite},
-            select: {
-                expoPushToken: true,
+                invitedUserId: invitedUser.id,
+                invitingUserId: userId,
             },
         });
 
@@ -490,22 +582,56 @@ export class GroupService {
         return true;
     }
 
-    async cancelInvitation(groupId: string, userIdToCancel: string) {
+    async cancelInvitation(groupId: string, UsernameDto: UsernameDto, userId: string) {
+        const {username} = UsernameDto;
+
+        const hasPermissions = await this.prisma.group.findUnique({
+            where: {
+                id: groupId,
+                OR: [
+                    {
+                        leaderId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!hasPermissions) {
+            throw new BadRequestException("No tienes permisos para invitar.");
+        }
+        const invitedUser = await this.prisma.user.findUnique({
+            where: {username},
+            select: {
+                id: true,
+                expoPushToken: true,
+            },
+        });
+
+        if (!invitedUser) {
+            throw new NotFoundException("No se encontró el usuario a cancelar la invitación.");
+        }
+
         const invitation = await this.prisma.groupInvitation.findFirst({
             where: {
                 groupId: groupId,
-                invitedUserId: userIdToCancel,
+                invitedUserId: invitedUser.id,
             },
         });
 
         if (invitation) {
-            await this.prisma.groupInvitation.delete({
+            return this.prisma.groupInvitation.delete({
                 where: {id: invitation.id},
             });
+        } else {
+            return false;
         }
-        //TODO: Enviar notificacion al usuario que declino la invitacion
-
-        return true;
     }
 
     async acceptJoinRequest(groupId: string, userId: string, joinRequestDto: JoinRequestDto) {
@@ -712,7 +838,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 description: true,
                                 birthDate: true,
                                 gender: true,
@@ -739,7 +871,13 @@ export class GroupService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         description: true,
                                         birthDate: true,
                                         gender: true,
@@ -768,7 +906,13 @@ export class GroupService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         description: true,
                                         birthDate: true,
                                         gender: true,
@@ -797,7 +941,13 @@ export class GroupService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         verified: true,
                         isCompany: true,
                         gender: true,
@@ -834,7 +984,13 @@ export class GroupService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         verified: true,
                         isCompany: true,
                         gender: true,
@@ -847,7 +1003,13 @@ export class GroupService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
@@ -860,7 +1022,13 @@ export class GroupService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -875,7 +1043,13 @@ export class GroupService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,

@@ -414,7 +414,13 @@ export class PartyService {
                                                 username: true,
                                                 name: true,
                                                 lastName: true,
-                                                profilePictures: {take: 1},
+                                                profilePictures: {
+                                                    take: 1,
+                                                    select: {
+                                                        url: true,
+                                                        id: true,
+                                                    },
+                                                },
                                                 verified: true,
                                                 isCompany: true,
                                                 gender: true,
@@ -497,7 +503,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -512,7 +524,13 @@ export class PartyService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         verified: true,
                         isCompany: true,
                         gender: true,
@@ -525,7 +543,13 @@ export class PartyService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
@@ -538,7 +562,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -553,7 +583,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -623,7 +659,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -638,7 +680,13 @@ export class PartyService {
                         username: true,
                         name: true,
                         lastName: true,
-                        profilePictures: {take: 1},
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
                         verified: true,
                         isCompany: true,
                         gender: true,
@@ -651,7 +699,13 @@ export class PartyService {
                                 username: true,
                                 name: true,
                                 lastName: true,
-                                profilePictures: {take: 1},
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
@@ -664,7 +718,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,
@@ -679,7 +739,13 @@ export class PartyService {
                                         username: true,
                                         name: true,
                                         lastName: true,
-                                        profilePictures: {take: 1},
+                                        profilePictures: {
+                                            take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
+                                        },
                                         verified: true,
                                         isCompany: true,
                                         gender: true,

@@ -47,7 +47,6 @@ export class NotificationsService {
     async sendGroupInviteNotification(pushToken: string, inviter: Partial<User>, groupName: string, groupId: string) {
         // Comprueba si el token es válido
         if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
-            console.error(`Push token ${pushToken} is not a valid Expo push token`);
             return;
         }
 
