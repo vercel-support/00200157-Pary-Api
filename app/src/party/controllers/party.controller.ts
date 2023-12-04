@@ -145,6 +145,22 @@ export class PartyController {
         return this.partyService.deleteMember(partyId, usernameDto, request.raw.decoded.id);
     }
 
+    @Post(":partyId/delete-group")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async deleteGroupMember(
+        @Param("partyId") partyId: string,
+        @Body() groupIdDto: OptionalGroupIdDto,
+        @Req() request: any,
+    ) {
+        return this.partyService.deleteGroupMember(partyId, groupIdDto, request.raw.decoded.id);
+    }
+
     @Post(":partyId/delete-mod")
     @UsePipes(
         new ValidationPipe({

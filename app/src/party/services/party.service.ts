@@ -1537,6 +1537,47 @@ export class PartyService {
         });
     }
 
+    async deleteGroupMember(partyId: string, groupIdDto: OptionalGroupIdDto, userId: string) {
+        const {groupId} = groupIdDto;
+        const group = await this.prisma.party.findUnique({
+            where: {
+                id: partyId,
+                OR: [
+                    {
+                        ownerId: userId,
+                    },
+                    {
+                        moderators: {
+                            some: {
+                                userId,
+                            },
+                        },
+                    },
+                ],
+            },
+        });
+
+        if (!group) {
+            throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+        }
+
+        await this.prisma.partyGroup.delete({
+            where: {
+                partyId_groupId: {
+                    partyId,
+                    groupId,
+                },
+            },
+        });
+
+        await this.prisma.membershipRequest.deleteMany({
+            where: {
+                groupId,
+                partyId,
+            },
+        });
+    }
+
     async deleteMod(partyId: string, usernameDto: UsernameDto, userId: string) {
         const {username} = usernameDto;
         // Obtenemos la información del group.

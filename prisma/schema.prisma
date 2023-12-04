@@ -142,10 +142,12 @@ model PartyInvitation {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   invitingUser   User             @relation("PartyInvitingToInvited", fields: [invitingUserId], references: [id])
   invitingUserId String           @map("invitingUserId") @db.ObjectId
-  invitedUser    User             @relation("PartyInvitedToInviting", fields: [invitedUserId], references: [id])
-  invitedUserId  String           @map("invitedUserId") @db.ObjectId
+  invitedUser    User?            @relation("PartyInvitedToInviting", fields: [invitedUserId], references: [id])
+  invitedUserId  String?          @map("invitedUserId") @db.ObjectId
   party          Party            @relation(fields: [partyId], references: [id])
   partyId        String           @map("partyId") @db.ObjectId
+  group          Group?           @relation("PartyInvitingToGroup", fields: [groupId], references: [id])
+  groupId        String?          @map("groupId") @db.ObjectId
   status         InvitationStatus @default(PENDING)
   createdAt      DateTime         @default(now())
 }
@@ -170,6 +172,7 @@ model Group {
   private            Boolean              @default(false)
   showInFeed         Boolean              @default(true)
   createdAt          DateTime             @default(now())
+  invitedParties     PartyInvitation[]    @relation("PartyInvitingToGroup")
   ageRange           AgeRange
   members            GroupMember[]
   moderators         UserGroupModerator[]
