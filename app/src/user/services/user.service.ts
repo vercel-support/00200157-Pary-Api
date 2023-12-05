@@ -264,6 +264,7 @@ export class UserService {
                     parties: {
                         select: {
                             partyId: true,
+                            party: true,
                         },
                     },
                     invitedParties: {
