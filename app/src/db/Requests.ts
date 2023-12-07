@@ -2,6 +2,7 @@ export const PARTY_REQUEST = {
     owner: {
         select: {
             username: true,
+            socialMedia: true,
             name: true,
             lastName: true,
             profilePictures: {
@@ -21,6 +22,7 @@ export const PARTY_REQUEST = {
             user: {
                 select: {
                     username: true,
+                    socialMedia: true,
                     name: true,
                     lastName: true,
                     profilePictures: {
@@ -42,6 +44,7 @@ export const PARTY_REQUEST = {
             user: {
                 select: {
                     username: true,
+                    socialMedia: true,
                     name: true,
                     lastName: true,
                     profilePictures: {
@@ -63,6 +66,7 @@ export const PARTY_REQUEST = {
             invitingUser: {
                 select: {
                     username: true,
+                    socialMedia: true,
                     name: true,
                     lastName: true,
                     profilePictures: {
@@ -77,6 +81,7 @@ export const PARTY_REQUEST = {
             invitedUser: {
                 select: {
                     username: true,
+                    socialMedia: true,
                     name: true,
                     lastName: true,
                     profilePictures: {
@@ -97,6 +102,7 @@ export const PARTY_REQUEST = {
                     leader: {
                         select: {
                             username: true,
+                            socialMedia: true,
                             name: true,
                             lastName: true,
                             profilePictures: {
@@ -116,6 +122,7 @@ export const PARTY_REQUEST = {
                             user: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -137,6 +144,7 @@ export const PARTY_REQUEST = {
                             user: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -158,6 +166,7 @@ export const PARTY_REQUEST = {
             user: {
                 select: {
                     username: true,
+                    socialMedia: true,
                     name: true,
                     lastName: true,
                     profilePictures: {
@@ -184,6 +193,7 @@ export const PARTY_REQUEST = {
                     leader: {
                         select: {
                             username: true,
+                            socialMedia: true,
                             name: true,
                             lastName: true,
                             profilePictures: {
@@ -203,6 +213,7 @@ export const PARTY_REQUEST = {
                             user: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -224,6 +235,7 @@ export const PARTY_REQUEST = {
                             user: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {

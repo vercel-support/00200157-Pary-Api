@@ -59,7 +59,12 @@ export class PartyService {
 
         const inviter = await this.prisma.user.findUnique({
             where: {id: userId},
-            select: {name: true, username: true, id: true},
+            select: {
+                name: true,
+                username: true,
+                socialMedia: true,
+                id: true,
+            },
         });
 
         if (!inviter) {
@@ -79,6 +84,7 @@ export class PartyService {
             select: {
                 id: true,
                 username: true,
+                socialMedia: true,
                 expoPushToken: true, // asumimos que usarás Expo para notificaciones push
             },
         });
@@ -386,6 +392,7 @@ export class PartyService {
                                 owner: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -399,6 +406,7 @@ export class PartyService {
                                         user: {
                                             select: {
                                                 username: true,
+                                                socialMedia: true,
                                                 name: true,
                                                 lastName: true,
                                                 profilePictures: {
@@ -413,6 +421,7 @@ export class PartyService {
                                         user: {
                                             select: {
                                                 username: true,
+                                                socialMedia: true,
                                                 name: true,
                                                 lastName: true,
                                                 profilePictures: {
@@ -475,6 +484,7 @@ export class PartyService {
                         owner: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -488,6 +498,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -502,6 +513,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -523,6 +535,7 @@ export class PartyService {
                 user: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -542,6 +555,7 @@ export class PartyService {
                         leader: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -561,6 +575,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -582,6 +597,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -631,6 +647,7 @@ export class PartyService {
                         owner: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -644,6 +661,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -658,6 +676,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -679,6 +698,7 @@ export class PartyService {
                 user: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -698,6 +718,7 @@ export class PartyService {
                         leader: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -717,6 +738,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -738,6 +760,7 @@ export class PartyService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -981,6 +1004,7 @@ export class PartyService {
             where: {id: userId},
             select: {
                 username: true,
+                socialMedia: true,
                 name: true,
             },
         });

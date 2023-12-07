@@ -16,6 +16,7 @@ model User {
   lastName              String               @default("")
   signedIn              Boolean              @default(false)
   profilePictures       ProfilePicture[]
+  socialMedia           SocialMedia
   accessToken           String               @default("")
   refreshToken          String               @default("")
   gender                Gender               @default(Femenino)
@@ -55,6 +56,10 @@ enum Gender {
   Femenino
   NoBinario
   Otro
+}
+
+type SocialMedia {
+  instagram String
 }
 
 model UserFollows {

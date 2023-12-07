@@ -40,6 +40,7 @@ export class UtilsService {
                             owner: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -53,6 +54,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -81,6 +83,7 @@ export class UtilsService {
                             owner: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -94,6 +97,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -121,6 +125,7 @@ export class UtilsService {
                             owner: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -134,6 +139,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -158,6 +164,7 @@ export class UtilsService {
                     owner: {
                         select: {
                             username: true,
+                            socialMedia: true,
                             name: true,
                             lastName: true,
                             profilePictures: {
@@ -171,6 +178,7 @@ export class UtilsService {
                             user: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -196,6 +204,7 @@ export class UtilsService {
                             owner: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -209,6 +218,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -234,6 +244,7 @@ export class UtilsService {
                             leader: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -247,6 +258,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -268,6 +280,7 @@ export class UtilsService {
                             leader: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -280,6 +293,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -294,6 +308,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -324,6 +339,7 @@ export class UtilsService {
                                             owner: {
                                                 select: {
                                                     username: true,
+                                                    socialMedia: true,
                                                     name: true,
                                                     lastName: true,
                                                     profilePictures: {
@@ -337,6 +353,7 @@ export class UtilsService {
                                                     user: {
                                                         select: {
                                                             username: true,
+                                                            socialMedia: true,
                                                             name: true,
                                                             lastName: true,
                                                             profilePictures: {
@@ -363,6 +380,7 @@ export class UtilsService {
                             leader: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -376,6 +394,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -390,6 +409,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -418,6 +438,7 @@ export class UtilsService {
                             leader: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -431,6 +452,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -445,6 +467,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -472,6 +495,7 @@ export class UtilsService {
                             leader: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -491,6 +515,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -512,6 +537,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -541,6 +567,7 @@ export class UtilsService {
                             owner: {
                                 select: {
                                     username: true,
+                                    socialMedia: true,
                                     name: true,
                                     lastName: true,
                                     profilePictures: {
@@ -554,6 +581,7 @@ export class UtilsService {
                                     user: {
                                         select: {
                                             username: true,
+                                            socialMedia: true,
                                             name: true,
                                             lastName: true,
                                             profilePictures: {
@@ -568,6 +596,7 @@ export class UtilsService {
                     user: {
                         select: {
                             username: true,
+                            socialMedia: true,
                             name: true,
                             lastName: true,
                             profilePictures: {

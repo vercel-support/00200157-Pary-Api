@@ -61,6 +61,9 @@ export class AuthService {
                         timestamp: new Date(),
                         address: "",
                     },
+                    socialMedia: {
+                        instagram: "",
+                    },
                 },
                 include: this.utils.getUserFields(),
             });
@@ -83,7 +86,7 @@ export class AuthService {
     }
 
     async logoutUser(userId: string) {
-        return await this.prisma.user.update({
+        return this.prisma.user.update({
             where: {id: userId},
             data: {
                 accessToken: "",

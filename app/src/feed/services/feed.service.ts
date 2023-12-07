@@ -51,6 +51,7 @@ export class FeedService {
             orderBy: [{isCompany: "desc"}, {verified: "desc"}, {username: "desc"}],
             select: {
                 username: true,
+                socialMedia: true,
                 name: true,
                 lastName: true,
                 profilePictures: {
@@ -114,6 +115,7 @@ export class FeedService {
             where: {id: userId},
             select: {
                 username: true,
+                socialMedia: true,
                 location: true,
                 musicInterest: true,
                 deportsInterest: true,
@@ -140,6 +142,7 @@ export class FeedService {
                 leader: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -159,6 +162,7 @@ export class FeedService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -180,6 +184,7 @@ export class FeedService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -302,6 +307,7 @@ export class FeedService {
             },
             select: {
                 username: true,
+                socialMedia: true,
                 name: true,
                 lastName: true,
                 description: true,
@@ -342,6 +348,7 @@ export class FeedService {
             },
             select: {
                 username: true,
+                socialMedia: true,
                 name: true,
                 lastName: true,
                 description: true,

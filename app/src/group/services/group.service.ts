@@ -21,7 +21,12 @@ export class GroupService {
 
         const inviter = await this.prisma.user.findUnique({
             where: {id: userId},
-            select: {name: true, username: true, id: true},
+            select: {
+                name: true,
+                username: true,
+                socialMedia: true,
+                id: true,
+            },
         });
 
         if (!inviter) {
@@ -66,6 +71,7 @@ export class GroupService {
                 select: {
                     id: true,
                     username: true,
+                    socialMedia: true,
                     expoPushToken: true,
                 },
             });
@@ -123,6 +129,7 @@ export class GroupService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -139,6 +146,7 @@ export class GroupService {
                 leader: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -155,6 +163,7 @@ export class GroupService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -200,6 +209,7 @@ export class GroupService {
                                         user: {
                                             select: {
                                                 username: true,
+                                                socialMedia: true,
                                                 name: true,
                                                 lastName: true,
                                                 profilePictures: {
@@ -216,6 +226,7 @@ export class GroupService {
                                 leader: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -232,6 +243,7 @@ export class GroupService {
                                         user: {
                                             select: {
                                                 username: true,
+                                                socialMedia: true,
                                                 name: true,
                                                 lastName: true,
                                                 profilePictures: {
@@ -270,6 +282,7 @@ export class GroupService {
                 leader: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -303,6 +316,7 @@ export class GroupService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -338,6 +352,7 @@ export class GroupService {
                         user: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -373,6 +388,7 @@ export class GroupService {
                         invitingUser: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -387,6 +403,7 @@ export class GroupService {
                         invitedUser: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -494,6 +511,7 @@ export class GroupService {
             where: {id: userId},
             select: {
                 username: true,
+                socialMedia: true,
                 name: true,
             },
         });
@@ -835,6 +853,7 @@ export class GroupService {
                         leader: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -868,6 +887,7 @@ export class GroupService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -903,6 +923,7 @@ export class GroupService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -938,6 +959,7 @@ export class GroupService {
                 user: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -981,6 +1003,7 @@ export class GroupService {
                 user: {
                     select: {
                         username: true,
+                        socialMedia: true,
                         name: true,
                         lastName: true,
                         profilePictures: {
@@ -1000,6 +1023,7 @@ export class GroupService {
                         leader: {
                             select: {
                                 username: true,
+                                socialMedia: true,
                                 name: true,
                                 lastName: true,
                                 profilePictures: {
@@ -1019,6 +1043,7 @@ export class GroupService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
@@ -1040,6 +1065,7 @@ export class GroupService {
                                 user: {
                                     select: {
                                         username: true,
+                                        socialMedia: true,
                                         name: true,
                                         lastName: true,
                                         profilePictures: {
