@@ -107,10 +107,11 @@ export class FeedService {
 
     async getPersonalizedParties(personalizedParties: PersonalizedPartiesDto, userId: string) {
         const {partyLimit, groupLimit, distanceLimit, maxAge, minAge, showGroups} = personalizedParties;
-        let {partyPage, groupPage} = personalizedParties;
+        let {partyPage} = personalizedParties;
+        const {groupPage} = personalizedParties;
         const foundedGroups = [];
         const foundedParties = [];
-        let totalGroups = 0;
+        const totalGroups = 0;
         const currentUser = await this.prisma.user.findUnique({
             where: {id: userId},
             select: {
@@ -137,7 +138,7 @@ export class FeedService {
         const followedUsers = currentUser.followingUserList.map(follow => follow.followedUserId);
         const currentDateTime = new Date();
 
-        if (showGroups) {
+        /*if (showGroups) {
             const queryFilters = {
                 leader: {
                     select: {
@@ -221,7 +222,7 @@ export class FeedService {
                 foundedGroups.push(...groups);
                 groupPage++;
             }
-        }
+        }*/
 
         const queryFilters = {
             date: {gte: currentDateTime},
@@ -263,10 +264,9 @@ export class FeedService {
                 ...partiesToReturn
                     .filter(party => {
                         return (
-                            party &&
-                            party.distance <= distanceLimit &&
+                            party && party.distance <= distanceLimit /*&&
                             party.ageRange.min >= minAge &&
-                            party.ageRange.max <= maxAge
+                            party.ageRange.max <= maxAge*/
                         );
                     })
                     .sort((a, b) => b!.relevanceScore - a!.relevanceScore),

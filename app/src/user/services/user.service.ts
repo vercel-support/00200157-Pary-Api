@@ -51,7 +51,9 @@ export class UserService {
             location,
             isCompany,
             expoPushToken,
+            socialMedia,
         } = user;
+        console.log(socialMedia);
         return this.prisma.user
             .update({
                 where: {id: userId},
@@ -59,7 +61,7 @@ export class UserService {
                     username,
                     name,
                     lastName,
-                    gender: gender,
+                    gender,
                     signedIn: true,
                     musicInterest,
                     deportsInterest,
@@ -72,6 +74,7 @@ export class UserService {
                     location,
                     isCompany,
                     expoPushToken: expoPushToken ?? "",
+                    socialMedia,
                 },
                 include: this.utils.getUserFields(),
             })
@@ -550,6 +553,76 @@ export class UserService {
             where: {id},
             include: this.utils.getUserFields(),
         });
+    }
+
+    async purgeUserById(id: string) {
+        const user = await this.prisma.user.findFirst({
+            where: {id},
+            include: {
+                profilePictures: true,
+                parties: true,
+                groups: true,
+            },
+        });
+        if (!user) {
+            throw new NotFoundException("User not found");
+        }
+
+        // Delete all profile pictures
+        for (const profilePicture of user.profilePictures) {
+            await del(profilePicture.url);
+            await this.prisma.profilePicture.delete({where: {id: profilePicture.id}});
+        }
+
+        // Delete all party memberships
+        await this.prisma.partyMember.deleteMany({where: {userId: id}});
+
+        // Delete all group memberships
+        await this.prisma.groupMember.deleteMany({where: {userId: id}});
+
+        // Delete all user follows
+        await this.prisma.userFollows.deleteMany({where: {followerUserId: id}});
+        await this.prisma.userFollows.deleteMany({where: {followedUserId: id}});
+
+        // Delete all party invitations
+        await this.prisma.partyInvitation.deleteMany({where: {invitingUserId: id}});
+        await this.prisma.partyInvitation.deleteMany({where: {invitedUserId: id}});
+
+        // Delete all group invitations
+        await this.prisma.groupInvitation.deleteMany({where: {invitingUserId: id}});
+        await this.prisma.groupInvitation.deleteMany({where: {invitedUserId: id}});
+
+        // Delete all membership requests
+        await this.prisma.membershipRequest.deleteMany({where: {userId: id}});
+
+        // Delete all party moderations
+        await this.prisma.userPartyModerator.deleteMany({where: {userId: id}});
+
+        // Delete all group moderations
+        await this.prisma.userGroupModerator.deleteMany({where: {userId: id}});
+
+        // Delete all owned parties
+        const ownedParties = await this.prisma.party.findMany({where: {ownerId: id}});
+        for (const party of ownedParties) {
+            await this.prisma.partyGroup.deleteMany({where: {partyId: party.id}});
+            await this.prisma.partyInvitation.deleteMany({where: {partyId: party.id}});
+            await this.prisma.membershipRequest.deleteMany({where: {partyId: party.id}});
+        }
+        await this.prisma.party.deleteMany({where: {ownerId: id}});
+
+        // Delete all led groups
+        const ledGroups = await this.prisma.group.findMany({where: {leaderId: id}});
+        for (const group of ledGroups) {
+            await this.prisma.partyGroup.deleteMany({where: {groupId: group.id}});
+            await this.prisma.groupInvitation.deleteMany({where: {groupId: group.id}});
+            await this.prisma.membershipRequest.deleteMany({where: {groupId: group.id}});
+        }
+        await this.prisma.group.deleteMany({where: {leaderId: id}});
+
+        // Delete user
+        await this.prisma.user.delete({where: {id}});
+
+        return true;
     }
 
     async updateAndGetUserById(id: string, location: Location, expoPushToken: string) {

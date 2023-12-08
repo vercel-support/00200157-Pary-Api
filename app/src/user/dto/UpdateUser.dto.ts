@@ -1,4 +1,4 @@
-import {Gender, Location} from "@prisma/client";
+import {Gender, Location, SocialMedia} from "@prisma/client";
 import {IsArray, IsBoolean, IsNotEmpty, IsString} from "class-validator";
 
 export class UpdateUserDto {
@@ -32,4 +32,6 @@ export class UpdateUserDto {
     location: Location;
     @IsBoolean()
     isCompany: boolean;
+    @IsNotEmpty()
+    socialMedia: SocialMedia;
 }

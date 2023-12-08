@@ -133,4 +133,13 @@ export class UserController {
         }
         return await this.userService.getUserById(id);
     }
+
+    @Get(":id/purge")
+    async purgeUserById(@Param("id") id: string) {
+        if (!id) {
+            throw new NotFoundException("User not found");
+        }
+
+        return await this.userService.purgeUserById(id);
+    }
 }

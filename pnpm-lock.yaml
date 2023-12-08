@@ -29,6 +29,9 @@ dependencies:
   '@vercel/blob':
     specifier: ^0.15.0
     version: 0.15.0
+  '@vercel/speed-insights':
+    specifier: ^1.0.0
+    version: 1.0.0
   axios:
     specifier: ^1.5.0
     version: 1.5.0
@@ -1887,6 +1890,11 @@ packages:
   /@vercel/ruby@2.0.2:
     resolution: {integrity: sha512-MqFynhtZ905L210DWAbgkiEQEK39LTtp9eL2Nm6PjzhjNzU6hV0UfK8Z24vU9CC6J4mrUTTZx396fH7XTYJWqg==}
     dev: true
+
+  /@vercel/speed-insights@1.0.0:
+    resolution: {integrity: sha512-5blmCVGGPn+3BqwBPb1jc3OnzRozNuLgJVr7xH6XjxCTvocs7z/Bml7lo+JzLKUXR1Q35qI/PlEllmNbZmP9Ew==}
+    requiresBuild: true
+    dev: false
 
   /@vercel/static-build@2.0.10:
     resolution: {integrity: sha512-H3YM60+Jx/X9YbHrPaQYflJiSC5fQu9R39j+njIAQAQHiitiqFAnFEzQfOXSp52csb0uJ9XacL94vjzQ/T2S5w==}
