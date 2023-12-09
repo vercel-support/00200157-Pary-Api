@@ -417,6 +417,58 @@ export class GroupService {
                         },
                     },
                 },
+                parties: {
+                    select: {
+                        partyId: true,
+                        party: {
+                            include: {
+                                owner: {
+                                    select: {
+                                        username: true,
+                                        socialMedia: true,
+                                        name: true,
+                                        lastName: true,
+                                        profilePictures: {
+                                            take: 1,
+                                        },
+                                    },
+                                },
+                                members: {
+                                    select: {
+                                        userId: true,
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                socialMedia: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: {
+                                                    take: 1,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                moderators: {
+                                    select: {
+                                        userId: true,
+                                        user: {
+                                            select: {
+                                                username: true,
+                                                socialMedia: true,
+                                                name: true,
+                                                lastName: true,
+                                                profilePictures: {
+                                                    take: 1,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
         });
 

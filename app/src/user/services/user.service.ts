@@ -2,7 +2,7 @@ import {Injectable, InternalServerErrorException, NotFoundException} from "@nest
 import {Location} from "@prisma/client";
 import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
 import {del, put} from "@vercel/blob";
-import {UpdateUserDto} from "app/src/user/dto/UpdateUser.dto";
+import {UpdateUser} from "app/src/user/dto/UpdateUser";
 import {randomUUID} from "crypto";
 import {PrismaService} from "../../db/services/prisma.service";
 import {NotificationsService} from "../../notifications/services/notifications.service";
@@ -34,7 +34,7 @@ export class UserService {
             });
     }
 
-    async updateUser(user: UpdateUserDto, userId: string) {
+    async updateUser(user: UpdateUser, userId: string) {
         const {
             username,
             name,

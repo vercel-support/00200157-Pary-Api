@@ -12,12 +12,12 @@ import {
     ValidationPipe,
 } from "@nestjs/common";
 import {Location} from "@prisma/client";
-import {UpdateUserDto} from "app/src/user/dto/UpdateUser.dto";
-import {UserService} from "app/src/user/services/user.service";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
 import {UploadImageDto} from "../../party/dto/UploadImageDto";
 import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
 import {SearchDto} from "../../feed/dto/Search.dto";
+import {UserService} from "../services/user.service";
+import {UpdateUser} from "../dto/UpdateUser";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -48,7 +48,7 @@ export class UserController {
             disableErrorMessages: false,
         }),
     )
-    async updateUser(@Body() user: UpdateUserDto, @Req() request: any) {
+    async updateUser(@Body() user: UpdateUser, @Req() request: any) {
         return this.userService.updateUser(user, request.raw.decoded.id);
     }
 

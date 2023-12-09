@@ -1,7 +1,7 @@
 import {Gender, Location, SocialMedia} from "@prisma/client";
 import {IsArray, IsBoolean, IsNotEmpty, IsString} from "class-validator";
 
-export class UpdateUserDto {
+export class UpdateUser {
     @IsNotEmpty()
     username: string;
     @IsNotEmpty()

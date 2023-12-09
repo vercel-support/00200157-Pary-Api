@@ -64,6 +64,22 @@ export class UtilsService {
                                     },
                                 },
                             },
+                            moderators: {
+                                select: {
+                                    userId: true,
+                                    user: {
+                                        select: {
+                                            username: true,
+                                            socialMedia: true,
+                                            name: true,
+                                            lastName: true,
+                                            profilePictures: {
+                                                take: 1,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -329,13 +345,7 @@ export class UtilsService {
                                 select: {
                                     partyId: true,
                                     party: {
-                                        select: {
-                                            name: true,
-                                            description: true,
-                                            image: true,
-                                            id: true,
-                                            location: true,
-                                            date: true,
+                                        include: {
                                             owner: {
                                                 select: {
                                                     username: true,
@@ -348,6 +358,22 @@ export class UtilsService {
                                                 },
                                             },
                                             members: {
+                                                select: {
+                                                    userId: true,
+                                                    user: {
+                                                        select: {
+                                                            username: true,
+                                                            socialMedia: true,
+                                                            name: true,
+                                                            lastName: true,
+                                                            profilePictures: {
+                                                                take: 1,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                            moderators: {
                                                 select: {
                                                     userId: true,
                                                     user: {
