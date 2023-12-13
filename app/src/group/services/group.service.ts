@@ -881,6 +881,7 @@ export class GroupService {
     async getJoinRequests(userId: string) {
         return await this.prisma.membershipRequest.findMany({
             where: {
+                partyId: null,
                 OR: [
                     {
                         group: {

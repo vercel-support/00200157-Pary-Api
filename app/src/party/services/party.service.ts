@@ -1262,7 +1262,7 @@ export class PartyService {
                     groupId,
                 },
             });
-            for (const member of joinRequest.group.members) {
+            /*for (const member of joinRequest.group.members) {
                 await this.prisma.partyMember.delete({
                     where: {
                         userId_partyId: {
@@ -1271,7 +1271,7 @@ export class PartyService {
                         },
                     },
                 });
-            }
+            }*/
             this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
         }
         return true;

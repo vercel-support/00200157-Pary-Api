@@ -3,6 +3,7 @@ import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
 import {AppModule} from "./src/app.module";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import {injectSpeedInsights} from "@vercel/speed-insights";
+import multiPart from "@fastify/multipart";
 
 export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL, PUBLIC_API_PORT} = process.env;
 
@@ -25,6 +26,7 @@ async function bootstrap() {
         AppModule,
         new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
     );
+    await app.register(multiPart);
     app.enableCors();
     app.setGlobalPrefix("api/v1");
 

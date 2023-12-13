@@ -8,16 +8,18 @@ import {
     Post,
     Query,
     Req,
+    UseInterceptors,
     UsePipes,
     ValidationPipe,
 } from "@nestjs/common";
 import {Location} from "@prisma/client";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
-import {UploadImageDto} from "../../party/dto/UploadImageDto";
 import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
 import {SearchDto} from "../../feed/dto/Search.dto";
 import {UserService} from "../services/user.service";
 import {UpdateUser} from "../dto/UpdateUser";
+import {FileFieldsInterceptor, MemoryStorageFile, UploadedFiles} from "@blazity/nest-file-fastify";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -139,7 +141,30 @@ export class UserController {
         if (!id) {
             throw new NotFoundException("User not found");
         }
-
         return await this.userService.purgeUserById(id);
+    }
+
+    @Post(":id/upload-profile-picture")
+    @UseInterceptors(FileFieldsInterceptor([{name: "image", maxCount: 1}]))
+    async register(
+        @Param("id") id: string,
+        @UploadedFiles()
+        files: {
+            image?: MemoryStorageFile;
+        },
+    ) {
+        return this.userService.uploadProfilePicture2(files.image[0], id);
+    }
+
+    @Post("upload-image")
+    @UseInterceptors(FileFieldsInterceptor([{name: "image", maxCount: 1}]))
+    async uploadImage(
+        @Param("id") id: string,
+        @UploadedFiles()
+        files: {
+            image?: MemoryStorageFile;
+        },
+    ) {
+        return this.userService.uploadImage(files.image[0]);
     }
 }
