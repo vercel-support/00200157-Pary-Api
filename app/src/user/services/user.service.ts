@@ -11,6 +11,8 @@ import {UploadImageDto} from "../../party/dto/UploadImageDto";
 import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
 import {SearchDto} from "../../feed/dto/Search.dto";
 import {MemoryStorageFile} from "@blazity/nest-file-fastify";
+import {CreateConsumableItemDto} from "./../dto/CreateConsumableItem.dto";
+import {MultipartFile} from "@fastify/multipart";
 
 @Injectable()
 export class UserService {
@@ -55,7 +57,11 @@ export class UserService {
                 id: location.id,
             },
             data: {
-                ...location,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                name: location.name,
+                timestamp: location.timestamp,
+                address: location.address,
             },
         });
         return this.prisma.user
@@ -470,14 +476,14 @@ export class UserService {
         await uploadImageToVercel();
     }
 
-    async uploadImage(image: MemoryStorageFile) {
+    async uploadImage(image: MultipartFile) {
         if (!image) {
             throw new InternalServerErrorException("No image provided.");
         }
         const fileType = image.mimetype.split("/")[1];
         const uploadImageToVercel = async (retry = true) => {
             try {
-                const {url} = await put(`random-picture-${randomUUID()}.${fileType}`, image.buffer, {
+                const {url} = await put(`random-picture-${randomUUID()}.${fileType}`, image.file, {
                     access: "public",
                 }).catch(() => {
                     throw new InternalServerErrorException("Error uploading image into vercel.");
@@ -494,7 +500,34 @@ export class UserService {
                 }
             }
         };
-        await uploadImageToVercel();
+        return await uploadImageToVercel();
+    }
+    async uploadConsumablemage(image: MultipartFile) {
+        if (!image) {
+            throw new InternalServerErrorException("No image provided.");
+        }
+        const fileType = image.mimetype.split("/")[1];
+        const uploadImageToVercel = async (retry = true) => {
+            try {
+                const {url} = await put(`consumable-picture-${randomUUID()}.${fileType}`, image.file, {
+                    access: "public",
+                }).catch(() => {
+                    throw new InternalServerErrorException("Error uploading image into vercel.");
+                });
+
+                if (!url || url === "") {
+                    throw new InternalServerErrorException("Error uploading image.");
+                }
+                return url;
+            } catch (error) {
+                if (retry) {
+                    return await uploadImageToVercel(false);
+                } else {
+                    throw new InternalServerErrorException("Error uploading image.");
+                }
+            }
+        };
+        return await uploadImageToVercel();
     }
 
     async deleteProfilePicture(deleteUserProfilePictureDto: DeleteUserProfilePictureDto, userId: string) {
@@ -790,5 +823,38 @@ export class UserService {
             },
             include: this.utils.getUserFields(),
         });
+    }
+
+    async createConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
+        const {name, description, pictureUrl, type, tags} = createConsumableItemDto;
+
+        return this.prisma.consumableItem
+            .create({
+                data: {
+                    name,
+                    description,
+                    pictureUrl,
+                    type,
+                    tags,
+                    itemCreator: {
+                        connect: {
+                            id: userId,
+                        },
+                    },
+                },
+            })
+            .catch(() => {
+                throw new InternalServerErrorException("Error creating consumable item.");
+            });
+    }
+
+    async getConsumableItems(userId: string) {
+        const response = this.prisma.consumableItem.findMany({
+            where: {
+                userId,
+            },
+        });
+        console.log(response);
+        return response;
     }
 }

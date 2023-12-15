@@ -1,3 +1,4 @@
+import {FileFieldsInterceptor, MemoryStorageFile, UploadedFiles} from "@blazity/nest-file-fastify";
 import {
     Body,
     Controller,
@@ -8,18 +9,21 @@ import {
     Post,
     Query,
     Req,
+    UseGuards,
     UseInterceptors,
     UsePipes,
     ValidationPipe,
 } from "@nestjs/common";
+import {ApiBearerAuth, ApiConsumes, ApiTags} from "@nestjs/swagger";
 import {Location} from "@prisma/client";
-import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
-import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {UploadGuard} from "app/src/guard/upload.guard";
+import {File} from "../../decorators/file.decorator";
 import {SearchDto} from "../../feed/dto/Search.dto";
-import {UserService} from "../services/user.service";
-import {UpdateUser} from "../dto/UpdateUser";
-import {FileFieldsInterceptor, MemoryStorageFile, UploadedFiles} from "@blazity/nest-file-fastify";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
 import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {CreateConsumableItemDto} from "../dto/CreateConsumableItem.dto";
+import {UpdateUser} from "../dto/UpdateUser";
+import {UserService} from "../services/user.service";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -166,5 +170,29 @@ export class UserController {
         },
     ) {
         return this.userService.uploadImage(files.image[0]);
+    }
+
+    @ApiConsumes("multipart/form-data")
+    @Post("upload-consumable-image")
+    @UseGuards(UploadGuard)
+    async uploadConsumableImage(@File() file) {
+        return await this.userService.uploadConsumablemage(file);
+    }
+
+    @Post("create-consumable-item")
+    @UsePipes(
+        new ValidationPipe({
+            transform: true,
+            forbidNonWhitelisted: true,
+            disableErrorMessages: false,
+        }),
+    )
+    async createConsumableItem(@Body() createConsumableItemDto: CreateConsumableItemDto, @Req() request: any) {
+        return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
+    }
+
+    @Get("consumable-items")
+    async getConsumableItems(@Req() request: any) {
+        return this.userService.getConsumableItems(request.raw.decoded.id);
     }
 }

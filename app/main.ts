@@ -2,7 +2,6 @@ import {NestFactory} from "@nestjs/core";
 import {FastifyAdapter, NestFastifyApplication} from "@nestjs/platform-fastify";
 import {AppModule} from "./src/app.module";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
-import {injectSpeedInsights} from "@vercel/speed-insights";
 import multiPart from "@fastify/multipart";
 
 export const {JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL, PUBLIC_API_PORT} = process.env;
@@ -24,7 +23,7 @@ const SWAGGER_ENVS = ["local", "dev", "staging"];
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
         AppModule,
-        new FastifyAdapter({logger: true, bodyLimit: 50 * 1024 * 1024}),
+        new FastifyAdapter({logger: true, bodyLimit: 100 * 1024 * 1024}),
     );
     await app.register(multiPart);
     app.enableCors();
@@ -49,7 +48,6 @@ async function bootstrap() {
             customCssUrl: ["https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui.css"],
         });
     }
-    injectSpeedInsights({});
     await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
 }
 

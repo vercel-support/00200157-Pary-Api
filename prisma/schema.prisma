@@ -274,6 +274,7 @@ model Consumable {
   quantity             Int            @default(0)
   price                Int            @default(0)
   expiresAt            DateTime
+  weightOrVolume       Int            @default(0)
   partyIdForConsumable String?        @map("partyIdForConsumable") @db.ObjectId
   partyForConsumable   Party?         @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
   partyIdForCover      String?        @map("partyIdForCover") @db.ObjectId
@@ -290,12 +291,12 @@ model Consumable {
 model ConsumableItem {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  description String
-  pictureUrl  String
-  type        ConsumableType
+  description String         @default("")
+  pictureUrl  String         @default("")
+  type        ConsumableType @default(Other)
   consumed    Boolean        @default(false)
   createdAt   DateTime       @default(now())
-  tags        String[]
+  tags        String[]       @default([])
   userId      String         @map("userId") @db.ObjectId
   itemCreator User           @relation("UserToConsumableItem", fields: [userId], references: [id])
   consumable  Consumable[]
