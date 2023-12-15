@@ -21,6 +21,7 @@ export interface GoogleUser {
 
 type Gender = "Masculino" | "Femenino" | "NoBinario" | "Otro";
 type Interest = string[];
+type UserType = "Normal" | "Staff" | "Enterprise";
 
 export interface User extends BasicUserData {
     id: string;
@@ -38,12 +39,9 @@ export interface BasicUserData {
     description: string;
     birthDate: Date;
     gender: Gender;
-    musicInterest: Interest;
-    deportsInterest: Interest;
-    artAndCultureInterest: Interest;
-    techInterest: Interest;
-    hobbiesInterest: Interest;
+    interests: Interest;
     verified: boolean;
+    userType: UserType;
 }
 
 export interface ProfilePicture {

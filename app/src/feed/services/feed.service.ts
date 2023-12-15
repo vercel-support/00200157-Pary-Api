@@ -41,11 +41,7 @@ export class FeedService {
                     {username: {contains: search, mode: "insensitive"}},
                     {name: {contains: search, mode: "insensitive"}},
                     {lastName: {contains: search, mode: "insensitive"}},
-                    {techInterest: {has: search}},
-                    {musicInterest: {has: search}},
-                    {deportsInterest: {has: search}},
-                    {hobbiesInterest: {has: search}},
-                    {artAndCultureInterest: {has: search}},
+                    {interests: {has: search}},
                 ],
             },
             orderBy: [{isCompany: "desc"}, {verified: "desc"}, {username: "desc"}],
@@ -64,11 +60,8 @@ export class FeedService {
                 description: true,
                 birthDate: true,
                 gender: true,
-                musicInterest: true,
-                deportsInterest: true,
-                artAndCultureInterest: true,
-                techInterest: true,
-                hobbiesInterest: true,
+                interests: true,
+                userType: true,
                 verified: true,
                 location: true,
                 createdAt: true,
@@ -106,7 +99,7 @@ export class FeedService {
     }
 
     async getPersonalizedParties(personalizedParties: PersonalizedPartiesDto, userId: string) {
-        const {partyLimit, groupLimit, distanceLimit, maxAge, minAge, showGroups} = personalizedParties;
+        const {partyLimit, groupLimit, distanceLimit /* , maxAge, minAge, showGroups */} = personalizedParties;
         let {partyPage} = personalizedParties;
         const {groupPage} = personalizedParties;
         const foundedGroups = [];
@@ -118,11 +111,7 @@ export class FeedService {
                 username: true,
                 socialMedia: true,
                 location: true,
-                musicInterest: true,
-                deportsInterest: true,
-                artAndCultureInterest: true,
-                techInterest: true,
-                hobbiesInterest: true,
+                interests: true,
                 followingUserList: {
                     select: {
                         followedUserId: true,
@@ -156,6 +145,7 @@ export class FeedService {
                         verified: true,
                         isCompany: true,
                         gender: true,
+                        userType: true,
                     },
                 },
                 members: {
@@ -176,6 +166,7 @@ export class FeedService {
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
+                                userType: true,
                             },
                         },
                     },
@@ -198,6 +189,7 @@ export class FeedService {
                                 verified: true,
                                 isCompany: true,
                                 gender: true,
+                                userType: true,
                             },
                         },
                     },
@@ -246,11 +238,7 @@ export class FeedService {
 
                     let relevanceScore = 0;
                     for (const tag of party.tags) {
-                        if (currentUser.musicInterest.includes(tag)) relevanceScore++;
-                        if (currentUser.deportsInterest.includes(tag)) relevanceScore++;
-                        if (currentUser.artAndCultureInterest.includes(tag)) relevanceScore++;
-                        if (currentUser.techInterest.includes(tag)) relevanceScore++;
-                        if (currentUser.hobbiesInterest.includes(tag)) relevanceScore++;
+                        if (currentUser.interests.includes(tag)) relevanceScore++;
                     }
 
                     if (followedUsers.includes(party.ownerId!)) relevanceScore++;
@@ -314,6 +302,7 @@ export class FeedService {
                 verified: true,
                 isCompany: true,
                 gender: true,
+                userType: true,
                 profilePictures: {
                     take: 1,
                     select: {

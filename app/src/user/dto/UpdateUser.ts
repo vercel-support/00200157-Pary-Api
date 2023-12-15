@@ -19,15 +19,7 @@ export class UpdateUser {
     @IsNotEmpty()
     expoPushToken: string;
     @IsArray()
-    musicInterest: string[];
-    @IsArray()
-    deportsInterest: string[];
-    @IsArray()
-    artAndCultureInterest: string[];
-    @IsArray()
-    techInterest: string[];
-    @IsArray()
-    hobbiesInterest: string[];
+    interests: string[];
     @IsNotEmpty()
     location: Location;
     @IsBoolean()
