@@ -44,7 +44,7 @@ export class FeedService {
                     {interests: {has: search}},
                 ],
             },
-            orderBy: [{isCompany: "desc"}, {verified: "desc"}, {username: "desc"}],
+            orderBy: [{isCompany: "desc"}, {verified: "desc"}, {username: "desc"}, {userType: "desc"}],
             select: {
                 username: true,
                 socialMedia: true,
@@ -57,35 +57,138 @@ export class FeedService {
                         id: true,
                     },
                 },
+                verified: true,
+                isCompany: true,
+                gender: true,
+                userType: true,
                 description: true,
                 birthDate: true,
-                gender: true,
                 interests: true,
-                userType: true,
-                verified: true,
                 location: true,
                 createdAt: true,
                 lastLogin: true,
-                isCompany: true,
             },
         });
 
         const parties = await this.prisma.party.findMany({
-            skip: skip,
-            take: limit,
             where: {
                 OR: [
                     {name: {contains: search, mode: "insensitive"}},
                     {
                         owner: {
-                            username: {contains: search, mode: "insensitive"},
+                            OR: [
+                                {
+                                    username: {contains: search, mode: "insensitive"},
+                                },
+                                {
+                                    name: {contains: search, mode: "insensitive"},
+                                },
+                                {
+                                    lastName: {contains: search, mode: "insensitive"},
+                                },
+                            ],
                         },
                     },
                     {tags: {has: search}},
+                    {
+                        location: {
+                            name: {contains: search, mode: "insensitive"},
+                        },
+                    },
                 ],
             },
             include: PARTY_REQUEST,
             orderBy: {advertisement: "desc"},
+        });
+
+        const groups = await this.prisma.group.findMany({
+            where: {
+                OR: [
+                    {name: {contains: search, mode: "insensitive"}},
+                    {
+                        leader: {
+                            OR: [
+                                {
+                                    username: {contains: search, mode: "insensitive"},
+                                },
+                                {
+                                    name: {contains: search, mode: "insensitive"},
+                                },
+                                {
+                                    lastName: {contains: search, mode: "insensitive"},
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+            include: {
+                members: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                socialMedia: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
+                            },
+                        },
+                    },
+                },
+                leader: {
+                    select: {
+                        username: true,
+                        socialMedia: true,
+                        name: true,
+                        lastName: true,
+                        profilePictures: {
+                            take: 1,
+                            select: {
+                                url: true,
+                                id: true,
+                            },
+                        },
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                        userType: true,
+                    },
+                },
+                moderators: {
+                    include: {
+                        user: {
+                            select: {
+                                username: true,
+                                socialMedia: true,
+                                name: true,
+                                lastName: true,
+                                profilePictures: {
+                                    take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
+                                },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         const partiesToReturn = await Promise.all(
@@ -95,7 +198,7 @@ export class FeedService {
             }),
         );
 
-        return {users, parties: partiesToReturn};
+        return {users, parties: partiesToReturn, groups};
     }
 
     async getPersonalizedParties(personalizedParties: PersonalizedPartiesDto, userId: string) {
@@ -163,10 +266,10 @@ export class FeedService {
                                         id: true,
                                     },
                                 },
-                                verified: true,
-                                isCompany: true,
-                                gender: true,
-                                userType: true,
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                        userType: true,
                             },
                         },
                     },
@@ -299,16 +402,16 @@ export class FeedService {
                 name: true,
                 lastName: true,
                 description: true,
-                verified: true,
-                isCompany: true,
-                gender: true,
-                userType: true,
                 profilePictures: {
                     take: 1,
                     select: {
                         url: true,
                     },
                 },
+                verified: true,
+                isCompany: true,
+                gender: true,
+                userType: true,
             },
         });
     }
@@ -341,15 +444,16 @@ export class FeedService {
                 name: true,
                 lastName: true,
                 description: true,
-                verified: true,
-                isCompany: true,
-                gender: true,
                 profilePictures: {
                     take: 1,
                     select: {
                         url: true,
                     },
                 },
+                verified: true,
+                isCompany: true,
+                gender: true,
+                userType: true,
             },
         });
     }

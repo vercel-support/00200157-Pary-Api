@@ -44,6 +44,16 @@ export class AuthService {
             const generatedUsername = `${googleUser.user.givenName ?? ""}${
                 googleUser.user.familyName ?? ""
             }${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
+
+            const userLocation = await this.prisma.location.create({
+                data: {
+                    name: "",
+                    latitude: 0,
+                    longitude: 0,
+                    timestamp: new Date(),
+                    address: "",
+                },
+            });
             user = await this.prisma.user.create({
                 data: {
                     username: generatedUsername,
@@ -54,16 +64,10 @@ export class AuthService {
                     lastLogin: new Date(),
                     createdAt: new Date(),
                     birthDate: new Date(),
-                    location: {
-                        name: "",
-                        latitude: 0,
-                        longitude: 0,
-                        timestamp: new Date(),
-                        address: "",
-                    },
                     socialMedia: {
                         instagram: "",
                     },
+                    locationId: userLocation.id,
                 },
                 include: this.utils.getUserFields(),
             });

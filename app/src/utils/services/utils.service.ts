@@ -32,11 +32,31 @@ export class UtilsService {
             profilePictures: true,
             followerUserList: true,
             followingUserList: true,
+            location: {
+                select: {
+                    id: true,
+                    name: true,
+                    latitude: true,
+                    longitude: true,
+                    timestamp: true,
+                    address: true,
+                },
+            },
             parties: {
                 select: {
                     partyId: true,
                     party: {
                         include: {
+                            location: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    latitude: true,
+                                    longitude: true,
+                                    timestamp: true,
+                                    address: true,
+                                },
+                            },
                             owner: {
                                 select: {
                                     username: true,
@@ -45,7 +65,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -59,7 +87,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -75,7 +111,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -94,7 +138,16 @@ export class UtilsService {
                             description: true,
                             image: true,
                             id: true,
-                            location: true,
+                            location: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    latitude: true,
+                                    longitude: true,
+                                    timestamp: true,
+                                    address: true,
+                                },
+                            },
                             date: true,
                             owner: {
                                 select: {
@@ -104,7 +157,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -118,7 +179,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -136,7 +205,16 @@ export class UtilsService {
                             description: true,
                             image: true,
                             id: true,
-                            location: true,
+                            location: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    latitude: true,
+                                    longitude: true,
+                                    timestamp: true,
+                                    address: true,
+                                },
+                            },
                             date: true,
                             owner: {
                                 select: {
@@ -146,7 +224,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -160,7 +246,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -175,7 +269,16 @@ export class UtilsService {
                     description: true,
                     image: true,
                     id: true,
-                    location: true,
+                    location: {
+                        select: {
+                            id: true,
+                            name: true,
+                            latitude: true,
+                            longitude: true,
+                            timestamp: true,
+                            address: true,
+                        },
+                    },
                     date: true,
                     owner: {
                         select: {
@@ -185,7 +288,15 @@ export class UtilsService {
                             lastName: true,
                             profilePictures: {
                                 take: 1,
+                                select: {
+                                    url: true,
+                                    id: true,
+                                },
                             },
+                            verified: true,
+                            isCompany: true,
+                            gender: true,
+                            userType: true,
                         },
                     },
                     members: {
@@ -199,7 +310,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                         },
@@ -215,7 +334,16 @@ export class UtilsService {
                             description: true,
                             image: true,
                             id: true,
-                            location: true,
+                            location: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    latitude: true,
+                                    longitude: true,
+                                    timestamp: true,
+                                    address: true,
+                                },
+                            },
                             date: true,
                             owner: {
                                 select: {
@@ -225,7 +353,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -239,7 +375,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -265,7 +409,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -279,7 +431,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -301,7 +461,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -314,7 +482,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -347,6 +523,16 @@ export class UtilsService {
                                     partyId: true,
                                     party: {
                                         include: {
+                                            location: {
+                                                select: {
+                                                    id: true,
+                                                    name: true,
+                                                    latitude: true,
+                                                    longitude: true,
+                                                    timestamp: true,
+                                                    address: true,
+                                                },
+                                            },
                                             owner: {
                                                 select: {
                                                     username: true,
@@ -355,7 +541,15 @@ export class UtilsService {
                                                     lastName: true,
                                                     profilePictures: {
                                                         take: 1,
+                                                        select: {
+                                                            url: true,
+                                                            id: true,
+                                                        },
                                                     },
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                    userType: true,
                                                 },
                                             },
                                             members: {
@@ -369,7 +563,15 @@ export class UtilsService {
                                                             lastName: true,
                                                             profilePictures: {
                                                                 take: 1,
+                                                                select: {
+                                                                    url: true,
+                                                                    id: true,
+                                                                },
                                                             },
+                                                            verified: true,
+                                                            isCompany: true,
+                                                            gender: true,
+                                                            userType: true,
                                                         },
                                                     },
                                                 },
@@ -385,7 +587,15 @@ export class UtilsService {
                                                             lastName: true,
                                                             profilePictures: {
                                                                 take: 1,
+                                                                select: {
+                                                                    url: true,
+                                                                    id: true,
+                                                                },
                                                             },
+                                                            verified: true,
+                                                            isCompany: true,
+                                                            gender: true,
+                                                            userType: true,
                                                         },
                                                     },
                                                 },
@@ -412,7 +622,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -426,7 +644,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -471,7 +697,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -485,7 +719,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -594,7 +836,16 @@ export class UtilsService {
                             description: true,
                             image: true,
                             id: true,
-                            location: true,
+                            location: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    latitude: true,
+                                    longitude: true,
+                                    timestamp: true,
+                                    address: true,
+                                },
+                            },
                             date: true,
                             owner: {
                                 select: {
@@ -604,7 +855,15 @@ export class UtilsService {
                                     lastName: true,
                                     profilePictures: {
                                         take: 1,
+                                        select: {
+                                            url: true,
+                                            id: true,
+                                        },
                                     },
+                                    verified: true,
+                                    isCompany: true,
+                                    gender: true,
+                                    userType: true,
                                 },
                             },
                             members: {
@@ -618,7 +877,15 @@ export class UtilsService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },

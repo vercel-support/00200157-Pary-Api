@@ -1,4 +1,14 @@
 export const PARTY_REQUEST = {
+    location: {
+        select: {
+            id: true,
+            name: true,
+            latitude: true,
+            longitude: true,
+            timestamp: true,
+            address: true,
+        },
+    },
     owner: {
         select: {
             username: true,
@@ -79,6 +89,10 @@ export const PARTY_REQUEST = {
                             id: true,
                         },
                     },
+                    verified: true,
+                    isCompany: true,
+                    gender: true,
+                    userType: true,
                 },
             },
             invitedUser: {
@@ -94,6 +108,10 @@ export const PARTY_REQUEST = {
                             id: true,
                         },
                     },
+                    verified: true,
+                    isCompany: true,
+                    gender: true,
+                    userType: true,
                 },
             },
         },
@@ -213,6 +231,7 @@ export const PARTY_REQUEST = {
                             verified: true,
                             isCompany: true,
                             gender: true,
+                            userType: true,
                         },
                     },
                     members: {

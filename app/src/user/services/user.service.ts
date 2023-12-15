@@ -50,7 +50,14 @@ export class UserService {
             expoPushToken,
             socialMedia,
         } = user;
-        console.log(socialMedia);
+        await this.prisma.location.update({
+            where: {
+                id: location.id,
+            },
+            data: {
+                ...location,
+            },
+        });
         return this.prisma.user
             .update({
                 where: {id: userId},
@@ -64,7 +71,6 @@ export class UserService {
                     description,
                     birthDate,
                     phoneNumber,
-                    location,
                     isCompany,
                     expoPushToken: expoPushToken ?? "",
                     socialMedia,
@@ -111,6 +117,16 @@ export class UserService {
                             partyId: true,
                             party: {
                                 include: {
+                                    location: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            latitude: true,
+                                            longitude: true,
+                                            timestamp: true,
+                                            address: true,
+                                        },
+                                    },
                                     owner: {
                                         select: {
                                             username: true,
@@ -119,7 +135,15 @@ export class UserService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                 },
@@ -188,7 +212,15 @@ export class UserService {
                                             lastName: true,
                                             profilePictures: {
                                                 take: 1,
+                                                select: {
+                                                    url: true,
+                                                    id: true,
+                                                },
                                             },
+                                            verified: true,
+                                            isCompany: true,
+                                            gender: true,
+                                            userType: true,
                                         },
                                     },
                                     members: {
@@ -201,7 +233,15 @@ export class UserService {
                                                     lastName: true,
                                                     profilePictures: {
                                                         take: 1,
+                                                        select: {
+                                                            url: true,
+                                                            id: true,
+                                                        },
                                                     },
+                                                    verified: true,
+                                                    isCompany: true,
+                                                    gender: true,
+                                                    userType: true,
                                                 },
                                             },
                                         },
@@ -729,10 +769,21 @@ export class UserService {
     }
 
     async updateAndGetUserById(id: string, location: Location, expoPushToken: string) {
+        await this.prisma.location.update({
+            where: {
+                id: location.id,
+            },
+            data: {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                name: location.name,
+                timestamp: location.timestamp,
+                address: location.address,
+            },
+        });
         return this.prisma.user.update({
             where: {id},
             data: {
-                location,
                 expoPushToken,
             },
             include: this.utils.getUserFields(),

@@ -139,6 +139,10 @@ export class GroupService {
                                         id: true,
                                     },
                                 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
                             },
                         },
                     },
@@ -156,6 +160,10 @@ export class GroupService {
                                 id: true,
                             },
                         },
+                        verified: true,
+                        isCompany: true,
+                        gender: true,
+                        userType: true,
                     },
                 },
                 moderators: {
@@ -220,6 +228,10 @@ export class GroupService {
                                                         id: true,
                                                     },
                                                 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                                userType: true,
                                             },
                                         },
                                     },
@@ -237,6 +249,10 @@ export class GroupService {
                                                 id: true,
                                             },
                                         },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                        userType: true,
                                     },
                                 },
                                 moderators: {
@@ -391,6 +407,10 @@ export class GroupService {
                                         id: true,
                                     },
                                 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
                             },
                         },
                         invitedUser: {
@@ -406,6 +426,10 @@ export class GroupService {
                                         id: true,
                                     },
                                 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
                             },
                         },
                     },
@@ -415,6 +439,16 @@ export class GroupService {
                         partyId: true,
                         party: {
                             include: {
+                                location: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        latitude: true,
+                                        longitude: true,
+                                        timestamp: true,
+                                        address: true,
+                                    },
+                                },
                                 owner: {
                                     select: {
                                         username: true,
@@ -424,6 +458,10 @@ export class GroupService {
                                         profilePictures: {
                                             take: 1,
                                         },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                        userType: true,
                                     },
                                 },
                                 members: {
@@ -438,6 +476,10 @@ export class GroupService {
                                                 profilePictures: {
                                                     take: 1,
                                                 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                                userType: true,
                                             },
                                         },
                                     },
@@ -454,6 +496,10 @@ export class GroupService {
                                                 profilePictures: {
                                                     take: 1,
                                                 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                                userType: true,
                                             },
                                         },
                                     },

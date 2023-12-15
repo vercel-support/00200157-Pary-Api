@@ -88,11 +88,17 @@ export class PartyService {
                 expoPushToken: true, // asumimos que usarás Expo para notificaciones push
             },
         });
+
+        const partyLocation = await this.prisma.location.create({
+            data: {
+                ...location,
+            },
+        });
+
         const party = await this.prisma.party.create({
             data: {
                 name,
                 description,
-                location,
                 type,
                 tags,
                 advertisement: false,
@@ -103,6 +109,7 @@ export class PartyService {
                 image,
                 showAddressInFeed,
                 ageRange,
+                locationId: partyLocation.id,
             },
         });
 
@@ -165,7 +172,6 @@ export class PartyService {
             data: {
                 name,
                 description,
-                location,
                 type,
                 tags,
                 active: true,
@@ -174,6 +180,15 @@ export class PartyService {
                 image,
                 showAddressInFeed,
                 ageRange,
+            },
+        });
+
+        await this.prisma.location.update({
+            where: {
+                id: party.locationId,
+            },
+            data: {
+                ...location,
             },
         });
 
@@ -389,6 +404,16 @@ export class PartyService {
                         partyId: true,
                         party: {
                             include: {
+                                location: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        latitude: true,
+                                        longitude: true,
+                                        timestamp: true,
+                                        address: true,
+                                    },
+                                },
                                 owner: {
                                     select: {
                                         username: true,
@@ -398,6 +423,10 @@ export class PartyService {
                                         profilePictures: {
                                             take: 1,
                                         },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                        userType: true,
                                     },
                                 },
                                 members: {
@@ -412,6 +441,10 @@ export class PartyService {
                                                 profilePictures: {
                                                     take: 1,
                                                 },
+                                                verified: true,
+                                                isCompany: true,
+                                                gender: true,
+                                                userType: true,
                                             },
                                         },
                                     },
@@ -482,6 +515,16 @@ export class PartyService {
             include: {
                 party: {
                     include: {
+                        location: {
+                            select: {
+                                id: true,
+                                name: true,
+                                latitude: true,
+                                longitude: true,
+                                timestamp: true,
+                                address: true,
+                            },
+                        },
                         owner: {
                             select: {
                                 username: true,
@@ -505,6 +548,10 @@ export class PartyService {
                                         profilePictures: {
                                             take: 1,
                                         },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                        userType: true,
                                     },
                                 },
                             },
@@ -650,6 +697,16 @@ export class PartyService {
             include: {
                 party: {
                     include: {
+                        location: {
+                            select: {
+                                id: true,
+                                name: true,
+                                latitude: true,
+                                longitude: true,
+                                timestamp: true,
+                                address: true,
+                            },
+                        },
                         owner: {
                             select: {
                                 username: true,
@@ -658,7 +715,15 @@ export class PartyService {
                                 lastName: true,
                                 profilePictures: {
                                     take: 1,
+                                    select: {
+                                        url: true,
+                                        id: true,
+                                    },
                                 },
+                                verified: true,
+                                isCompany: true,
+                                gender: true,
+                                userType: true,
                             },
                         },
                         members: {
@@ -672,7 +737,15 @@ export class PartyService {
                                         lastName: true,
                                         profilePictures: {
                                             take: 1,
+                                            select: {
+                                                url: true,
+                                                id: true,
+                                            },
                                         },
+                                        verified: true,
+                                        isCompany: true,
+                                        gender: true,
+                                        userType: true,
                                     },
                                 },
                             },

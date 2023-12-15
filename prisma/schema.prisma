@@ -26,7 +26,8 @@ model User {
   interests          String[]             @default([])
   verified           Boolean              @default(false)
   phoneNumber        String               @default("")
-  location           Location
+  location           Location             @relation(fields: [locationId], references: [id])
+  locationId         String               @db.ObjectId
   createdAt          DateTime             @default(now())
   lastLogin          DateTime             @default(now())
   isCompany          Boolean              @default(false)
@@ -45,6 +46,7 @@ model User {
   invitingGroups     GroupInvitation[]    @relation("InvitingToInvited")
   membershipRequests MembershipRequest[]
   tickets            Ticket[]
+  // Variables de empresa
   consumableItems    ConsumableItem[]     @relation("UserToConsumableItem")
 
   @@index([username, email, assignedGoogleID])
@@ -84,7 +86,7 @@ model ProfilePicture {
 
 model Party {
   id                 String               @id @default(auto()) @map("_id") @db.ObjectId
-  location           Location
+  location           Location             @relation(fields: [locationId], references: [id])
   name               String
   description        String
   image              PartyPicture
@@ -107,6 +109,7 @@ model Party {
   invitations        PartyInvitation[]
   consumables        Consumable[]
   tickets            Ticket[]
+  locationId         String               @db.ObjectId
 }
 
 enum PartyType {
@@ -250,12 +253,15 @@ enum InvitationStatus {
   DECLINED
 }
 
-type Location {
+model Location {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   latitude  Float
   longitude Float
   timestamp DateTime
   address   String
+  parties   Party[]
+  users     User[]
 }
 
 type PartyPicture {
