@@ -107,7 +107,8 @@ model Party {
   createdAt          DateTime             @default(now())
   membershipRequests MembershipRequest[]
   invitations        PartyInvitation[]
-  consumables        Consumable[]
+  consumables        Consumable[]         @relation("PartyToConsumable")
+  covers             Consumable[]         @relation("PartyToCover")
   tickets            Ticket[]
   locationId         String               @db.ObjectId
 }
@@ -269,18 +270,21 @@ type PartyPicture {
 }
 
 model Consumable {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
-  quantity         Int            @default(0)
-  price            Int            @default(0)
-  expiresAt        DateTime
-  party            Party          @relation(fields: [partyId], references: [id])
-  partyId          String         @map("partyId") @db.ObjectId
-  ticket           Ticket?        @relation(fields: [ticketId], references: [id])
-  ticketId         String?        @db.ObjectId
-  consumableItemId String         @db.ObjectId
-  item             ConsumableItem @relation(fields: [consumableItemId], references: [id])
+  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
+  quantity             Int            @default(0)
+  price                Int            @default(0)
+  expiresAt            DateTime
+  partyIdForConsumable String?        @map("partyIdForConsumable") @db.ObjectId
+  partyForConsumable   Party?         @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
+  partyIdForCover      String?        @map("partyIdForCover") @db.ObjectId
+  partyForCover        Party?         @relation("PartyToCover", fields: [partyIdForCover], references: [id])
+  ticket               Ticket?        @relation(fields: [ticketId], references: [id])
+  ticketId             String?        @db.ObjectId
+  consumableItemId     String         @db.ObjectId
+  item                 ConsumableItem @relation(fields: [consumableItemId], references: [id])
 
-  @@unique([partyId])
+  @@unique([partyIdForConsumable])
+  @@unique([partyIdForCover])
 }
 
 model ConsumableItem {

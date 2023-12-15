@@ -449,6 +449,8 @@ export class GroupService {
                                         address: true,
                                     },
                                 },
+                                consumables: true,
+                                covers: true,
                                 owner: {
                                     select: {
                                         username: true,

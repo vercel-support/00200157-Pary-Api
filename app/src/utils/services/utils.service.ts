@@ -57,6 +57,8 @@ export class UtilsService {
                                     address: true,
                                 },
                             },
+                            consumables: true,
+                            covers: true,
                             owner: {
                                 select: {
                                     username: true,
@@ -148,6 +150,8 @@ export class UtilsService {
                                     address: true,
                                 },
                             },
+                            consumables: true,
+                            covers: true,
                             date: true,
                             owner: {
                                 select: {
@@ -215,6 +219,8 @@ export class UtilsService {
                                     address: true,
                                 },
                             },
+                            consumables: true,
+                            covers: true,
                             date: true,
                             owner: {
                                 select: {
@@ -344,6 +350,8 @@ export class UtilsService {
                                     address: true,
                                 },
                             },
+                            consumables: true,
+                            covers: true,
                             date: true,
                             owner: {
                                 select: {
@@ -533,6 +541,8 @@ export class UtilsService {
                                                     address: true,
                                                 },
                                             },
+                                            consumables: true,
+                                            covers: true,
                                             owner: {
                                                 select: {
                                                     username: true,
@@ -846,6 +856,8 @@ export class UtilsService {
                                     address: true,
                                 },
                             },
+                            consumables: true,
+                            covers: true,
                             date: true,
                             owner: {
                                 select: {

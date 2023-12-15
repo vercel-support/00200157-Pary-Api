@@ -127,6 +127,8 @@ export class UserService {
                                             address: true,
                                         },
                                     },
+                                    consumables: true,
+                                    covers: true,
                                     owner: {
                                         select: {
                                             username: true,

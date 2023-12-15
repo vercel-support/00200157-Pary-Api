@@ -414,6 +414,8 @@ export class PartyService {
                                         address: true,
                                     },
                                 },
+                                consumables: true,
+                                covers: true,
                                 owner: {
                                     select: {
                                         username: true,
@@ -525,6 +527,8 @@ export class PartyService {
                                 address: true,
                             },
                         },
+                        consumables: true,
+                        covers: true,
                         owner: {
                             select: {
                                 username: true,
@@ -707,6 +711,8 @@ export class PartyService {
                                 address: true,
                             },
                         },
+                        consumables: true,
+                        covers: true,
                         owner: {
                             select: {
                                 username: true,
