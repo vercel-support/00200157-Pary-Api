@@ -1,11 +1,11 @@
-import {IsNotEmpty, IsString} from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class DeleteUserProfilePictureDto {
-    @IsNotEmpty()
-    @IsString()
-    url: string;
+	@IsNotEmpty()
+	@IsString()
+	url: string;
 
-    @IsNotEmpty()
-    @IsString()
-    id: string;
+	@IsNotEmpty()
+	@IsString()
+	id: string;
 }

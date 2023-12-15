@@ -1,7 +1,7 @@
-import {AuthTokenMiddleware} from "./auth-token.middleware";
+import { AuthTokenMiddleware } from "./auth-token.middleware";
 
 describe("AuthTokenMiddleware", () => {
-    it("should be defined", () => {
-        expect(new AuthTokenMiddleware()).toBeDefined();
-    });
+	it("should be defined", () => {
+		expect(new AuthTokenMiddleware()).toBeDefined();
+	});
 });

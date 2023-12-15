@@ -1,8 +1,8 @@
-import {createParamDecorator, ExecutionContext} from "@nestjs/common";
-import {FastifyRequest} from "fastify";
+import { ExecutionContext, createParamDecorator } from "@nestjs/common";
+import { FastifyRequest } from "fastify";
 
 export const File = createParamDecorator((_data: unknown, ctx: ExecutionContext) => {
-    const req = ctx.switchToHttp().getRequest() as FastifyRequest;
-    const file = req.incomingFile;
-    return file;
+	const req = ctx.switchToHttp().getRequest() as FastifyRequest;
+	const file = req.incomingFile;
+	return file;
 });
