@@ -12,6 +12,7 @@ import { NotificationsService } from "../../notifications/services/notifications
 import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
 import { UploadImageDto } from "../../party/dto/UploadImageDto";
 import { UtilsService } from "../../utils/services/utils.service";
+import { RemoveConsumableImageDto } from "../dto/RemoveConsumableImage.dto";
 import { CreateConsumableItemDto } from "./../dto/CreateConsumableItem.dto";
 
 @Injectable()
@@ -526,6 +527,30 @@ export class UserService {
 		return await uploadImageToVercel();
 	}
 
+	async removeConsumableImage(removeConsumableImageDto: RemoveConsumableImageDto, userId: string) {
+		const { imageUrl, consumableId } = removeConsumableImageDto;
+
+		if (!imageUrl) {
+			throw new InternalServerErrorException("Falata la url de la imagen.");
+		}
+
+		const isOwnerOfConsumable = await this.prisma.consumable.findFirst({
+			where: {
+				creatorId: userId,
+				id: consumableId,
+			},
+		});
+
+		if (!isOwnerOfConsumable) {
+			throw new InternalServerErrorException("No tienes permiso para eliminar esta imagen.");
+		}
+		await del(imageUrl).catch(() => {
+			throw new InternalServerErrorException("Error al eliminar la imagen.");
+		});
+
+		return true;
+	}
+
 	async deleteProfilePicture(deleteUserProfilePictureDto: DeleteUserProfilePictureDto, userId: string) {
 		const { url, id } = deleteUserProfilePictureDto;
 		await del(url);
@@ -822,35 +847,79 @@ export class UserService {
 	}
 
 	async createConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
-		const { name, description, pictureUrl, type, tags } = createConsumableItemDto;
+		const { name, description, pictureUrl, type, tags, stock, brand, weightOrVolume, expiresAt, price } =
+			createConsumableItemDto;
 
-		return this.prisma.consumableItem
-			.create({
-				data: {
-					name,
-					description,
-					pictureUrl,
-					type,
-					tags,
-					itemCreator: {
-						connect: {
-							id: userId,
-						},
+		let newExpirationDate = expiresAt;
+		if (!newExpirationDate) {
+			newExpirationDate = new Date();
+			newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
+		}
+
+		return this.prisma.consumable.create({
+			data: {
+				name,
+				brand,
+				stock,
+				price,
+				description,
+				pictureUrl,
+				type,
+				tags,
+				weightOrVolume,
+				expiresAt: newExpirationDate,
+				itemCreator: {
+					connect: {
+						id: userId,
 					},
 				},
-			})
-			.catch(() => {
-				throw new InternalServerErrorException("Error creating consumable item.");
-			});
-	}
-
-	async getConsumableItems(userId: string) {
-		const response = this.prisma.consumableItem.findMany({
-			where: {
-				userId,
 			},
 		});
-		console.log(response);
-		return response;
+	}
+
+	async updateConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
+		const { id, name, description, pictureUrl, type, tags, stock, brand, weightOrVolume, expiresAt, price } =
+			createConsumableItemDto;
+
+		let newExpirationDate = expiresAt;
+		if (!newExpirationDate) {
+			newExpirationDate = new Date();
+			newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
+		}
+
+		return this.prisma.consumable.update({
+			where: {
+				id,
+				creatorId: userId,
+			},
+			data: {
+				name,
+				brand,
+				stock,
+				price,
+				description,
+				pictureUrl,
+				type,
+				tags,
+				weightOrVolume,
+				expiresAt: newExpirationDate,
+			},
+		});
+	}
+
+	async getConsumableItems() {
+		return this.prisma.consumable.findMany({});
+	}
+
+	async getUserConsumableItems(creatorId: string) {
+		return this.prisma.consumable.findMany({
+			where: {
+				creatorId,
+			},
+		});
+	}
+
+	async getConsumables(userId: string) {
+		return this.prisma.consumable.findMany({});
 	}
 }

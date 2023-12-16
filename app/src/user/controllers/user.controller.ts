@@ -24,6 +24,7 @@ import { UploadImageDto } from "../../party/dto/UploadImageDto";
 import { CreateConsumableItemDto } from "../dto/CreateConsumableItem.dto";
 import { UpdateUser } from "../dto/UpdateUser";
 import { UserService } from "../services/user.service";
+import { RemoveConsumableImageDto } from "../dto/RemoveConsumableImage.dto";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -179,7 +180,14 @@ export class UserController {
 		return await this.userService.uploadConsumablemage(file);
 	}
 
-	@Post("create-consumable-item")
+	@Delete("remove-consumable-image")
+	@UseGuards(UploadGuard)
+	async deleteConsumableImage(@Param() removeConsumableImageDto: RemoveConsumableImageDto, @Req() request: any) {
+		console.log(removeConsumableImageDto);
+		return await this.userService.removeConsumableImage(removeConsumableImageDto, request.raw.decoded.id);
+	}
+
+	@Post("create-consumable")
 	@UsePipes(
 		new ValidationPipe({
 			transform: true,
@@ -191,8 +199,20 @@ export class UserController {
 		return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
 	}
 
-	@Get("consumable-items")
-	async getConsumableItems(@Req() request: any) {
-		return this.userService.getConsumableItems(request.raw.decoded.id);
+	@Post("update-consumable")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false,
+		}),
+	)
+	async updateConsumableItem(@Body() createConsumableItemDto: CreateConsumableItemDto, @Req() request: any) {
+		return this.userService.updateConsumableItem(createConsumableItemDto, request.raw.decoded.id);
+	}
+
+	@Get("consumables")
+	async getConsumables(@Req() request: any) {
+		return this.userService.getConsumables(request.raw.decoded.id);
 	}
 }

@@ -162,12 +162,56 @@ export class PartyService {
 			showAddressInFeed,
 			ageRange,
 			isPrivate,
+			consumables,
+			covers,
 		} = partyBody;
+
+		const currentParty = await this.prisma.party.findUnique({
+			where: {
+				id,
+			},
+			select: {
+				ownerId: true,
+				image: true,
+				locationId: true,
+				moderators: {
+					select: {
+						userId: true,
+					},
+				},
+				consumables: {
+					select: {
+						id: true,
+					},
+				},
+				covers: {
+					select: {
+						id: true,
+					},
+				},
+			},
+		});
+
+		if (!currentParty) {
+			throw new NotFoundException("Carrete no encontrado");
+		}
+
+		if (currentParty.ownerId !== userId && !currentParty.moderators.some((mod) => mod.userId === userId)) {
+			throw new ForbiddenException("No tienes permisos para actualizar este carrete.");
+		}
+
+		const newConsumables = consumables.filter(
+			(consumable) => !currentParty.consumables.some((c) => c.id === consumable.id),
+		);
+		const newCovers = covers.filter((cover) => !currentParty.covers.some((c) => c.id === cover.id));
+		const consumablesToDelete = currentParty.consumables.filter(
+			(consumable) => !consumables.some((c) => c.id === consumable.id),
+		);
+		const coversToDelete = currentParty.covers.filter((cover) => !covers.some((c) => c.id === cover.id));
 
 		const party = await this.prisma.party.update({
 			where: {
 				id,
-				ownerId: userId,
 			},
 			data: {
 				name,
@@ -180,6 +224,14 @@ export class PartyService {
 				image,
 				showAddressInFeed,
 				ageRange,
+				consumables: {
+					connect: newConsumables.map((consumable) => ({ id: consumable.id })),
+					disconnect: consumablesToDelete.map((consumable) => ({ id: consumable.id })),
+				},
+				covers: {
+					connect: newCovers.map((cover) => ({ id: cover.id })),
+					disconnect: coversToDelete.map((cover) => ({ id: cover.id })),
+				},
 			},
 		});
 
@@ -188,7 +240,11 @@ export class PartyService {
 				id: party.locationId,
 			},
 			data: {
-				...location,
+				name: location.name,
+				latitude: location.latitude,
+				longitude: location.longitude,
+				timestamp: location.timestamp,
+				address: location.address,
 			},
 		});
 

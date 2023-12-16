@@ -47,7 +47,7 @@ model User {
   membershipRequests MembershipRequest[]
   tickets            Ticket[]
   // Variables de empresa
-  consumableItems    ConsumableItem[]     @relation("UserToConsumableItem")
+  consumables        Consumable[]         @relation("UserToConsumableItem")
 
   @@index([username, email, assignedGoogleID])
 }
@@ -271,35 +271,26 @@ type PartyPicture {
 
 model Consumable {
   id                   String         @id @default(auto()) @map("_id") @db.ObjectId
-  quantity             Int            @default(0)
   price                Int            @default(0)
+  stock                Int            @default(0)
+  name                 String
+  description          String         @default("")
+  pictureUrl           String         @default("")
+  type                 ConsumableType @default(Other)
+  tags                 String[]       @default([])
+  brand                String         @default("")
   expiresAt            DateTime
+  createdAt            DateTime       @default(now())
   weightOrVolume       Int            @default(0)
+  consumed             Boolean        @default(false)
   partyIdForConsumable String?        @map("partyIdForConsumable") @db.ObjectId
   partyForConsumable   Party?         @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
   partyIdForCover      String?        @map("partyIdForCover") @db.ObjectId
   partyForCover        Party?         @relation("PartyToCover", fields: [partyIdForCover], references: [id])
   ticket               Ticket?        @relation(fields: [ticketId], references: [id])
   ticketId             String?        @db.ObjectId
-  consumableItemId     String         @db.ObjectId
-  item                 ConsumableItem @relation(fields: [consumableItemId], references: [id])
-
-  @@unique([partyIdForConsumable])
-  @@unique([partyIdForCover])
-}
-
-model ConsumableItem {
-  id          String         @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String         @default("")
-  pictureUrl  String         @default("")
-  type        ConsumableType @default(Other)
-  consumed    Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  tags        String[]       @default([])
-  userId      String         @map("userId") @db.ObjectId
-  itemCreator User           @relation("UserToConsumableItem", fields: [userId], references: [id])
-  consumable  Consumable[]
+  creatorId            String         @map("creatorId") @db.ObjectId
+  itemCreator          User           @relation("UserToConsumableItem", fields: [creatorId], references: [id])
 }
 
 enum ConsumableType {
