@@ -47,7 +47,8 @@ model User {
   membershipRequests MembershipRequest[]
   tickets            Ticket[]
   // Variables de empresa
-  consumables        Consumable[]         @relation("UserToConsumableItem")
+  consumables        Consumable[]         @relation("UserToConsumable")
+  consumableItems    ConsumableItem[]     @relation("UserToConsumableItem")
 
   @@index([username, email, assignedGoogleID])
 }
@@ -269,28 +270,35 @@ type PartyPicture {
   url String
 }
 
+model ConsumableItem {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String         @default("")
+  pictureUrl  String         @default("")
+  type        ConsumableType @default(Other)
+  creator     User?          @relation("UserToConsumableItem", fields: [creatorId], references: [id])
+  creatorId   String?        @db.ObjectId
+  consumables Consumable[]
+}
+
 model Consumable {
   id                   String         @id @default(auto()) @map("_id") @db.ObjectId
   price                Int            @default(0)
   stock                Int            @default(0)
-  name                 String
-  description          String         @default("")
-  pictureUrl           String         @default("")
-  type                 ConsumableType @default(Other)
   tags                 String[]       @default([])
   brand                String         @default("")
-  expiresAt            DateTime
   createdAt            DateTime       @default(now())
   weightOrVolume       Int            @default(0)
-  consumed             Boolean        @default(false)
   partyIdForConsumable String?        @map("partyIdForConsumable") @db.ObjectId
   partyForConsumable   Party?         @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
   partyIdForCover      String?        @map("partyIdForCover") @db.ObjectId
   partyForCover        Party?         @relation("PartyToCover", fields: [partyIdForCover], references: [id])
+  itemId               String         @map("consumableItemId") @db.ObjectId
+  item                 ConsumableItem @relation(fields: [itemId], references: [id])
+  creator              User?          @relation("UserToConsumable", fields: [creatorId], references: [id])
+  creatorId            String?        @db.ObjectId
   ticket               Ticket?        @relation(fields: [ticketId], references: [id])
   ticketId             String?        @db.ObjectId
-  creatorId            String         @map("creatorId") @db.ObjectId
-  itemCreator          User           @relation("UserToConsumableItem", fields: [creatorId], references: [id])
 }
 
 enum ConsumableType {

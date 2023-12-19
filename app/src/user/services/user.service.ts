@@ -847,30 +847,32 @@ export class UserService {
 	}
 
 	async createConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
-		const { name, description, pictureUrl, type, tags, stock, brand, weightOrVolume, expiresAt, price } =
-			createConsumableItemDto;
-
-		let newExpirationDate = expiresAt;
-		if (!newExpirationDate) {
-			newExpirationDate = new Date();
-			newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
-		}
+		const { item, tags, stock, brand, weightOrVolume, price } = createConsumableItemDto;
+		const { name, description, pictureUrl, type } = item;
 
 		return this.prisma.consumable.create({
 			data: {
-				name,
 				brand,
 				stock,
 				price,
-				description,
-				pictureUrl,
-				type,
 				tags,
 				weightOrVolume,
-				expiresAt: newExpirationDate,
-				itemCreator: {
+				creator: {
 					connect: {
 						id: userId,
+					},
+				},
+				item: {
+					create: {
+						name,
+						description,
+						pictureUrl,
+						type,
+						creator: {
+							connect: {
+								id: userId,
+							},
+						},
 					},
 				},
 			},
@@ -878,14 +880,8 @@ export class UserService {
 	}
 
 	async updateConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
-		const { id, name, description, pictureUrl, type, tags, stock, brand, weightOrVolume, expiresAt, price } =
-			createConsumableItemDto;
-
-		let newExpirationDate = expiresAt;
-		if (!newExpirationDate) {
-			newExpirationDate = new Date();
-			newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
-		}
+		const { id, item, tags, stock, brand, weightOrVolume, price } = createConsumableItemDto;
+		const { name, description, pictureUrl, type } = item;
 
 		return this.prisma.consumable.update({
 			where: {
@@ -893,16 +889,19 @@ export class UserService {
 				creatorId: userId,
 			},
 			data: {
-				name,
 				brand,
 				stock,
 				price,
-				description,
-				pictureUrl,
-				type,
 				tags,
 				weightOrVolume,
-				expiresAt: newExpirationDate,
+				item: {
+					update: {
+						name,
+						description,
+						pictureUrl,
+						type,
+					},
+				},
 			},
 		});
 	}
@@ -920,6 +919,13 @@ export class UserService {
 	}
 
 	async getConsumables(userId: string) {
-		return this.prisma.consumable.findMany({});
+		return this.prisma.consumable.findMany({
+			include: {
+				item: true,
+			},
+			where: {
+				creatorId: userId,
+			},
+		});
 	}
 }
