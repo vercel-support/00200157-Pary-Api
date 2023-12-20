@@ -1,5 +1,5 @@
-import {Injectable} from "@nestjs/common";
-import {Location} from "app/types";
+import { Injectable } from "@nestjs/common";
+import { Location } from "app/types";
 
 @Injectable()
 export class UtilsService {
@@ -39,8 +39,8 @@ export class UtilsService {
 					latitude: true,
 					longitude: true,
 					timestamp: true,
-					address: true,
-				},
+					address: true
+				}
 			},
 			parties: {
 				select: {
@@ -54,18 +54,18 @@ export class UtilsService {
 									latitude: true,
 									longitude: true,
 									timestamp: true,
-									address: true,
-								},
+									address: true
+								}
 							},
 							consumables: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							covers: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							owner: {
 								select: {
@@ -77,14 +77,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -99,16 +99,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							moderators: {
 								select: {
@@ -123,20 +123,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			invitedParties: {
 				select: {
@@ -155,18 +155,18 @@ export class UtilsService {
 									latitude: true,
 									longitude: true,
 									timestamp: true,
-									address: true,
-								},
+									address: true
+								}
 							},
 							consumables: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							covers: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							date: true,
 							owner: {
@@ -179,14 +179,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -201,20 +201,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			invitingParties: {
 				select: {
@@ -232,18 +232,18 @@ export class UtilsService {
 									latitude: true,
 									longitude: true,
 									timestamp: true,
-									address: true,
-								},
+									address: true
+								}
 							},
 							consumables: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							covers: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							date: true,
 							owner: {
@@ -256,14 +256,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -278,20 +278,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			ownedParties: {
 				select: {
@@ -306,8 +306,8 @@ export class UtilsService {
 							latitude: true,
 							longitude: true,
 							timestamp: true,
-							address: true,
-						},
+							address: true
+						}
 					},
 					date: true,
 					owner: {
@@ -320,14 +320,14 @@ export class UtilsService {
 								take: 1,
 								select: {
 									url: true,
-									id: true,
-								},
+									id: true
+								}
 							},
 							verified: true,
 							isCompany: true,
 							gender: true,
-							userType: true,
-						},
+							userType: true
+						}
 					},
 					members: {
 						select: {
@@ -342,18 +342,18 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
-							},
-						},
-					},
-				},
+									userType: true
+								}
+							}
+						}
+					}
+				}
 			},
 			partiesModerating: {
 				select: {
@@ -371,18 +371,18 @@ export class UtilsService {
 									latitude: true,
 									longitude: true,
 									timestamp: true,
-									address: true,
-								},
+									address: true
+								}
 							},
 							consumables: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							covers: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							date: true,
 							owner: {
@@ -395,14 +395,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -417,20 +417,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			groupsModerating: {
 				select: {
@@ -451,14 +451,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -473,20 +473,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			groups: {
 				select: {
@@ -503,14 +503,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								include: {
@@ -524,16 +524,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							moderators: {
 								include: {
@@ -547,16 +547,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							parties: {
 								select: {
@@ -570,18 +570,18 @@ export class UtilsService {
 													latitude: true,
 													longitude: true,
 													timestamp: true,
-													address: true,
-												},
+													address: true
+												}
 											},
 											consumables: {
 												include: {
-													item: true,
-												},
+													item: true
+												}
 											},
 											covers: {
 												include: {
-													item: true,
-												},
+													item: true
+												}
 											},
 											owner: {
 												select: {
@@ -593,14 +593,14 @@ export class UtilsService {
 														take: 1,
 														select: {
 															url: true,
-															id: true,
-														},
+															id: true
+														}
 													},
 													verified: true,
 													isCompany: true,
 													gender: true,
-													userType: true,
-												},
+													userType: true
+												}
 											},
 											members: {
 												select: {
@@ -615,16 +615,16 @@ export class UtilsService {
 																take: 1,
 																select: {
 																	url: true,
-																	id: true,
-																},
+																	id: true
+																}
 															},
 															verified: true,
 															isCompany: true,
 															gender: true,
-															userType: true,
-														},
-													},
-												},
+															userType: true
+														}
+													}
+												}
 											},
 											moderators: {
 												select: {
@@ -639,24 +639,24 @@ export class UtilsService {
 																take: 1,
 																select: {
 																	url: true,
-																	id: true,
-																},
+																	id: true
+																}
 															},
 															verified: true,
 															isCompany: true,
 															gender: true,
-															userType: true,
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+															userType: true
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			invitedGroups: {
 				select: {
@@ -674,14 +674,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -696,16 +696,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							moderators: {
 								include: {
@@ -719,20 +719,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			invitingGroups: {
 				select: {
@@ -749,14 +749,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -771,16 +771,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							moderators: {
 								include: {
@@ -794,20 +794,20 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			},
 			membershipRequests: {
 				include: {
@@ -823,14 +823,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								include: {
@@ -844,16 +844,16 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
+											userType: true
+										}
+									}
+								}
 							},
 							moderators: {
 								include: {
@@ -867,18 +867,18 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
+											userType: true
+										}
+									}
+								}
+							}
+						}
 					},
 					party: {
 						select: {
@@ -893,18 +893,18 @@ export class UtilsService {
 									latitude: true,
 									longitude: true,
 									timestamp: true,
-									address: true,
-								},
+									address: true
+								}
 							},
 							consumables: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							covers: {
 								include: {
-									item: true,
-								},
+									item: true
+								}
 							},
 							date: true,
 							owner: {
@@ -917,14 +917,14 @@ export class UtilsService {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
+									userType: true
+								}
 							},
 							members: {
 								select: {
@@ -939,18 +939,18 @@ export class UtilsService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
+											userType: true
+										}
+									}
+								}
+							}
+						}
 					},
 					user: {
 						select: {
@@ -962,17 +962,17 @@ export class UtilsService {
 								take: 1,
 								select: {
 									url: true,
-									id: true,
-								},
+									id: true
+								}
 							},
 							verified: true,
 							isCompany: true,
 							gender: true,
-							userType: true,
-						},
-					},
-				},
-			},
+							userType: true
+						}
+					}
+				}
+			}
 		};
 	}
 

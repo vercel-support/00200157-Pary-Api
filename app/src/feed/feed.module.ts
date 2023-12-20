@@ -9,7 +9,7 @@ import { FeedController } from "./controllers/feed.controller";
 @Module({
 	controllers: [FeedController],
 	providers: [FeedService],
-	imports: [PrismaModule, UtilsModule, NotificationsModule],
+	imports: [PrismaModule, UtilsModule, NotificationsModule]
 })
 export class FeedModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

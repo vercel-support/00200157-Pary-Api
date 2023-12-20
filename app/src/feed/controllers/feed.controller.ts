@@ -16,8 +16,8 @@ export class FeedController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async search(@Query() searchDto: SearchDto, @Req() request: any) {
 		return await this.feedService.search(searchDto, request.raw.decoded.id);
@@ -28,8 +28,8 @@ export class FeedController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getPersonalizedParties(@Query() personalizedParties: PersonalizedPartiesDto, @Req() request: any) {
 		return await this.feedService.getPersonalizedParties(personalizedParties, request.raw.decoded.id);
@@ -40,8 +40,8 @@ export class FeedController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getFollowers(@Query() followerDto: FollowersFollowingDto) {
 		return await this.feedService.getFollowers(followerDto);
@@ -52,8 +52,8 @@ export class FeedController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getFollowing(@Query() followingDto: FollowersFollowingDto) {
 		return await this.feedService.getFollowing(followingDto);

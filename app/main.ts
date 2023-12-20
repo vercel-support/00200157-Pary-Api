@@ -23,7 +23,7 @@ const SWAGGER_ENVS = ["local", "dev", "staging"];
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
-		new FastifyAdapter({ logger: true, bodyLimit: 100 * 1024 * 1024 }),
+		new FastifyAdapter({ logger: true, bodyLimit: 100 * 1024 * 1024 })
 	);
 	await app.register(multiPart);
 	app.enableCors();
@@ -43,9 +43,9 @@ async function bootstrap() {
 			customJs: [
 				"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui-standalone-preset.js",
 				"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui-bundle.js",
-				"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui-standalone-preset.js",
+				"https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui-standalone-preset.js"
 			],
-			customCssUrl: ["https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui.css"],
+			customCssUrl: ["https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui.css"]
 		});
 	}
 	await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);

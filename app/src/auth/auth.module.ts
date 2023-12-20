@@ -9,17 +9,17 @@ import { AuthService } from "./services/auth.service";
 @Module({
 	controllers: [AuthController],
 	providers: [AuthService],
-	imports: [PrismaModule, UtilsModule],
+	imports: [PrismaModule, UtilsModule]
 })
 export class AuthModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
 		consumer.apply(AuthRefreshTokenMiddleware).forRoutes({
 			path: "auth/refresh-token",
-			method: RequestMethod.POST,
+			method: RequestMethod.POST
 		});
 		consumer.apply(AuthTokenMiddleware).forRoutes({
 			path: "auth/logout",
-			method: RequestMethod.POST,
+			method: RequestMethod.POST
 		});
 	}
 }

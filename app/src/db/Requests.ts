@@ -6,8 +6,8 @@ export const PARTY_REQUEST = {
 			latitude: true,
 			longitude: true,
 			timestamp: true,
-			address: true,
-		},
+			address: true
+		}
 	},
 	owner: {
 		select: {
@@ -19,14 +19,14 @@ export const PARTY_REQUEST = {
 				take: 1,
 				select: {
 					url: true,
-					id: true,
-				},
+					id: true
+				}
 			},
 			verified: true,
 			isCompany: true,
 			gender: true,
-			userType: true,
-		},
+			userType: true
+		}
 	},
 	moderators: {
 		include: {
@@ -40,16 +40,16 @@ export const PARTY_REQUEST = {
 						take: 1,
 						select: {
 							url: true,
-							id: true,
-						},
+							id: true
+						}
 					},
 					verified: true,
 					isCompany: true,
 					gender: true,
-					userType: true,
-				},
-			},
-		},
+					userType: true
+				}
+			}
+		}
 	},
 	members: {
 		include: {
@@ -63,16 +63,16 @@ export const PARTY_REQUEST = {
 						take: 1,
 						select: {
 							url: true,
-							id: true,
-						},
+							id: true
+						}
 					},
 					verified: true,
 					isCompany: true,
 					gender: true,
-					userType: true,
-				},
-			},
-		},
+					userType: true
+				}
+			}
+		}
 	},
 	invitations: {
 		include: {
@@ -86,14 +86,14 @@ export const PARTY_REQUEST = {
 						take: 1,
 						select: {
 							url: true,
-							id: true,
-						},
+							id: true
+						}
 					},
 					verified: true,
 					isCompany: true,
 					gender: true,
-					userType: true,
-				},
+					userType: true
+				}
 			},
 			invitedUser: {
 				select: {
@@ -105,16 +105,16 @@ export const PARTY_REQUEST = {
 						take: 1,
 						select: {
 							url: true,
-							id: true,
-						},
+							id: true
+						}
 					},
 					verified: true,
 					isCompany: true,
 					gender: true,
-					userType: true,
-				},
-			},
-		},
+					userType: true
+				}
+			}
+		}
 	},
 	membershipRequests: {
 		include: {
@@ -130,14 +130,14 @@ export const PARTY_REQUEST = {
 								take: 1,
 								select: {
 									url: true,
-									id: true,
-								},
+									id: true
+								}
 							},
 							verified: true,
 							isCompany: true,
 							gender: true,
-							userType: true,
-						},
+							userType: true
+						}
 					},
 					members: {
 						include: {
@@ -151,16 +151,16 @@ export const PARTY_REQUEST = {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
-							},
-						},
+									userType: true
+								}
+							}
+						}
 					},
 					moderators: {
 						include: {
@@ -174,18 +174,18 @@ export const PARTY_REQUEST = {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
-							},
-						},
-					},
-				},
+									userType: true
+								}
+							}
+						}
+					}
+				}
 			},
 			user: {
 				select: {
@@ -197,16 +197,16 @@ export const PARTY_REQUEST = {
 						take: 1,
 						select: {
 							url: true,
-							id: true,
-						},
+							id: true
+						}
 					},
 					verified: true,
 					isCompany: true,
 					gender: true,
-					userType: true,
-				},
-			},
-		},
+					userType: true
+				}
+			}
+		}
 	},
 	groups: {
 		include: {
@@ -225,14 +225,14 @@ export const PARTY_REQUEST = {
 								take: 1,
 								select: {
 									url: true,
-									id: true,
-								},
+									id: true
+								}
 							},
 							verified: true,
 							isCompany: true,
 							gender: true,
-							userType: true,
-						},
+							userType: true
+						}
 					},
 					members: {
 						include: {
@@ -246,16 +246,16 @@ export const PARTY_REQUEST = {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
-							},
-						},
+									userType: true
+								}
+							}
+						}
 					},
 					moderators: {
 						include: {
@@ -269,29 +269,29 @@ export const PARTY_REQUEST = {
 										take: 1,
 										select: {
 											url: true,
-											id: true,
-										},
+											id: true
+										}
 									},
 									verified: true,
 									isCompany: true,
 									gender: true,
-									userType: true,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+									userType: true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	},
 	consumables: {
 		include: {
-			item: true,
-		},
+			item: true
+		}
 	},
 	covers: {
 		include: {
-			item: true,
-		},
-	},
+			item: true
+		}
+	}
 };

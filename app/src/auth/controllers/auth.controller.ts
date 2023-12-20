@@ -9,7 +9,7 @@ import {
 	Post,
 	Req,
 	UsePipes,
-	ValidationPipe,
+	ValidationPipe
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "app/main";
@@ -29,8 +29,8 @@ export class AuthController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async signIn(@Body() googleUser: GoogleUserDto): Promise<User> {
 		return this.authService.signInUser(googleUser);

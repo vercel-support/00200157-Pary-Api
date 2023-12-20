@@ -9,7 +9,7 @@
 		"build": "nest build",
 		"lint": "biome check --apply ./app",
 		"lint:fix": "biome check --apply-unsafe ./app",
-		"format": "pnpm dlx @biomejs/biome format --write ./app",
+		"format": "biome format --write ./app",
 		"start": "nest start",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",

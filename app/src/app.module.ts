@@ -12,6 +12,6 @@ import { UtilsService } from "./utils/services/utils.service";
 
 @Module({
 	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule],
-	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService],
+	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService]
 })
 export class AppModule {}

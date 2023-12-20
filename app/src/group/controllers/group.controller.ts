@@ -18,8 +18,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async createGroup(@Body() group: CreateGroupDto, @Req() request: any) {
 		return await this.groupService.createGroup(group, request.raw.decoded.id);
@@ -30,8 +30,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async updateGroup(@Body() group: UpdateGroupDto, @Req() request: any) {
 		return await this.groupService.updateGroup(group, request.raw.decoded.id);
@@ -42,8 +42,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getOwnGroups(@Query() paginationDto: PaginationDto, @Req() request: any) {
 		return await this.groupService.getOwnGroups(paginationDto, request.raw.decoded.id);
@@ -54,8 +54,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getInvitedGroups(@Query() paginationDto: PaginationDto, @Req() request: any) {
 		return this.groupService.getInvitedGroups(paginationDto, request.raw.decoded.id);
@@ -76,8 +76,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getGroup(@Param("groupId") groupId: string) {
 		return await this.groupService.getGroup(groupId);
@@ -88,8 +88,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteGroup(@Param("groupId") groupId: string, @Req() request: any) {
 		return await this.groupService.deleteGroup(groupId, request.raw.decoded.id);
@@ -100,8 +100,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async inviteToGroup(@Param("groupId") groupId: string, @Body() inviteToGroupDto: UsernameDto, @Req() request: any) {
 		return await this.groupService.inviteToGroup(groupId, inviteToGroupDto, request.raw.decoded.id);
@@ -112,8 +112,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async acceptInvitation(@Param("groupId") groupId: string, @Req() request: any) {
 		return await this.groupService.acceptInvitation(groupId, request.raw.decoded.id);
@@ -124,8 +124,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async declineInvitation(@Param("groupId") groupId: string, @Req() request: any) {
 		return await this.groupService.declineInvitation(groupId, request.raw.decoded.id);
@@ -136,13 +136,13 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async cancelInvitation(
 		@Param("groupId") groupId: string,
 		@Body() inviteToGroupDto: UsernameDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return await this.groupService.cancelInvitation(groupId, inviteToGroupDto, request.raw.decoded.id);
 	}
@@ -152,13 +152,13 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async acceptJoinRequest(
 		@Param("groupId") groupId: string,
 		@Body() joinRequestDto: JoinRequestDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.groupService.acceptJoinRequest(groupId, request.raw.decoded.id, joinRequestDto);
 	}
@@ -168,13 +168,13 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async declineJoinRequest(
 		@Param("groupId") groupId: string,
 		@Body() joinRequestDto: JoinRequestDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.groupService.declineJoinRequest(groupId, request.raw.decoded.id, joinRequestDto);
 	}
@@ -184,8 +184,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async leaveGroup(@Param("groupId") groupId: string, @Req() request: any) {
 		return await this.groupService.leaveGroup(groupId, request.raw.decoded.id);
@@ -196,8 +196,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async requestJoin(@Param("groupId") groupId: string, @Req() request: any) {
 		return this.groupService.requestJoin(groupId, request.raw.decoded.id);
@@ -208,8 +208,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteMember(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.groupService.deleteMember(groupId, usernameDto, request.raw.decoded.id);
@@ -220,8 +220,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteMod(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.groupService.deleteMod(groupId, usernameDto, request.raw.decoded.id);
@@ -232,8 +232,8 @@ export class GroupController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async addMemberToModList(@Param("groupId") groupId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.groupService.addMemberToModList(groupId, usernameDto, request.raw.decoded.id);

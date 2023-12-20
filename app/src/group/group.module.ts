@@ -9,7 +9,7 @@ import { GroupController } from "./controllers/group.controller";
 @Module({
 	controllers: [GroupController],
 	providers: [GroupService],
-	imports: [PrismaModule, UtilsModule, NotificationsModule],
+	imports: [PrismaModule, UtilsModule, NotificationsModule]
 })
 export class GroupModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

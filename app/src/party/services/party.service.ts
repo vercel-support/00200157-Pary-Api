@@ -1,4 +1,4 @@
-import {randomUUID} from "crypto";
+import { randomUUID } from "crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -6,27 +6,27 @@ import {
 	HttpStatus,
 	Injectable,
 	InternalServerErrorException,
-	NotFoundException,
+	NotFoundException
 } from "@nestjs/common";
-import {del, put} from "@vercel/blob";
-import {CreatePartyDto} from "app/src/party/dto/CreateParty.dto";
-import {PARTY_REQUEST} from "../../db/Requests";
-import {PrismaService} from "../../db/services/prisma.service";
-import {PaginationDto} from "../../group/dto/Pagination.dto";
-import {NotificationsService} from "../../notifications/services/notifications.service";
-import {UtilsService} from "../../utils/services/utils.service";
-import {OptionalGroupIdDto} from "../dto/Group.dto";
-import {JoinRequestDto} from "../dto/JoinRequestDto";
-import {UpdatePartyDto} from "../dto/UpdateParty.dto";
-import {UploadImageDto} from "../dto/UploadImageDto";
-import {UsernameDto} from "../dto/User.dto";
+import { del, put } from "@vercel/blob";
+import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
+import { PARTY_REQUEST } from "../../db/Requests";
+import { PrismaService } from "../../db/services/prisma.service";
+import { PaginationDto } from "../../group/dto/Pagination.dto";
+import { NotificationsService } from "../../notifications/services/notifications.service";
+import { UtilsService } from "../../utils/services/utils.service";
+import { OptionalGroupIdDto } from "../dto/Group.dto";
+import { JoinRequestDto } from "../dto/JoinRequestDto";
+import { UpdatePartyDto } from "../dto/UpdateParty.dto";
+import { UploadImageDto } from "../dto/UploadImageDto";
+import { UsernameDto } from "../dto/User.dto";
 
 @Injectable()
 export class PartyService {
 	constructor(
 		private prisma: PrismaService,
 		private utils: UtilsService,
-		private notifications: NotificationsService,
+		private notifications: NotificationsService
 	) {}
 
 	async createParty(partyBody: CreatePartyDto, userId: string) {
@@ -41,16 +41,16 @@ export class PartyService {
 			image,
 			showAddressInFeed,
 			ageRange,
-			isPrivate,
+			isPrivate
 		} = partyBody;
 		const userParties = await this.prisma.party.count({
 			where: {
 				ownerId: userId,
 				active: true,
 				date: {
-					gte: new Date(),
-				},
-			},
+					gte: new Date()
+				}
+			}
 		});
 
 		if (userParties >= 15) {
@@ -63,8 +63,8 @@ export class PartyService {
 				name: true,
 				username: true,
 				socialMedia: true,
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!inviter) {
@@ -78,21 +78,21 @@ export class PartyService {
 		const users = await this.prisma.user.findMany({
 			where: {
 				username: {
-					in: usersToInvite,
-				},
+					in: usersToInvite
+				}
 			},
 			select: {
 				id: true,
 				username: true,
 				socialMedia: true,
-				expoPushToken: true, // asumimos que usarás Expo para notificaciones push
-			},
+				expoPushToken: true // asumimos que usarás Expo para notificaciones push
+			}
 		});
 
 		const partyLocation = await this.prisma.location.create({
 			data: {
-				...location,
-			},
+				...location
+			}
 		});
 
 		const party = await this.prisma.party.create({
@@ -109,8 +109,8 @@ export class PartyService {
 				image,
 				showAddressInFeed,
 				ageRange,
-				locationId: partyLocation.id,
-			},
+				locationId: partyLocation.id
+			}
 		});
 
 		if (!party) {
@@ -119,8 +119,8 @@ export class PartyService {
 		await this.prisma.partyMember.create({
 			data: {
 				partyId: party.id,
-				userId,
-			},
+				userId
+			}
 		});
 
 		for (const user of users) {
@@ -129,8 +129,8 @@ export class PartyService {
 				data: {
 					partyId: party.id,
 					invitedUserId: user.id,
-					invitingUserId: userId,
-				},
+					invitingUserId: userId
+				}
 			});
 			if (response) {
 				this.notifications.sendPartyInviteNotification(
@@ -138,7 +138,7 @@ export class PartyService {
 					inviter,
 					party.name,
 					party.id,
-					party.type,
+					party.type
 				);
 			}
 
@@ -163,12 +163,12 @@ export class PartyService {
 			ageRange,
 			isPrivate,
 			consumables,
-			covers,
+			covers
 		} = partyBody;
 
 		const currentParty = await this.prisma.party.findUnique({
 			where: {
-				id,
+				id
 			},
 			select: {
 				ownerId: true,
@@ -176,42 +176,42 @@ export class PartyService {
 				locationId: true,
 				moderators: {
 					select: {
-						userId: true,
-					},
+						userId: true
+					}
 				},
 				consumables: {
 					select: {
-						id: true,
-					},
+						id: true
+					}
 				},
 				covers: {
 					select: {
-						id: true,
-					},
-				},
-			},
+						id: true
+					}
+				}
+			}
 		});
 
 		if (!currentParty) {
 			throw new NotFoundException("Carrete no encontrado");
 		}
 
-		if (currentParty.ownerId !== userId && !currentParty.moderators.some((mod) => mod.userId === userId)) {
+		if (currentParty.ownerId !== userId && !currentParty.moderators.some(mod => mod.userId === userId)) {
 			throw new ForbiddenException("No tienes permisos para actualizar este carrete.");
 		}
 
 		const newConsumables = consumables.filter(
-			(consumable) => !currentParty.consumables.some((c) => c.id === consumable.id),
+			consumable => !currentParty.consumables.some(c => c.id === consumable.id)
 		);
-		const newCovers = covers.filter((cover) => !currentParty.covers.some((c) => c.id === cover.id));
+		const newCovers = covers.filter(cover => !currentParty.covers.some(c => c.id === cover.id));
 		const consumablesToDelete = currentParty.consumables.filter(
-			(consumable) => !consumables.some((c) => c.id === consumable.id),
+			consumable => !consumables.some(c => c.id === consumable.id)
 		);
-		const coversToDelete = currentParty.covers.filter((cover) => !covers.some((c) => c.id === cover.id));
+		const coversToDelete = currentParty.covers.filter(cover => !covers.some(c => c.id === cover.id));
 
 		const party = await this.prisma.party.update({
 			where: {
-				id,
+				id
 			},
 			data: {
 				name,
@@ -225,27 +225,27 @@ export class PartyService {
 				showAddressInFeed,
 				ageRange,
 				consumables: {
-					connect: newConsumables.map((consumable) => ({ id: consumable.id })),
-					disconnect: consumablesToDelete.map((consumable) => ({ id: consumable.id })),
+					connect: newConsumables.map(consumable => ({ id: consumable.id })),
+					disconnect: consumablesToDelete.map(consumable => ({ id: consumable.id }))
 				},
 				covers: {
-					connect: newCovers.map((cover) => ({ id: cover.id })),
-					disconnect: coversToDelete.map((cover) => ({ id: cover.id })),
-				},
-			},
+					connect: newCovers.map(cover => ({ id: cover.id })),
+					disconnect: coversToDelete.map(cover => ({ id: cover.id }))
+				}
+			}
 		});
 
 		await this.prisma.location.update({
 			where: {
-				id: party.locationId,
+				id: party.locationId
 			},
 			data: {
 				name: location.name,
 				latitude: location.latitude,
 				longitude: location.longitude,
 				timestamp: location.timestamp,
-				address: location.address,
-			},
+				address: location.address
+			}
 		});
 
 		if (!party) {
@@ -268,8 +268,8 @@ export class PartyService {
 		const currentUser = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: {
-				location: true,
-			},
+				location: true
+			}
 		});
 
 		if (!currentUser) {
@@ -282,23 +282,23 @@ export class PartyService {
 					{
 						members: {
 							some: {
-								userId,
-							},
-						},
+								userId
+							}
+						}
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
+								userId
+							}
+						}
+					}
+				]
 			},
 			include: PARTY_REQUEST,
 			take: limit,
 			skip: skip,
-			orderBy: { date: "asc" },
+			orderBy: { date: "asc" }
 		});
 
 		const totalParties = await this.prisma.party.count({
@@ -308,27 +308,27 @@ export class PartyService {
 					{
 						members: {
 							some: {
-								userId,
-							},
-						},
+								userId
+							}
+						}
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		const partiesToReturn = await Promise.all(
-			parties.map(async (party) => {
+			parties.map(async party => {
 				const distance = this.utils.haversineDistance(currentUser.location, party.location);
 				party.distance = distance;
 				return party;
-			}),
+			})
 		);
 
 		const hasNextPage = page * limit < totalParties;
@@ -337,7 +337,7 @@ export class PartyService {
 		return {
 			parties: partiesToReturn,
 			hasNextPage,
-			nextPage,
+			nextPage
 		};
 	}
 
@@ -355,7 +355,7 @@ export class PartyService {
 			try {
 				const { url } = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
 					access: "public",
-					contentType: `image/${fileType}`,
+					contentType: `image/${fileType}`
 				});
 
 				if (!url || url === "") {
@@ -364,7 +364,7 @@ export class PartyService {
 				}
 
 				return {
-					url,
+					url
 				};
 			} catch (error) {
 				if (retry) {
@@ -386,11 +386,11 @@ export class PartyService {
 		const party = await this.prisma.party.findUnique({
 			where: {
 				id: partId,
-				ownerId: userId,
+				ownerId: userId
 			},
 			select: {
-				image: true,
-			},
+				image: true
+			}
 		});
 
 		if (!party) {
@@ -404,7 +404,7 @@ export class PartyService {
 			try {
 				const { url } = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
 					access: "public",
-					contentType: `image/${fileType}`,
+					contentType: `image/${fileType}`
 				});
 
 				if (!url || url === "") {
@@ -412,7 +412,7 @@ export class PartyService {
 				}
 
 				return {
-					url,
+					url
 				};
 			} catch (error) {
 				if (retry) {
@@ -427,13 +427,13 @@ export class PartyService {
 		}
 		return await this.prisma.party.update({
 			where: {
-				id: partId,
+				id: partId
 			},
 			data: {
 				image: {
-					url,
-				},
-			},
+					url
+				}
+			}
 		});
 	}
 
@@ -442,8 +442,8 @@ export class PartyService {
 		const currentUser = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: {
-				location: true,
-			},
+				location: true
+			}
 		});
 
 		if (!currentUser) {
@@ -465,8 +465,8 @@ export class PartyService {
 										latitude: true,
 										longitude: true,
 										timestamp: true,
-										address: true,
-									},
+										address: true
+									}
 								},
 								consumables: true,
 								covers: true,
@@ -477,13 +477,13 @@ export class PartyService {
 										name: true,
 										lastName: true,
 										profilePictures: {
-											take: 1,
+											take: 1
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
+										userType: true
+									}
 								},
 								members: {
 									select: {
@@ -495,15 +495,15 @@ export class PartyService {
 												name: true,
 												lastName: true,
 												profilePictures: {
-													take: 1,
+													take: 1
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
+												userType: true
+											}
+										}
+									}
 								},
 								moderators: {
 									include: {
@@ -517,22 +517,22 @@ export class PartyService {
 													take: 1,
 													select: {
 														url: true,
-														id: true,
-													},
+														id: true
+													}
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+												userType: true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 
 		const totalGroups = user.invitedParties.length;
@@ -543,7 +543,7 @@ export class PartyService {
 		return {
 			parties: user.invitedParties,
 			hasNextPage,
-			nextPage,
+			nextPage
 		};
 	}
 
@@ -553,20 +553,20 @@ export class PartyService {
 				OR: [
 					{
 						party: {
-							ownerId: userId,
-						},
+							ownerId: userId
+						}
 					},
 					{
 						party: {
 							moderators: {
 								some: {
-									userId,
-								},
-							},
-						},
-					},
+									userId
+								}
+							}
+						}
+					}
 				],
-				status: "PENDING",
+				status: "PENDING"
 			},
 			include: {
 				party: {
@@ -578,8 +578,8 @@ export class PartyService {
 								latitude: true,
 								longitude: true,
 								timestamp: true,
-								address: true,
-							},
+								address: true
+							}
 						},
 						consumables: true,
 						covers: true,
@@ -590,9 +590,9 @@ export class PartyService {
 								name: true,
 								lastName: true,
 								profilePictures: {
-									take: 1,
-								},
-							},
+									take: 1
+								}
+							}
 						},
 						members: {
 							select: {
@@ -604,15 +604,15 @@ export class PartyService {
 										name: true,
 										lastName: true,
 										profilePictures: {
-											take: 1,
+											take: 1
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
+										userType: true
+									}
+								}
+							}
 						},
 						moderators: {
 							include: {
@@ -626,18 +626,18 @@ export class PartyService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-					},
+										userType: true
+									}
+								}
+							}
+						}
+					}
 				},
 				user: {
 					select: {
@@ -649,14 +649,14 @@ export class PartyService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
+						userType: true
+					}
 				},
 				group: {
 					select: {
@@ -670,14 +670,14 @@ export class PartyService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
+								userType: true
+							}
 						},
 						members: {
 							include: {
@@ -691,16 +691,16 @@ export class PartyService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
+										userType: true
+									}
+								}
+							}
 						},
 						moderators: {
 							include: {
@@ -714,20 +714,20 @@ export class PartyService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+										userType: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 	}
 
@@ -737,24 +737,24 @@ export class PartyService {
 				OR: [
 					{
 						party: {
-							ownerId: userId,
-						},
+							ownerId: userId
+						}
 					},
 					{
 						party: {
 							moderators: {
 								some: {
-									userId: userId,
-								},
-							},
-						},
-					},
+									userId: userId
+								}
+							}
+						}
+					}
 				],
-				status: "PENDING",
+				status: "PENDING"
 			},
 			include: {
 				party: {
-					include: PARTY_REQUEST,
+					include: PARTY_REQUEST
 				},
 				user: {
 					select: {
@@ -766,14 +766,14 @@ export class PartyService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
+						userType: true
+					}
 				},
 				group: {
 					select: {
@@ -787,14 +787,14 @@ export class PartyService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
+								userType: true
+							}
 						},
 						members: {
 							include: {
@@ -808,16 +808,16 @@ export class PartyService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
+										userType: true
+									}
+								}
+							}
 						},
 						moderators: {
 							include: {
@@ -831,20 +831,20 @@ export class PartyService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+										userType: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 	}
 
@@ -852,9 +852,9 @@ export class PartyService {
 		return await this.prisma.party
 			.findUnique({
 				where: { id: partyId },
-				include: PARTY_REQUEST,
+				include: PARTY_REQUEST
 			})
-			.then(async (party) => {
+			.then(async party => {
 				if (!party) {
 					throw new NotFoundException("Carrete no encontrado");
 				}
@@ -862,8 +862,8 @@ export class PartyService {
 				const currentUser = await this.prisma.user.findUnique({
 					where: { id: userId },
 					select: {
-						location: true,
-					},
+						location: true
+					}
 				});
 
 				if (!currentUser) {
@@ -882,7 +882,7 @@ export class PartyService {
 	async leaveParty(partyId: string, userId: string) {
 		const party = await this.prisma.party.findUnique({
 			where: {
-				id: partyId,
+				id: partyId
 			},
 			include: {
 				groups: {
@@ -893,14 +893,14 @@ export class PartyService {
 								leaderId: true,
 								members: {
 									select: {
-										userId: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+										userId: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 
 		if (!party) {
@@ -911,25 +911,25 @@ export class PartyService {
 		if (party.ownerId === userId) {
 			// Delete all group invitations related to this group
 			await this.prisma.partyInvitation.deleteMany({
-				where: { partyId },
+				where: { partyId }
 			});
 
 			// Delete all group members
 			await this.prisma.partyMember.deleteMany({
-				where: { partyId },
+				where: { partyId }
 			});
 
 			await this.prisma.membershipRequest.deleteMany({
-				where: { partyId },
+				where: { partyId }
 			});
 
 			await this.prisma.partyGroup.deleteMany({
-				where: { partyId },
+				where: { partyId }
 			});
 
 			// Delete the group itself
 			await this.prisma.party.delete({
-				where: { id: partyId },
+				where: { id: partyId }
 			});
 
 			await del(party.image.url);
@@ -939,28 +939,26 @@ export class PartyService {
 		const isMember = await this.prisma.partyMember.findFirst({
 			where: {
 				partyId,
-				userId: userId,
-			},
+				userId: userId
+			}
 		});
 
 		if (!isMember) {
 			console.log("A");
-			if (
-				party.groups.some((partyGroup) => partyGroup.group.members.some((member) => member.userId === userId))
-			) {
+			if (party.groups.some(partyGroup => partyGroup.group.members.some(member => member.userId === userId))) {
 				console.log("b");
-				if (party.groups.some((partyGroup) => partyGroup.group.leaderId === userId)) {
+				if (party.groups.some(partyGroup => partyGroup.group.leaderId === userId)) {
 					console.log("c");
-					const groups = party.groups.filter((partyGroup) => partyGroup.group.leaderId === userId);
+					const groups = party.groups.filter(partyGroup => partyGroup.group.leaderId === userId);
 					for (const group of groups) {
 						console.log("d", group.groupId);
 						await this.prisma.partyGroup.delete({
 							where: {
 								partyId_groupId: {
 									partyId,
-									groupId: group.groupId,
-								},
-							},
+									groupId: group.groupId
+								}
+							}
 						});
 					}
 				} else {
@@ -976,8 +974,8 @@ export class PartyService {
 			.deleteMany({
 				where: {
 					partyId,
-					OR: [{ invitedUserId: userId }, { invitingUserId: userId }],
-				},
+					OR: [{ invitedUserId: userId }, { invitingUserId: userId }]
+				}
 			})
 			.catch(() => {});
 
@@ -987,9 +985,9 @@ export class PartyService {
 				where: {
 					userId_partyId: {
 						partyId,
-						userId: userId,
-					},
-				},
+						userId: userId
+					}
+				}
 			})
 			.catch(() => {});
 
@@ -997,8 +995,8 @@ export class PartyService {
 			.deleteMany({
 				where: {
 					partyId,
-					userId,
-				},
+					userId
+				}
 			})
 			.catch(() => {});
 		return true;
@@ -1012,17 +1010,17 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!hasPermissions) {
@@ -1033,8 +1031,8 @@ export class PartyService {
 			where: { username },
 			select: {
 				id: true,
-				expoPushToken: true,
-			},
+				expoPushToken: true
+			}
 		});
 
 		if (!invitedUser) {
@@ -1050,18 +1048,18 @@ export class PartyService {
 				type: true,
 				moderators: {
 					select: {
-						userId: true,
-					},
-				},
-			},
+						userId: true
+					}
+				}
+			}
 		});
 
 		const invitation = await this.prisma.partyInvitation.create({
 			data: {
 				partyId,
 				invitedUserId: invitedUser.id,
-				invitingUserId: userId,
-			},
+				invitingUserId: userId
+			}
 		});
 
 		const inviter = await this.prisma.user.findUnique({
@@ -1069,8 +1067,8 @@ export class PartyService {
 			select: {
 				username: true,
 				socialMedia: true,
-				name: true,
-			},
+				name: true
+			}
 		});
 
 		this.notifications.sendPartyInviteNotification(
@@ -1078,7 +1076,7 @@ export class PartyService {
 			inviter,
 			party.name,
 			party.id,
-			party.type,
+			party.type
 		);
 		return invitation;
 	}
@@ -1091,17 +1089,17 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!hasPermissions) {
@@ -1111,8 +1109,8 @@ export class PartyService {
 			where: { username },
 			select: {
 				id: true,
-				expoPushToken: true,
-			},
+				expoPushToken: true
+			}
 		});
 
 		if (!invitedUser) {
@@ -1122,13 +1120,13 @@ export class PartyService {
 		const invitation = await this.prisma.partyInvitation.findFirst({
 			where: {
 				partyId,
-				invitedUserId: invitedUser.id,
-			},
+				invitedUserId: invitedUser.id
+			}
 		});
 
 		if (invitation) {
 			return this.prisma.partyInvitation.delete({
-				where: { id: invitation.id },
+				where: { id: invitation.id }
 			});
 		}
 		return false;
@@ -1138,43 +1136,43 @@ export class PartyService {
 		const invitation = await this.prisma.partyInvitation.findFirst({
 			where: {
 				partyId,
-				invitedUserId: userId,
-			},
+				invitedUserId: userId
+			}
 		});
 
 		if (invitation) {
 			await this.prisma.partyInvitation.delete({
-				where: { id: invitation.id },
+				where: { id: invitation.id }
 			});
 		}
 
 		await this.prisma.partyMember.create({
 			data: {
 				partyId,
-				userId: userId,
-			},
+				userId: userId
+			}
 		});
 
 		const members = await this.prisma.party.findMany({
 			where: {
-				id: partyId,
+				id: partyId
 			},
 			select: {
 				members: {
 					select: {
 						user: {
 							select: {
-								expoPushToken: true,
-							},
-						},
-					},
-				},
-			},
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
 		});
 
 		if (members) {
-			const expoTokens = members.flatMap((member) =>
-				member.members.map((partyMember) => partyMember.user.expoPushToken),
+			const expoTokens = members.flatMap(member =>
+				member.members.map(partyMember => partyMember.user.expoPushToken)
 			);
 			this.notifications.sendNewPartyMemberNotification(expoTokens, userId, partyId);
 		}
@@ -1185,26 +1183,26 @@ export class PartyService {
 		const invitation = await this.prisma.partyInvitation.findFirst({
 			where: {
 				partyId,
-				invitedUserId: userId,
-			},
+				invitedUserId: userId
+			}
 		});
 
 		if (invitation) {
 			await this.prisma.partyInvitation.delete({
-				where: { id: invitation.id },
+				where: { id: invitation.id }
 			});
 		}
 
 		const joinRequest = await this.prisma.membershipRequest.findFirst({
 			where: {
 				partyId,
-				userId,
-			},
+				userId
+			}
 		});
 
 		if (joinRequest) {
 			await this.prisma.membershipRequest.delete({
-				where: { id: joinRequest.id },
+				where: { id: joinRequest.id }
 			});
 		}
 
@@ -1229,28 +1227,28 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
+								userId
+							}
+						}
+					}
+				]
 			},
 			include: {
 				moderators: {
 					select: {
 						user: {
 							select: {
-								expoPushToken: true,
-							},
-						},
-					},
-				},
-			},
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
 		});
 		if (!party) {
 			throw new NotFoundException("Carrete no encontrado");
@@ -1259,8 +1257,8 @@ export class PartyService {
 			const joinRequest = await this.prisma.membershipRequest.findFirst({
 				where: {
 					partyId,
-					userId: requesterUserId,
-				},
+					userId: requesterUserId
+				}
 			});
 
 			if (!joinRequest) {
@@ -1269,25 +1267,25 @@ export class PartyService {
 
 			await this.prisma.membershipRequest.update({
 				where: {
-					id: joinRequest.id,
+					id: joinRequest.id
 				},
 				data: {
-					status: "ACCEPTED",
-				},
+					status: "ACCEPTED"
+				}
 			});
 
 			await this.prisma.partyMember.create({
 				data: {
 					partyId,
-					userId: requesterUserId,
-				},
+					userId: requesterUserId
+				}
 			});
 			this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party);
 		} else {
 			const joinRequest = await this.prisma.membershipRequest.findFirst({
 				where: {
 					partyId,
-					groupId,
+					groupId
 				},
 				include: {
 					group: {
@@ -1297,14 +1295,14 @@ export class PartyService {
 									userId: true,
 									user: {
 										select: {
-											expoPushToken: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
+											expoPushToken: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			});
 
 			if (!joinRequest) {
@@ -1313,18 +1311,18 @@ export class PartyService {
 
 			await this.prisma.membershipRequest.update({
 				where: {
-					id: joinRequest.id,
+					id: joinRequest.id
 				},
 				data: {
-					status: "ACCEPTED",
-				},
+					status: "ACCEPTED"
+				}
 			});
 
 			await this.prisma.partyGroup.create({
 				data: {
 					partyId,
-					groupId,
-				},
+					groupId
+				}
 			});
 			/*for (const member of joinRequest.group.members) {
                 await this.prisma.partyMember.delete({
@@ -1354,8 +1352,8 @@ export class PartyService {
 		}
 		const party = await this.prisma.party.findUnique({
 			where: {
-				id: partyId,
-			},
+				id: partyId
+			}
 		});
 		if (!party) {
 			throw new NotFoundException("Carrete no encontrado");
@@ -1366,13 +1364,13 @@ export class PartyService {
 				partyId,
 				OR: [
 					{
-						userId: requesterUserId,
+						userId: requesterUserId
 					},
 					{
-						groupId,
-					},
-				],
-			},
+						groupId
+					}
+				]
+			}
 		});
 
 		if (!joinRequest) {
@@ -1381,11 +1379,11 @@ export class PartyService {
 
 		await this.prisma.membershipRequest.update({
 			where: {
-				id: joinRequest.id,
+				id: joinRequest.id
 			},
 			data: {
-				status: "DECLINED",
-			},
+				status: "DECLINED"
+			}
 		});
 		return true;
 	}
@@ -1393,8 +1391,8 @@ export class PartyService {
 	async cancelJoinRequest(partyId: string, userId: string) {
 		const party = await this.prisma.party.findUnique({
 			where: {
-				id: partyId,
-			},
+				id: partyId
+			}
 		});
 		if (!party) {
 			throw new NotFoundException("Carrete no encontrado");
@@ -1403,8 +1401,8 @@ export class PartyService {
 		const joinRequest = await this.prisma.membershipRequest.findFirst({
 			where: {
 				partyId,
-				userId,
-			},
+				userId
+			}
 		});
 
 		if (!joinRequest) {
@@ -1413,8 +1411,8 @@ export class PartyService {
 
 		await this.prisma.membershipRequest.delete({
 			where: {
-				id: joinRequest.id,
-			},
+				id: joinRequest.id
+			}
 		});
 		return true;
 	}
@@ -1423,7 +1421,7 @@ export class PartyService {
 		const { groupId } = optionalGroupIdDto;
 		// Obtenemos la información del party.
 		const party = await this.prisma.party.findUnique({
-			where: { id: partyId },
+			where: { id: partyId }
 		});
 
 		if (!party) {
@@ -1433,7 +1431,7 @@ export class PartyService {
 		// Chequear si el grupo existe si se proporciona un groupId.
 		if (groupId) {
 			const group = await this.prisma.group.count({
-				where: { id: groupId },
+				where: { id: groupId }
 			});
 
 			if (group <= 0) {
@@ -1446,9 +1444,9 @@ export class PartyService {
 			where: {
 				userId_partyId: {
 					userId,
-					partyId,
-				},
-			},
+					partyId
+				}
+			}
 		});
 
 		if (isUserMember) {
@@ -1461,18 +1459,18 @@ export class PartyService {
 				where: {
 					partyId_groupId: {
 						partyId,
-						groupId,
-					},
-				},
+						groupId
+					}
+				}
 			});
 
 			if (isGroupMember) {
 				throw new HttpException(
 					{
 						status: HttpStatus.METHOD_NOT_ALLOWED,
-						error: "El grupo ya es miembro de este carrete",
+						error: "El grupo ya es miembro de este carrete"
 					},
-					HttpStatus.METHOD_NOT_ALLOWED,
+					HttpStatus.METHOD_NOT_ALLOWED
 				);
 			}
 		}
@@ -1484,16 +1482,16 @@ export class PartyService {
 				await this.prisma.partyGroup.create({
 					data: {
 						partyId,
-						groupId,
-					},
+						groupId
+					}
 				});
 			} else {
 				// Unir el usuario al party
 				await this.prisma.partyMember.create({
 					data: {
 						partyId,
-						userId,
-					},
+						userId
+					}
 				});
 			}
 			return true;
@@ -1503,12 +1501,12 @@ export class PartyService {
 				where: {
 					partyId_groupId: {
 						partyId,
-						groupId,
-					},
+						groupId
+					}
 				},
 				select: {
-					status: true,
-				},
+					status: true
+				}
 			});
 
 			console.log("groupId", groupId, "partyId", partyId, "request:", existingRequest);
@@ -1527,8 +1525,8 @@ export class PartyService {
 					groupId,
 					partyId,
 					userId,
-					type: "GROUP",
-				},
+					type: "GROUP"
+				}
 			});
 		} else {
 			// Verificar si el usuario o grupo ya ha solicitado unirse al party.
@@ -1536,9 +1534,9 @@ export class PartyService {
 				where: {
 					userId_partyId: {
 						userId,
-						partyId,
-					},
-				},
+						partyId
+					}
+				}
 			});
 
 			if (existingRequest) {
@@ -1549,8 +1547,8 @@ export class PartyService {
 				data: {
 					userId,
 					partyId,
-					type: "SOLO",
-				},
+					type: "SOLO"
+				}
 			});
 		}
 		return true;
@@ -1564,17 +1562,17 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!group) {
@@ -1583,11 +1581,11 @@ export class PartyService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1599,9 +1597,9 @@ export class PartyService {
 			where: {
 				userId_partyId: {
 					userId: targetUser.id,
-					partyId,
-				},
-			},
+					partyId
+				}
+			}
 		});
 
 		if (!isUserMember) {
@@ -1613,16 +1611,16 @@ export class PartyService {
 			where: {
 				userId_partyId: {
 					userId: targetUser.id,
-					partyId,
-				},
-			},
+					partyId
+				}
+			}
 		});
 
 		await this.prisma.membershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
-				partyId,
-			},
+				partyId
+			}
 		});
 	}
 
@@ -1633,17 +1631,17 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!group) {
@@ -1654,16 +1652,16 @@ export class PartyService {
 			where: {
 				partyId_groupId: {
 					partyId,
-					groupId,
-				},
-			},
+					groupId
+				}
+			}
 		});
 
 		await this.prisma.membershipRequest.deleteMany({
 			where: {
 				groupId,
-				partyId,
-			},
+				partyId
+			}
 		});
 	}
 
@@ -1675,17 +1673,17 @@ export class PartyService {
 				id: partyId,
 				OR: [
 					{
-						ownerId: userId,
+						ownerId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!party) {
@@ -1694,11 +1692,11 @@ export class PartyService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1710,9 +1708,9 @@ export class PartyService {
 			where: {
 				userId_partyId: {
 					userId: targetUser.id,
-					partyId,
-				},
-			},
+					partyId
+				}
+			}
 		});
 
 		if (!isUserMember) {
@@ -1722,8 +1720,8 @@ export class PartyService {
 		await this.prisma.membershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
-				partyId,
-			},
+				partyId
+			}
 		});
 	}
 
@@ -1733,8 +1731,8 @@ export class PartyService {
 		const party = await this.prisma.party.findUnique({
 			where: {
 				id: partyId,
-				ownerId: userId,
-			},
+				ownerId: userId
+			}
 		});
 
 		if (!party) {
@@ -1743,11 +1741,11 @@ export class PartyService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1758,8 +1756,8 @@ export class PartyService {
 		const isUserMember = await this.prisma.userPartyModerator.create({
 			data: {
 				userId: targetUser.id,
-				partyId,
-			},
+				partyId
+			}
 		});
 
 		if (!isUserMember) {

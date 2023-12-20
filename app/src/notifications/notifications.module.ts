@@ -7,6 +7,6 @@ import { UtilsModule } from "../utils/utils.module";
 @Module({
 	providers: [NotificationsService],
 	exports: [NotificationsService],
-	imports: [PrismaModule, UtilsModule, ExpoModule],
+	imports: [PrismaModule, UtilsModule, ExpoModule]
 })
 export class NotificationsModule {}

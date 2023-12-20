@@ -15,7 +15,7 @@ export class NotificationsService {
 		}
 		const follower = await this.prisma.user.findUnique({
 			where: { id: followerId },
-			select: { name: true, username: true },
+			select: { name: true, username: true }
 		});
 
 		if (follower === null) return false;
@@ -29,10 +29,10 @@ export class NotificationsService {
 			data: {
 				url: `/feed/${follower.username}`,
 				params: {
-					username: follower.username,
+					username: follower.username
 				},
-				type: "follow",
-			},
+				type: "follow"
+			}
 		};
 		//TODO: Handle the response from expo
 		// Links:
@@ -59,10 +59,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/group/${groupId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					groupId: groupId,
+					groupId: groupId
 				},
-				type: "groupInvite",
-			},
+				type: "groupInvite"
+			}
 		};
 
 		// Envía la notificación
@@ -79,7 +79,7 @@ export class NotificationsService {
 		inviter: Partial<User>,
 		partyName: string,
 		partyId: string,
-		partyType: PartyType,
+		partyType: PartyType
 	) {
 		// Comprueba si el token es válido
 		if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
@@ -99,10 +99,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${partyId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId: partyId,
+					partyId: partyId
 				},
-				type: "partyInvite",
-			},
+				type: "partyInvite"
+			}
 		};
 
 		// Envía la notificación
@@ -116,14 +116,14 @@ export class NotificationsService {
 
 	async sendNewGroupMemberNotification(pushTokens: string[], newMemberId: string, groupId: string) {
 		// Comprueba si el token es válido
-		if (!pushTokens.every((token) => token !== "" && Expo.isExpoPushToken(token))) {
+		if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
 			console.error(`Push token ${pushTokens} is not a valid Expo push token`);
 			return;
 		}
 
 		const newMember = await this.prisma.user.findUnique({
 			where: { id: newMemberId },
-			select: { name: true, username: true },
+			select: { name: true, username: true }
 		});
 		const group = await this.prisma.group.findUnique({ where: { id: groupId }, select: { name: true } });
 		if (newMember === null || group === null) return;
@@ -138,10 +138,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/group/${groupId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					groupId: groupId,
+					groupId: groupId
 				},
-				type: "groupNewMember",
-			},
+				type: "groupNewMember"
+			}
 		};
 
 		// Envía la notificación
@@ -155,14 +155,14 @@ export class NotificationsService {
 
 	async sendNewPartyMemberNotification(pushTokens: string[], newMemberId: string, partyId: string) {
 		// Comprueba si el token es válido
-		if (!pushTokens.every((token) => token !== "" && Expo.isExpoPushToken(token))) {
+		if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
 			console.error(`Push token ${pushTokens} is not a valid Expo push token`);
 			return;
 		}
 
 		const newMember = await this.prisma.user.findUnique({
 			where: { id: newMemberId },
-			select: { name: true, username: true },
+			select: { name: true, username: true }
 		});
 		const party = await this.prisma.party.findUnique({ where: { id: partyId }, select: { name: true } });
 		if (newMember === null || party === null) return;
@@ -177,10 +177,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${partyId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId,
+					partyId
 				},
-				type: "partyNewMember",
-			},
+				type: "partyNewMember"
+			}
 		};
 
 		// Envía la notificación
@@ -195,10 +195,10 @@ export class NotificationsService {
 	async sendPartyJoinAcceptedSoloNotification(userId: string, party) {
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
-			select: { expoPushToken: true, username: true },
+			select: { expoPushToken: true, username: true }
 		});
 		if (user === null) return;
-		const pushTokens: string[] = party.moderators.map((moderator) => moderator.expoPushToken);
+		const pushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
 		const userMessage: ExpoPushMessage = {
 			to: [user.expoPushToken, ...pushTokens],
 			sound: "default",
@@ -208,10 +208,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId: party.id,
+					partyId: party.id
 				},
-				type: "partyNewMember",
-			},
+				type: "partyNewMember"
+			}
 		};
 		const modMessage: ExpoPushMessage = {
 			to: [user.expoPushToken, ...pushTokens],
@@ -222,10 +222,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId: party.id,
+					partyId: party.id
 				},
-				type: "partyNewMember",
-			},
+				type: "partyNewMember"
+			}
 		};
 
 		try {
@@ -245,16 +245,16 @@ export class NotificationsService {
 					select: {
 						user: {
 							select: {
-								expoPushToken: true,
-							},
-						},
-					},
-				},
-			},
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
 		});
 		if (group === null) return;
 		const messageToGroup: ExpoPushMessage = {
-			to: group.members.map((member) => member.user.expoPushToken),
+			to: group.members.map(member => member.user.expoPushToken),
 			sound: "default",
 			title: "Nuevo ingreso a un carrete como grupo!",
 			body: `Tu grupo ${group.name} se ha unido al carrete ${party.name}.`,
@@ -262,13 +262,13 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId: party.id,
+					partyId: party.id
 				},
-				type: "partyNewMember",
-			},
+				type: "partyNewMember"
+			}
 		};
 		const messageToMods: ExpoPushMessage = {
-			to: party.moderators.map((moderator) => moderator.expoPushToken),
+			to: party.moderators.map(moderator => moderator.expoPushToken),
 			sound: "default",
 			title: "Solicitud aceptada a un grupo",
 			body: `Se ha aceptado la solicitud de ${group.name} para unirse al carrete ${party.name}.`,
@@ -276,10 +276,10 @@ export class NotificationsService {
 			data: {
 				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					partyId: party.id,
+					partyId: party.id
 				},
-				type: "partyNewMember",
-			},
+				type: "partyNewMember"
+			}
 		};
 
 		// Envía la notificación
@@ -296,10 +296,10 @@ export class NotificationsService {
 	async sendGroupJoinAcceptedNotification(userId: string, group) {
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
-			select: { expoPushToken: true, username: true },
+			select: { expoPushToken: true, username: true }
 		});
 		if (user === null) return;
-		const pushTokens: string[] = group.moderators.map((moderator) => moderator.expoPushToken);
+		const pushTokens: string[] = group.moderators.map(moderator => moderator.expoPushToken);
 		const userMessage: ExpoPushMessage = {
 			to: [user.expoPushToken, ...pushTokens],
 			sound: "default",
@@ -309,10 +309,10 @@ export class NotificationsService {
 			data: {
 				url: `/feed/group/${group.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					groupId: group.id,
+					groupId: group.id
 				},
-				type: "groupNewMember",
-			},
+				type: "groupNewMember"
+			}
 		};
 		const modMessage: ExpoPushMessage = {
 			to: [user.expoPushToken, ...pushTokens],
@@ -323,10 +323,10 @@ export class NotificationsService {
 			data: {
 				url: `/feed/group/${group.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
-					groupId: group.id,
+					groupId: group.id
 				},
-				type: "groupNewMember",
-			},
+				type: "groupNewMember"
+			}
 		};
 
 		try {

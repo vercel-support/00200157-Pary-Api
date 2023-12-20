@@ -1,4 +1,4 @@
-import {FileFieldsInterceptor, MemoryStorageFile, UploadedFiles} from "@blazity/nest-file-fastify";
+import { FileFieldsInterceptor, MemoryStorageFile, UploadedFiles } from "@blazity/nest-file-fastify";
 import {
 	Body,
 	Controller,
@@ -12,18 +12,18 @@ import {
 	UseGuards,
 	UseInterceptors,
 	UsePipes,
-	ValidationPipe,
+	ValidationPipe
 } from "@nestjs/common";
-import {ApiBearerAuth, ApiConsumes, ApiTags} from "@nestjs/swagger";
-import {Location} from "@prisma/client";
-import {UploadGuard} from "app/src/guard/upload.guard";
-import {File} from "../../decorators/file.decorator";
-import {SearchDto} from "../../feed/dto/Search.dto";
-import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
-import {UploadImageDto} from "../../party/dto/UploadImageDto";
-import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
-import {UpdateUser} from "../dto/UpdateUser";
-import {UserService} from "../services/user.service";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { Location } from "@prisma/client";
+import { UploadGuard } from "app/src/guard/upload.guard";
+import { File } from "../../decorators/file.decorator";
+import { SearchDto } from "../../feed/dto/Search.dto";
+import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
+import { UploadImageDto } from "../../party/dto/UploadImageDto";
+import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
+import { UpdateUser } from "../dto/UpdateUser";
+import { UserService } from "../services/user.service";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -36,8 +36,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async checkUsername(@Param("username") username: string) {
 		if (!username) {
@@ -51,8 +51,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async updateUser(@Body() user: UpdateUser, @Req() request: any) {
 		return this.userService.updateUser(user, request.raw.decoded.id);
@@ -68,8 +68,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async uploadProfilePicture(@Body() uploadImageDto: UploadImageDto, @Req() request: any) {
 		return await this.userService.uploadProfilePicture(uploadImageDto, request.raw.decoded.id);
@@ -80,8 +80,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteProfilePicture(@Query() deleteUserProfilePictureDto: DeleteUserProfilePictureDto, @Req() request: any) {
 		return await this.userService.deleteProfilePicture(deleteUserProfilePictureDto, request.raw.decoded.id);
@@ -116,8 +116,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async searchUsers(@Query() searchDto: SearchDto) {
 		return await this.userService.searchUsers(searchDto);
@@ -127,7 +127,7 @@ export class UserController {
 	async getUserById(
 		@Param("id") id: string,
 		@Query("location") location: string,
-		@Query("expoPushToken") expoPushToken: string,
+		@Query("expoPushToken") expoPushToken: string
 	) {
 		if (!id) {
 			throw new NotFoundException("User not found");
@@ -155,7 +155,7 @@ export class UserController {
 		@UploadedFiles()
 		files: {
 			image?: MemoryStorageFile;
-		},
+		}
 	) {
 		return this.userService.uploadProfilePicture2(files.image[0], id);
 	}
@@ -167,7 +167,7 @@ export class UserController {
 		@UploadedFiles()
 		files: {
 			image?: MemoryStorageFile;
-		},
+		}
 	) {
 		return this.userService.uploadImage(files.image[0]);
 	}
@@ -192,8 +192,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async createConsumable(@Body() createConsumableItemDto: CreateConsumableDto, @Req() request: any) {
 		return this.userService.createConsumable(createConsumableItemDto, request.raw.decoded.id);
@@ -204,8 +204,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async updateConsumable(@Body() createConsumableItemDto: CreateConsumableDto, @Req() request: any) {
 		return this.userService.updateConsumable(createConsumableItemDto, request.raw.decoded.id);
@@ -224,8 +224,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async createConsumableItem(@Body() createConsumableItemDto: ConsumableItemDto, @Req() request: any) {
 		return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
@@ -236,8 +236,8 @@ export class UserController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async updateConsumableItem(@Body() createConsumableItemDto: ConsumableItemDto, @Req() request: any) {
 		return this.userService.updateConsumableItem(createConsumableItemDto, request.raw.decoded.id);

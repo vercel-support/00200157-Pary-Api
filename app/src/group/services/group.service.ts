@@ -13,7 +13,7 @@ export class GroupService {
 	constructor(
 		private prisma: PrismaService,
 		private utils: UtilsService,
-		private notifications: NotificationsService,
+		private notifications: NotificationsService
 	) {}
 
 	async createGroup(groupBody: CreateGroupDto, userId: string) {
@@ -25,8 +25,8 @@ export class GroupService {
 				name: true,
 				username: true,
 				socialMedia: true,
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!inviter) {
@@ -35,8 +35,8 @@ export class GroupService {
 
 		const userGroupsSize = await this.prisma.group.count({
 			where: {
-				leaderId: userId,
-			},
+				leaderId: userId
+			}
 		});
 
 		if (userGroupsSize >= 5) {
@@ -50,30 +50,30 @@ export class GroupService {
 				leaderId: userId,
 				ageRange,
 				private: isPrivate,
-				showInFeed,
-			},
+				showInFeed
+			}
 		});
 
 		await this.prisma.groupMember.create({
 			data: {
 				groupId: group.id,
-				userId,
-			},
+				userId
+			}
 		});
 
 		if (inviteUserNames) {
 			const users = await this.prisma.user.findMany({
 				where: {
 					username: {
-						in: inviteUserNames,
-					},
+						in: inviteUserNames
+					}
 				},
 				select: {
 					id: true,
 					username: true,
 					socialMedia: true,
-					expoPushToken: true,
-				},
+					expoPushToken: true
+				}
 			});
 
 			for (const user of users) {
@@ -82,8 +82,8 @@ export class GroupService {
 					data: {
 						groupId: group.id,
 						invitedUserId: user.id,
-						invitingUserId: userId,
-					},
+						invitingUserId: userId
+					}
 				});
 				if (response) {
 					this.notifications.sendGroupInviteNotification(user.expoPushToken, inviter, group.name, group.id);
@@ -99,15 +99,15 @@ export class GroupService {
 		const group = await this.prisma.group.update({
 			where: {
 				id,
-				leaderId: userId,
+				leaderId: userId
 			},
 			data: {
 				name,
 				description,
 				ageRange,
 				private: isPrivate,
-				showInFeed,
-			},
+				showInFeed
+			}
 		});
 
 		return group;
@@ -118,7 +118,7 @@ export class GroupService {
 		const skip = page * limit;
 		const groups = await this.prisma.group.findMany({
 			where: {
-				OR: [{ members: { some: { userId } } }, { leaderId: userId }, { moderators: { some: { userId } } }],
+				OR: [{ members: { some: { userId } } }, { leaderId: userId }, { moderators: { some: { userId } } }]
 			},
 			take: limit,
 			skip: skip,
@@ -136,16 +136,16 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
-						},
-					},
+								userType: true
+							}
+						}
+					}
 				},
 				leader: {
 					select: {
@@ -157,14 +157,14 @@ export class GroupService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
+						userType: true
+					}
 				},
 				moderators: {
 					include: {
@@ -178,24 +178,24 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
-						},
-					},
-				},
-			},
+								userType: true
+							}
+						}
+					}
+				}
+			}
 		});
 
 		const totalGroups = await this.prisma.group.count({
 			where: {
-				OR: [{ members: { some: { userId } } }, { leaderId: userId }, { moderators: { some: { userId } } }],
-			},
+				OR: [{ members: { some: { userId } } }, { leaderId: userId }, { moderators: { some: { userId } } }]
+			}
 		});
 
 		const hasNextPage = page * limit < totalGroups;
@@ -225,16 +225,16 @@ export class GroupService {
 													take: 1,
 													select: {
 														url: true,
-														id: true,
-													},
+														id: true
+													}
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
+												userType: true
+											}
+										}
+									}
 								},
 								leader: {
 									select: {
@@ -246,14 +246,14 @@ export class GroupService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
+										userType: true
+									}
 								},
 								moderators: {
 									include: {
@@ -267,22 +267,22 @@ export class GroupService {
 													take: 1,
 													select: {
 														url: true,
-														id: true,
-													},
+														id: true
+													}
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+												userType: true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 
 		const totalGroups = user.invitedGroups.length;
@@ -307,8 +307,8 @@ export class GroupService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						description: true,
 						birthDate: true,
@@ -318,13 +318,13 @@ export class GroupService {
 						verified: true,
 						location: {
 							select: {
-								name: true,
-							},
+								name: true
+							}
 						},
 						createdAt: true,
 						lastLogin: true,
-						isCompany: true,
-					},
+						isCompany: true
+					}
 				},
 				members: {
 					include: {
@@ -338,8 +338,8 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								description: true,
 								birthDate: true,
@@ -349,15 +349,15 @@ export class GroupService {
 								verified: true,
 								location: {
 									select: {
-										name: true,
-									},
+										name: true
+									}
 								},
 								createdAt: true,
 								lastLogin: true,
-								isCompany: true,
-							},
-						},
-					},
+								isCompany: true
+							}
+						}
+					}
 				},
 				moderators: {
 					include: {
@@ -371,8 +371,8 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								description: true,
 								birthDate: true,
@@ -382,15 +382,15 @@ export class GroupService {
 								verified: true,
 								location: {
 									select: {
-										name: true,
-									},
+										name: true
+									}
 								},
 								createdAt: true,
 								lastLogin: true,
-								isCompany: true,
-							},
-						},
-					},
+								isCompany: true
+							}
+						}
+					}
 				},
 				invitations: {
 					include: {
@@ -404,14 +404,14 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
+								userType: true
+							}
 						},
 						invitedUser: {
 							select: {
@@ -423,16 +423,16 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
-						},
-					},
+								userType: true
+							}
+						}
+					}
 				},
 				parties: {
 					select: {
@@ -446,8 +446,8 @@ export class GroupService {
 										latitude: true,
 										longitude: true,
 										timestamp: true,
-										address: true,
-									},
+										address: true
+									}
 								},
 								consumables: true,
 								covers: true,
@@ -458,13 +458,13 @@ export class GroupService {
 										name: true,
 										lastName: true,
 										profilePictures: {
-											take: 1,
+											take: 1
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
+										userType: true
+									}
 								},
 								members: {
 									select: {
@@ -476,15 +476,15 @@ export class GroupService {
 												name: true,
 												lastName: true,
 												profilePictures: {
-													take: 1,
+													take: 1
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
+												userType: true
+											}
+										}
+									}
 								},
 								moderators: {
 									select: {
@@ -496,21 +496,21 @@ export class GroupService {
 												name: true,
 												lastName: true,
 												profilePictures: {
-													take: 1,
+													take: 1
 												},
 												verified: true,
 												isCompany: true,
 												gender: true,
-												userType: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+												userType: true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 
 		return group;
@@ -520,8 +520,8 @@ export class GroupService {
 		const group = await this.prisma.group.findUnique({
 			where: { id: groupId },
 			select: {
-				leaderId: true,
-			},
+				leaderId: true
+			}
 		});
 
 		if (!group) {
@@ -533,7 +533,7 @@ export class GroupService {
 		}
 
 		await this.prisma.group.delete({
-			where: { id: groupId },
+			where: { id: groupId }
 		});
 
 		return true;
@@ -549,17 +549,17 @@ export class GroupService {
 				id: groupId,
 				OR: [
 					{
-						leaderId: userId,
+						leaderId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!hasPermissions) {
@@ -570,8 +570,8 @@ export class GroupService {
 			where: { username },
 			select: {
 				id: true,
-				expoPushToken: true,
-			},
+				expoPushToken: true
+			}
 		});
 
 		if (!invitedUser) {
@@ -586,18 +586,18 @@ export class GroupService {
 				name: true,
 				moderators: {
 					select: {
-						userId: true,
-					},
-				},
-			},
+						userId: true
+					}
+				}
+			}
 		});
 
 		const invitation = await this.prisma.groupInvitation.create({
 			data: {
 				groupId: groupId,
 				invitedUserId: invitedUser.id,
-				invitingUserId: userId,
-			},
+				invitingUserId: userId
+			}
 		});
 
 		const inviter = await this.prisma.user.findUnique({
@@ -605,8 +605,8 @@ export class GroupService {
 			select: {
 				username: true,
 				socialMedia: true,
-				name: true,
-			},
+				name: true
+			}
 		});
 
 		this.notifications.sendGroupInviteNotification(invitedUser.expoPushToken, inviter, group.name, group.id);
@@ -617,44 +617,44 @@ export class GroupService {
 		const invitation = await this.prisma.groupInvitation.findFirst({
 			where: {
 				groupId: groupId,
-				invitedUserId: userId,
-			},
+				invitedUserId: userId
+			}
 		});
 
 		if (invitation) {
 			await this.prisma.groupInvitation.update({
 				where: { id: invitation.id },
-				data: { status: "ACCEPTED" },
+				data: { status: "ACCEPTED" }
 			});
 		}
 
 		await this.prisma.groupMember.create({
 			data: {
 				groupId: groupId,
-				userId: userId,
-			},
+				userId: userId
+			}
 		});
 
 		const members = await this.prisma.group.findMany({
 			where: {
-				id: groupId,
+				id: groupId
 			},
 			select: {
 				members: {
 					select: {
 						user: {
 							select: {
-								expoPushToken: true,
-							},
-						},
-					},
-				},
-			},
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
 		});
 
 		if (members) {
-			const expoTokens = members.flatMap((member) =>
-				member.members.map((groupMember) => groupMember.user.expoPushToken),
+			const expoTokens = members.flatMap(member =>
+				member.members.map(groupMember => groupMember.user.expoPushToken)
 			);
 			this.notifications.sendNewGroupMemberNotification(expoTokens, userId, groupId);
 		}
@@ -666,26 +666,26 @@ export class GroupService {
 		const invitation = await this.prisma.groupInvitation.findFirst({
 			where: {
 				groupId: groupId,
-				invitedUserId: userId,
-			},
+				invitedUserId: userId
+			}
 		});
 
 		if (invitation) {
 			await this.prisma.groupInvitation.delete({
-				where: { id: invitation.id },
+				where: { id: invitation.id }
 			});
 		}
 
 		const joinRequest = await this.prisma.membershipRequest.findFirst({
 			where: {
 				groupId,
-				userId,
-			},
+				userId
+			}
 		});
 
 		if (joinRequest) {
 			await this.prisma.membershipRequest.delete({
-				where: { id: joinRequest.id },
+				where: { id: joinRequest.id }
 			});
 		}
 
@@ -700,17 +700,17 @@ export class GroupService {
 				id: groupId,
 				OR: [
 					{
-						leaderId: userId,
+						leaderId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!hasPermissions) {
@@ -720,8 +720,8 @@ export class GroupService {
 			where: { username },
 			select: {
 				id: true,
-				expoPushToken: true,
-			},
+				expoPushToken: true
+			}
 		});
 
 		if (!invitedUser) {
@@ -731,13 +731,13 @@ export class GroupService {
 		const invitation = await this.prisma.groupInvitation.findFirst({
 			where: {
 				groupId: groupId,
-				invitedUserId: invitedUser.id,
-			},
+				invitedUserId: invitedUser.id
+			}
 		});
 
 		if (invitation) {
 			return this.prisma.groupInvitation.delete({
-				where: { id: invitation.id },
+				where: { id: invitation.id }
 			});
 		}
 		return false;
@@ -751,28 +751,28 @@ export class GroupService {
 				id: groupId,
 				OR: [
 					{
-						leaderId: userId,
+						leaderId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
+								userId
+							}
+						}
+					}
+				]
 			},
 			include: {
 				moderators: {
 					select: {
 						user: {
 							select: {
-								expoPushToken: true,
-							},
-						},
-					},
-				},
-			},
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
 		});
 		if (!group) {
 			throw new NotFoundException("Group not found");
@@ -780,8 +780,8 @@ export class GroupService {
 		const joinRequest = await this.prisma.membershipRequest.findFirst({
 			where: {
 				groupId,
-				userId: requesterUserId,
-			},
+				userId: requesterUserId
+			}
 		});
 
 		if (!joinRequest) {
@@ -790,18 +790,18 @@ export class GroupService {
 
 		await this.prisma.membershipRequest.update({
 			where: {
-				id: joinRequest.id,
+				id: joinRequest.id
 			},
 			data: {
-				status: "ACCEPTED",
-			},
+				status: "ACCEPTED"
+			}
 		});
 
 		await this.prisma.groupMember.create({
 			data: {
 				groupId,
-				userId: requesterUserId,
-			},
+				userId: requesterUserId
+			}
 		});
 		this.notifications.sendGroupJoinAcceptedNotification(requesterUserId, group);
 
@@ -813,8 +813,8 @@ export class GroupService {
 
 		const group = await this.prisma.group.findUnique({
 			where: {
-				id: groupId,
-			},
+				id: groupId
+			}
 		});
 		if (!group) {
 			throw new NotFoundException("Group not found");
@@ -825,14 +825,14 @@ export class GroupService {
 				groupId,
 				OR: [
 					{
-						userId: requesterUserId,
+						userId: requesterUserId
 					},
 					{
-						groupId,
-					},
+						groupId
+					}
 				],
-				status: "PENDING",
-			},
+				status: "PENDING"
+			}
 		});
 
 		if (!joinRequest) {
@@ -843,18 +843,18 @@ export class GroupService {
 		}
 		await this.prisma.membershipRequest.update({
 			where: {
-				id: joinRequest.id,
+				id: joinRequest.id
 			},
 			data: {
-				status: "DECLINED",
-			},
+				status: "DECLINED"
+			}
 		});
 		return true;
 	}
 
 	async leaveGroup(groupId: string, userId: string) {
 		const group = await this.prisma.group.findUnique({
-			where: { id: groupId },
+			where: { id: groupId }
 		});
 
 		if (!group) {
@@ -865,21 +865,21 @@ export class GroupService {
 		if (group.leaderId === userId) {
 			// Delete all group invitations related to this group
 			await this.prisma.groupInvitation.deleteMany({
-				where: { groupId: groupId },
+				where: { groupId: groupId }
 			});
 
 			// Delete all group members
 			await this.prisma.groupMember.deleteMany({
-				where: { groupId: groupId },
+				where: { groupId: groupId }
 			});
 
 			await this.prisma.partyGroup.deleteMany({
-				where: { groupId: groupId },
+				where: { groupId: groupId }
 			});
 
 			// Delete the group itself
 			await this.prisma.group.delete({
-				where: { id: groupId },
+				where: { id: groupId }
 			});
 
 			return true;
@@ -888,8 +888,8 @@ export class GroupService {
 		const isMember = await this.prisma.groupMember.findFirst({
 			where: {
 				groupId: groupId,
-				userId,
-			},
+				userId
+			}
 		});
 
 		if (!isMember) {
@@ -900,8 +900,8 @@ export class GroupService {
 		await this.prisma.groupInvitation.deleteMany({
 			where: {
 				groupId: groupId,
-				OR: [{ invitedUserId: userId }, { invitingUserId: userId }],
-			},
+				OR: [{ invitedUserId: userId }, { invitingUserId: userId }]
+			}
 		});
 
 		// Remove the user from the group
@@ -909,9 +909,9 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					groupId: groupId,
-					userId,
-				},
-			},
+					userId
+				}
+			}
 		});
 
 		return true;
@@ -924,20 +924,20 @@ export class GroupService {
 				OR: [
 					{
 						group: {
-							leaderId: userId,
-						},
+							leaderId: userId
+						}
 					},
 					{
 						group: {
 							moderators: {
 								some: {
-									userId: userId,
-								},
-							},
-						},
-					},
+									userId: userId
+								}
+							}
+						}
+					}
 				],
-				status: "PENDING",
+				status: "PENDING"
 			},
 			include: {
 				group: {
@@ -952,8 +952,8 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								description: true,
 								birthDate: true,
@@ -963,13 +963,13 @@ export class GroupService {
 								verified: true,
 								location: {
 									select: {
-										name: true,
-									},
+										name: true
+									}
 								},
 								createdAt: true,
 								lastLogin: true,
-								isCompany: true,
-							},
+								isCompany: true
+							}
 						},
 						members: {
 							include: {
@@ -983,8 +983,8 @@ export class GroupService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										description: true,
 										birthDate: true,
@@ -994,15 +994,15 @@ export class GroupService {
 										verified: true,
 										location: {
 											select: {
-												name: true,
-											},
+												name: true
+											}
 										},
 										createdAt: true,
 										lastLogin: true,
-										isCompany: true,
-									},
-								},
-							},
+										isCompany: true
+									}
+								}
+							}
 						},
 						moderators: {
 							include: {
@@ -1016,8 +1016,8 @@ export class GroupService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										description: true,
 										birthDate: true,
@@ -1027,17 +1027,17 @@ export class GroupService {
 										verified: true,
 										location: {
 											select: {
-												name: true,
-											},
+												name: true
+											}
 										},
 										createdAt: true,
 										lastLogin: true,
-										isCompany: true,
-									},
-								},
-							},
-						},
-					},
+										isCompany: true
+									}
+								}
+							}
+						}
+					}
 				},
 				user: {
 					select: {
@@ -1049,16 +1049,16 @@ export class GroupService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
-				},
-			},
+						userType: true
+					}
+				}
+			}
 		});
 	}
 
@@ -1068,20 +1068,20 @@ export class GroupService {
 				OR: [
 					{
 						group: {
-							leaderId: userId,
-						},
+							leaderId: userId
+						}
 					},
 					{
 						group: {
 							moderators: {
 								some: {
-									userId: userId,
-								},
-							},
-						},
-					},
+									userId: userId
+								}
+							}
+						}
+					}
 				],
-				status: "PENDING",
+				status: "PENDING"
 			},
 			include: {
 				user: {
@@ -1094,14 +1094,14 @@ export class GroupService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
+						userType: true
+					}
 				},
 				group: {
 					select: {
@@ -1115,14 +1115,14 @@ export class GroupService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
+								userType: true
+							}
 						},
 						members: {
 							include: {
@@ -1136,16 +1136,16 @@ export class GroupService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
+										userType: true
+									}
+								}
+							}
 						},
 						moderators: {
 							include: {
@@ -1159,27 +1159,27 @@ export class GroupService {
 											take: 1,
 											select: {
 												url: true,
-												id: true,
-											},
+												id: true
+											}
 										},
 										verified: true,
 										isCompany: true,
 										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-					},
-				},
-			},
+										userType: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		});
 	}
 
 	async requestJoin(groupId: string, userId: string) {
 		// Obtenemos la información del group.
 		const group = await this.prisma.group.findUnique({
-			where: { id: groupId },
+			where: { id: groupId }
 		});
 
 		if (!group) {
@@ -1191,9 +1191,9 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					userId,
-					groupId,
-				},
-			},
+					groupId
+				}
+			}
 		});
 
 		if (isUserMember) {
@@ -1206,8 +1206,8 @@ export class GroupService {
 			await this.prisma.groupMember.create({
 				data: {
 					groupId,
-					userId,
-				},
+					userId
+				}
 			});
 			return true;
 		}
@@ -1216,10 +1216,10 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					userId,
-					groupId,
+					groupId
 				},
-				status: "PENDING",
-			},
+				status: "PENDING"
+			}
 		});
 
 		if (existingRequest) {
@@ -1229,8 +1229,8 @@ export class GroupService {
 			data: {
 				userId,
 				groupId,
-				type: "SOLO",
-			},
+				type: "SOLO"
+			}
 		});
 
 		return true;
@@ -1244,17 +1244,17 @@ export class GroupService {
 				id: groupId,
 				OR: [
 					{
-						leaderId: userId,
+						leaderId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!group) {
@@ -1263,11 +1263,11 @@ export class GroupService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1279,9 +1279,9 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					userId: targetUser.id,
-					groupId,
-				},
-			},
+					groupId
+				}
+			}
 		});
 
 		if (!isUserMember) {
@@ -1293,16 +1293,16 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					userId: targetUser.id,
-					groupId,
-				},
-			},
+					groupId
+				}
+			}
 		});
 
 		await this.prisma.membershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
-				groupId,
-			},
+				groupId
+			}
 		});
 	}
 
@@ -1314,17 +1314,17 @@ export class GroupService {
 				id: groupId,
 				OR: [
 					{
-						leaderId: userId,
+						leaderId: userId
 					},
 					{
 						moderators: {
 							some: {
-								userId,
-							},
-						},
-					},
-				],
-			},
+								userId
+							}
+						}
+					}
+				]
+			}
 		});
 
 		if (!group) {
@@ -1333,11 +1333,11 @@ export class GroupService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1349,9 +1349,9 @@ export class GroupService {
 			where: {
 				userId_groupId: {
 					userId: targetUser.id,
-					groupId,
-				},
-			},
+					groupId
+				}
+			}
 		});
 
 		if (!isUserMember) {
@@ -1361,8 +1361,8 @@ export class GroupService {
 		await this.prisma.membershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
-				groupId,
-			},
+				groupId
+			}
 		});
 	}
 
@@ -1372,8 +1372,8 @@ export class GroupService {
 		const group = await this.prisma.group.findUnique({
 			where: {
 				id: groupId,
-				leaderId: userId,
-			},
+				leaderId: userId
+			}
 		});
 
 		if (!group) {
@@ -1382,11 +1382,11 @@ export class GroupService {
 
 		const targetUser = await this.prisma.user.findUnique({
 			where: {
-				username,
+				username
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		});
 
 		if (!targetUser) {
@@ -1397,8 +1397,8 @@ export class GroupService {
 		const isUserMember = await this.prisma.userGroupModerator.create({
 			data: {
 				userId: targetUser.id,
-				groupId,
-			},
+				groupId
+			}
 		});
 
 		if (!isUserMember) {

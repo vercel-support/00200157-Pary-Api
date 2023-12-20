@@ -1,38 +1,38 @@
-import {randomUUID} from "crypto";
-import {MemoryStorageFile} from "@blazity/nest-file-fastify";
-import {MultipartFile} from "@fastify/multipart";
-import {Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
-import {Location} from "@prisma/client";
-import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
-import {del, put} from "@vercel/blob";
-import {UpdateUser} from "app/src/user/dto/UpdateUser";
-import {PrismaService} from "../../db/services/prisma.service";
-import {SearchDto} from "../../feed/dto/Search.dto";
-import {NotificationsService} from "../../notifications/services/notifications.service";
-import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
-import {UploadImageDto} from "../../party/dto/UploadImageDto";
-import {UtilsService} from "../../utils/services/utils.service";
-import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
+import { randomUUID } from "crypto";
+import { MemoryStorageFile } from "@blazity/nest-file-fastify";
+import { MultipartFile } from "@fastify/multipart";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Location } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { del, put } from "@vercel/blob";
+import { UpdateUser } from "app/src/user/dto/UpdateUser";
+import { PrismaService } from "../../db/services/prisma.service";
+import { SearchDto } from "../../feed/dto/Search.dto";
+import { NotificationsService } from "../../notifications/services/notifications.service";
+import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
+import { UploadImageDto } from "../../party/dto/UploadImageDto";
+import { UtilsService } from "../../utils/services/utils.service";
+import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 
 @Injectable()
 export class UserService {
 	constructor(
 		private prisma: PrismaService,
 		private utils: UtilsService,
-		private notifications: NotificationsService,
+		private notifications: NotificationsService
 	) {}
 
 	async checkUsername(username: string) {
 		return this.prisma.user
 			.findUnique({
 				where: {
-					username,
+					username
 				},
 				select: {
-					username: true,
-				},
+					username: true
+				}
 			})
-			.then((user) => {
+			.then(user => {
 				return !user;
 			});
 	}
@@ -50,19 +50,19 @@ export class UserService {
 			location,
 			isCompany,
 			expoPushToken,
-			socialMedia,
+			socialMedia
 		} = user;
 		await this.prisma.location.update({
 			where: {
-				id: location.id,
+				id: location.id
 			},
 			data: {
 				latitude: location.latitude,
 				longitude: location.longitude,
 				name: location.name,
 				timestamp: location.timestamp,
-				address: location.address,
-			},
+				address: location.address
+			}
 		});
 		return this.prisma.user
 			.update({
@@ -79,11 +79,11 @@ export class UserService {
 					phoneNumber,
 					isCompany,
 					expoPushToken: expoPushToken ?? "",
-					socialMedia,
+					socialMedia
 				},
-				include: this.utils.getUserFields(),
+				include: this.utils.getUserFields()
 			})
-			.catch((error) => {
+			.catch(error => {
 				if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
 					throw new InternalServerErrorException("El nombre de usuario ya está en uso.");
 				}
@@ -109,8 +109,8 @@ export class UserService {
 					verified: true,
 					location: {
 						select: {
-							name: true,
-						},
+							name: true
+						}
 					},
 					createdAt: true,
 					lastLogin: true,
@@ -129,8 +129,8 @@ export class UserService {
 											latitude: true,
 											longitude: true,
 											timestamp: true,
-											address: true,
-										},
+											address: true
+										}
 									},
 									consumables: true,
 									covers: true,
@@ -144,18 +144,18 @@ export class UserService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
-									},
-								},
-							},
-						},
+											userType: true
+										}
+									}
+								}
+							}
+						}
 					},
 					invitedParties: {
 						select: {
@@ -167,12 +167,12 @@ export class UserService {
 									owner: {
 										select: {
 											username: true,
-											socialMedia: true,
-										},
-									},
-								},
-							},
-						},
+											socialMedia: true
+										}
+									}
+								}
+							}
+						}
 					},
 					invitingParties: {
 						select: {
@@ -184,27 +184,27 @@ export class UserService {
 									owner: {
 										select: {
 											username: true,
-											socialMedia: true,
-										},
-									},
-								},
-							},
-						},
+											socialMedia: true
+										}
+									}
+								}
+							}
+						}
 					},
 					ownedParties: {
 						select: {
-							id: true,
-						},
+							id: true
+						}
 					},
 					partiesModerating: {
 						select: {
-							partyId: true,
-						},
+							partyId: true
+						}
 					},
 					groupsModerating: {
 						select: {
-							groupId: true,
-						},
+							groupId: true
+						}
 					},
 					groups: {
 						select: {
@@ -221,14 +221,14 @@ export class UserService {
 												take: 1,
 												select: {
 													url: true,
-													id: true,
-												},
+													id: true
+												}
 											},
 											verified: true,
 											isCompany: true,
 											gender: true,
-											userType: true,
-										},
+											userType: true
+										}
 									},
 									members: {
 										select: {
@@ -242,20 +242,20 @@ export class UserService {
 														take: 1,
 														select: {
 															url: true,
-															id: true,
-														},
+															id: true
+														}
 													},
 													verified: true,
 													isCompany: true,
 													gender: true,
-													userType: true,
-												},
-											},
-										},
-									},
-								},
-							},
-						},
+													userType: true
+												}
+											}
+										}
+									}
+								}
+							}
+						}
 					},
 					invitedGroups: {
 						select: {
@@ -264,10 +264,10 @@ export class UserService {
 								select: {
 									name: true,
 									description: true,
-									leaderId: true,
-								},
-							},
-						},
+									leaderId: true
+								}
+							}
+						}
 					},
 					invitingGroups: {
 						select: {
@@ -276,12 +276,12 @@ export class UserService {
 								select: {
 									name: true,
 									description: true,
-									leaderId: true,
-								},
-							},
-						},
-					},
-				},
+									leaderId: true
+								}
+							}
+						}
+					}
+				}
 			})
 			.catch(() => {
 				throw new InternalServerErrorException("Error fetching user data.");
@@ -299,7 +299,7 @@ export class UserService {
 		const uploadImageToVercel = async (retry = true) => {
 			try {
 				const { url } = await put(`profile-picture-${randomUUID()}.${fileType}`, imageBuffer, {
-					access: "public",
+					access: "public"
 				});
 
 				if (!url || url === "") {
@@ -312,27 +312,27 @@ export class UserService {
 							url,
 							user: {
 								connect: {
-									id: userId,
-								},
-							},
-						},
+									id: userId
+								}
+							}
+						}
 					})
 					.catch(() => {
 						throw new InternalServerErrorException("Error uploading image into the db.");
 					})
-					.then(async (profilePicture) => {
+					.then(async profilePicture => {
 						if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
 							const user = await this.prisma.user
 								.findUnique({
 									where: { id: userId },
 									select: {
-										profilePictures: true,
-									},
+										profilePictures: true
+									}
 								})
 								.catch(() => {
 									throw new InternalServerErrorException("Error updating user.");
 								})
-								.then((user) => user);
+								.then(user => user);
 
 							if (user && "profilePictures" in user && user.profilePictures) {
 								const profilePictures = [...user.profilePictures];
@@ -343,24 +343,24 @@ export class UserService {
 										where: { id: userId },
 										data: {
 											profilePictures: {
-												set: profilePictures,
-											},
+												set: profilePictures
+											}
 										},
 										include: {
-											profilePictures: true,
-										},
+											profilePictures: true
+										}
 									})
 									.catch(() => {
 										throw new InternalServerErrorException(
-											"Error al agregar la imagen al usuario.",
+											"Error al agregar la imagen al usuario."
 										);
 									})
-									.then(async (updatedUser) => {
+									.then(async updatedUser => {
 										if ("id" in updatedUser) {
 											return profilePicture;
 										}
 										throw new InternalServerErrorException(
-											"Error al obtener las imágenes del usuario 2.",
+											"Error al obtener las imágenes del usuario 2."
 										);
 									});
 							} else {
@@ -389,7 +389,7 @@ export class UserService {
 		const uploadImageToVercel = async (retry = true) => {
 			try {
 				const { url } = await put(`profile-picture-${randomUUID()}.${fileType}`, image.buffer, {
-					access: "public",
+					access: "public"
 				}).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
@@ -404,27 +404,27 @@ export class UserService {
 							url,
 							user: {
 								connect: {
-									id: userId,
-								},
-							},
-						},
+									id: userId
+								}
+							}
+						}
 					})
 					.catch(() => {
 						throw new InternalServerErrorException("Error uploading image into the db.");
 					})
-					.then(async (profilePicture) => {
+					.then(async profilePicture => {
 						if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
 							const user = await this.prisma.user
 								.findUnique({
 									where: { id: userId },
 									select: {
-										profilePictures: true,
-									},
+										profilePictures: true
+									}
 								})
 								.catch(() => {
 									throw new InternalServerErrorException("Error updating user.");
 								})
-								.then((user) => user);
+								.then(user => user);
 
 							if (user && "profilePictures" in user && user.profilePictures) {
 								const profilePictures = [...user.profilePictures];
@@ -435,24 +435,24 @@ export class UserService {
 										where: { id: userId },
 										data: {
 											profilePictures: {
-												set: profilePictures,
-											},
+												set: profilePictures
+											}
 										},
 										include: {
-											profilePictures: true,
-										},
+											profilePictures: true
+										}
 									})
 									.catch(() => {
 										throw new InternalServerErrorException(
-											"Error al agregar la imagen al usuario.",
+											"Error al agregar la imagen al usuario."
 										);
 									})
-									.then(async (updatedUser) => {
+									.then(async updatedUser => {
 										if ("id" in updatedUser) {
 											return profilePicture;
 										}
 										throw new InternalServerErrorException(
-											"Error al obtener las imágenes del usuario 2.",
+											"Error al obtener las imágenes del usuario 2."
 										);
 									});
 							} else {
@@ -481,7 +481,7 @@ export class UserService {
 		const uploadImageToVercel = async (retry = true) => {
 			try {
 				const { url } = await put(`random-picture-${randomUUID()}.${fileType}`, image.file, {
-					access: "public",
+					access: "public"
 				}).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
@@ -507,7 +507,7 @@ export class UserService {
 		const uploadImageToVercel = async (retry = true) => {
 			try {
 				const { url } = await put(`consumable-picture-${randomUUID()}.${fileType}`, image.file, {
-					access: "public",
+					access: "public"
 				}).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
@@ -530,8 +530,8 @@ export class UserService {
 		const consumable = await this.prisma.consumableItem.findFirst({
 			where: {
 				creatorId: userId,
-				id: consumableId,
-			},
+				id: consumableId
+			}
 		});
 		console.log("isOwnerOfConsumable", consumable);
 
@@ -554,8 +554,8 @@ export class UserService {
 		await this.prisma.profilePicture
 			.delete({
 				where: {
-					id,
-				},
+					id
+				}
 			})
 			.catch(() => {
 				throw new InternalServerErrorException("Error al eliminar la imagen de la base de datos.");
@@ -563,7 +563,7 @@ export class UserService {
 
 		return this.prisma.user.findUnique({
 			where: { id: userId },
-			include: this.utils.getUserFields(),
+			include: this.utils.getUserFields()
 		});
 	}
 
@@ -574,16 +574,16 @@ export class UserService {
 				id: true,
 				expoPushToken: true,
 				username: true,
-				socialMedia: true,
-			},
+				socialMedia: true
+			}
 		});
 
 		const followerUsername = await this.prisma.user.findUnique({
 			where: { id: followerUserId },
 			select: {
 				username: true,
-				socialMedia: true,
-			},
+				socialMedia: true
+			}
 		});
 
 		if (!followedUser) {
@@ -596,9 +596,9 @@ export class UserService {
 			where: {
 				followerUserId_followedUserId: {
 					followerUserId,
-					followedUserId,
-				},
-			},
+					followedUserId
+				}
+			}
 		});
 
 		if (existingRelation) {
@@ -612,8 +612,8 @@ export class UserService {
 					followedUserId,
 					followerUsername: followedUsername,
 					followedUsername: followerUsername?.username || "",
-					followDate: new Date(),
-				},
+					followDate: new Date()
+				}
 			})
 			.catch(() => {
 				throw new InternalServerErrorException("Error following user.");
@@ -626,7 +626,7 @@ export class UserService {
 
 	async unFollowUser(unFollowedUsername: string, followerUserId: string) {
 		const unFollowedUser = await this.prisma.user.findUnique({
-			where: { username: unFollowedUsername },
+			where: { username: unFollowedUsername }
 		});
 		if (!unFollowedUser) {
 			throw new NotFoundException("User not found.");
@@ -638,9 +638,9 @@ export class UserService {
 			where: {
 				followerUserId_followedUserId: {
 					followerUserId,
-					followedUserId,
-				},
-			},
+					followedUserId
+				}
+			}
 		});
 
 		if (!existingRelation) {
@@ -652,9 +652,9 @@ export class UserService {
 				where: {
 					followerUserId_followedUserId: {
 						followerUserId,
-						followedUserId,
-					},
-				},
+						followedUserId
+					}
+				}
 			})
 			.catch(() => {
 				throw new InternalServerErrorException("Error un following user.");
@@ -666,7 +666,7 @@ export class UserService {
 		return await this.prisma.user.findUnique({
 			where: {
 				signedIn: true,
-				username,
+				username
 			},
 			select: {
 				username: true,
@@ -677,8 +677,8 @@ export class UserService {
 					take: 1,
 					select: {
 						url: true,
-						id: true,
-					},
+						id: true
+					}
 				},
 				description: true,
 				birthDate: true,
@@ -688,13 +688,13 @@ export class UserService {
 				verified: true,
 				location: {
 					select: {
-						name: true,
-					},
+						name: true
+					}
 				},
 				createdAt: true,
 				lastLogin: true,
-				isCompany: true,
-			},
+				isCompany: true
+			}
 		});
 	}
 
@@ -709,8 +709,8 @@ export class UserService {
 				OR: [
 					{ username: { contains: search, mode: "insensitive" } },
 					{ name: { contains: search, mode: "insensitive" } },
-					{ lastName: { contains: search, mode: "insensitive" } },
-				],
+					{ lastName: { contains: search, mode: "insensitive" } }
+				]
 			},
 			orderBy: [{ isCompany: "desc" }, { verified: "desc" }, { username: "desc" }],
 			select: {
@@ -722,8 +722,8 @@ export class UserService {
 					take: 1,
 					select: {
 						url: true,
-						id: true,
-					},
+						id: true
+					}
 				},
 				description: true,
 				birthDate: true,
@@ -733,20 +733,20 @@ export class UserService {
 				verified: true,
 				location: {
 					select: {
-						name: true,
-					},
+						name: true
+					}
 				},
 				createdAt: true,
 				lastLogin: true,
-				isCompany: true,
-			},
+				isCompany: true
+			}
 		});
 	}
 
 	async getUserById(id: string) {
 		return this.prisma.user.findFirst({
 			where: { id },
-			include: this.utils.getUserFields(),
+			include: this.utils.getUserFields()
 		});
 	}
 
@@ -756,8 +756,8 @@ export class UserService {
 			include: {
 				profilePictures: true,
 				parties: true,
-				groups: true,
-			},
+				groups: true
+			}
 		});
 		if (!user) {
 			throw new NotFoundException("User not found");
@@ -823,22 +823,22 @@ export class UserService {
 	async updateAndGetUserById(id: string, location: Location, expoPushToken: string) {
 		await this.prisma.location.update({
 			where: {
-				id: location.id,
+				id: location.id
 			},
 			data: {
 				latitude: location.latitude,
 				longitude: location.longitude,
 				name: location.name,
 				timestamp: location.timestamp,
-				address: location.address,
-			},
+				address: location.address
+			}
 		});
 		return this.prisma.user.update({
 			where: { id },
 			data: {
-				expoPushToken,
+				expoPushToken
 			},
-			include: this.utils.getUserFields(),
+			include: this.utils.getUserFields()
 		});
 	}
 
@@ -855,23 +855,23 @@ export class UserService {
 				weightOrVolume,
 				creator: {
 					connect: {
-						id: userId,
-					},
+						id: userId
+					}
 				},
 				item: {
 					connectOrCreate: {
 						where: {
-							id: item.id,
+							id: item.id
 						},
 						create: {
 							name,
 							description,
 							pictureUrl,
-							type,
-						},
-					},
-				},
-			},
+							type
+						}
+					}
+				}
+			}
 		});
 	}
 
@@ -882,7 +882,7 @@ export class UserService {
 		return this.prisma.consumable.update({
 			where: {
 				id,
-				creatorId: userId,
+				creatorId: userId
 			},
 			data: {
 				brand,
@@ -892,21 +892,21 @@ export class UserService {
 				weightOrVolume,
 				item: {
 					connect: {
-						id: itemId,
-					},
-				},
-			},
+						id: itemId
+					}
+				}
+			}
 		});
 	}
 
 	async getConsumables(userId: string) {
 		return this.prisma.consumable.findMany({
 			include: {
-				item: true,
+				item: true
 			},
 			where: {
-				creatorId: userId,
-			},
+				creatorId: userId
+			}
 		});
 	}
 	async createConsumableItem(createConsumableItemDto: ConsumableItemDto, userId: string) {
@@ -915,14 +915,14 @@ export class UserService {
 			data: {
 				creator: {
 					connect: {
-						id: userId,
-					},
+						id: userId
+					}
 				},
 				name,
 				description,
 				pictureUrl,
-				type,
-			},
+				type
+			}
 		});
 	}
 
@@ -932,21 +932,21 @@ export class UserService {
 		return this.prisma.consumableItem.update({
 			where: {
 				id,
-				creatorId: userId,
+				creatorId: userId
 			},
 			data: {
 				name,
 				description,
 				pictureUrl,
-				type,
-			},
+				type
+			}
 		});
 	}
 	async getConsumableItems(userId: string) {
 		return this.prisma.consumableItem.findMany({
 			where: {
-				creatorId: userId,
-			},
+				creatorId: userId
+			}
 		});
 	}
 }

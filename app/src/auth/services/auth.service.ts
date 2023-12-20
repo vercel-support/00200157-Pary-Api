@@ -18,7 +18,7 @@ export class AuthService {
 		async function verify() {
 			const ticket = await client.verifyIdToken({
 				idToken,
-				audience: process.env.GOOGLE_AUTH_WEN_TOKEN,
+				audience: process.env.GOOGLE_AUTH_WEN_TOKEN
 			});
 			const payload = ticket.getPayload();
 			if (!payload) throw new InternalServerErrorException("Invalid access token.");
@@ -30,11 +30,11 @@ export class AuthService {
 
 		let user = (await this.prisma.user.findUnique({
 			where: {
-				assignedGoogleID: googleUser.user.id,
+				assignedGoogleID: googleUser.user.id
 			},
 			select: {
-				id: true,
-			},
+				id: true
+			}
 		})) as User;
 
 		if (!user) {
@@ -48,8 +48,8 @@ export class AuthService {
 					latitude: 0,
 					longitude: 0,
 					timestamp: new Date(),
-					address: "",
-				},
+					address: ""
+				}
 			});
 			user = await this.prisma.user.create({
 				data: {
@@ -62,11 +62,11 @@ export class AuthService {
 					createdAt: new Date(),
 					birthDate: new Date(),
 					socialMedia: {
-						instagram: "",
+						instagram: ""
 					},
-					locationId: userLocation.id,
+					locationId: userLocation.id
 				},
-				include: this.utils.getUserFields(),
+				include: this.utils.getUserFields()
 			});
 		}
 
@@ -78,9 +78,9 @@ export class AuthService {
 			data: {
 				accessToken,
 				refreshToken,
-				lastLogin: new Date(),
+				lastLogin: new Date()
 			},
-			include: this.utils.getUserFields(),
+			include: this.utils.getUserFields()
 		});
 
 		return user;
@@ -92,8 +92,8 @@ export class AuthService {
 			data: {
 				accessToken: "",
 				refreshToken: "",
-				expoPushToken: "",
-			},
+				expoPushToken: ""
+			}
 		});
 	}
 
@@ -104,9 +104,9 @@ export class AuthService {
 			where: { id: userId },
 			data: {
 				accessToken,
-				refreshToken,
+				refreshToken
 			},
-			include: this.utils.getUserFields(),
+			include: this.utils.getUserFields()
 		});
 
 		return user;

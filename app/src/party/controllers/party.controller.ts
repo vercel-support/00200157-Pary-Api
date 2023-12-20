@@ -20,8 +20,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async createParty(@Body() party: CreatePartyDto, @Req() request: any) {
 		return this.partyService.createParty(party, request.raw.decoded.id);
@@ -32,8 +32,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async updateParty(@Body() party: UpdatePartyDto, @Req() request: any) {
 		return this.partyService.updateParty(party, request.raw.decoded.id);
@@ -44,8 +44,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getOwnParties(@Query() paginationDto: PaginationDto, @Req() request: any) {
 		return this.partyService.getOwnParties(paginationDto, request.raw.decoded.id);
@@ -56,8 +56,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async uploadPartyImage(@Body() uploadImageDto: UploadImageDto) {
 		return this.partyService.uploadPartyImage(uploadImageDto);
@@ -68,8 +68,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async getInvitedParties(@Query() paginationDto: PaginationDto, @Req() request: any) {
 		return this.partyService.getInvitedParties(paginationDto, request.raw.decoded.id);
@@ -100,8 +100,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async inviteToGroup(@Param("partyId") partyId: string, @Body() inviteToPartyDto: UsernameDto, @Req() request: any) {
 		return await this.partyService.inviteToParty(partyId, inviteToPartyDto, request.raw.decoded.id);
@@ -112,13 +112,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async cancelInvitation(
 		@Param("partyId") partyId: string,
 		@Body() inviteToGroupDto: UsernameDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return await this.partyService.cancelInvitation(partyId, inviteToGroupDto, request.raw.decoded.id);
 	}
@@ -138,8 +138,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteMember(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.partyService.deleteMember(partyId, usernameDto, request.raw.decoded.id);
@@ -150,13 +150,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteGroupMember(
 		@Param("partyId") partyId: string,
 		@Body() groupIdDto: OptionalGroupIdDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.partyService.deleteGroupMember(partyId, groupIdDto, request.raw.decoded.id);
 	}
@@ -166,8 +166,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async deleteMod(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.partyService.deleteMod(partyId, usernameDto, request.raw.decoded.id);
@@ -178,13 +178,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async acceptJoinRequest(
 		@Param("partyId") partyId: string,
 		@Body() joinRequestDto: JoinRequestDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.partyService.acceptJoinRequest(partyId, request.raw.decoded.id, joinRequestDto);
 	}
@@ -194,13 +194,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async declineJoinRequest(
 		@Param("partyId") partyId: string,
 		@Body() joinRequestDto: JoinRequestDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.partyService.declineJoinRequest(partyId, request.raw.decoded.id, joinRequestDto);
 	}
@@ -210,8 +210,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async cancelJoinRequest(@Param("partyId") partyId: string, @Req() request: any) {
 		return this.partyService.cancelJoinRequest(partyId, request.raw.decoded.id);
@@ -222,13 +222,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async requestJoin(
 		@Param("partyId") partyId: string,
 		@Req() request: any,
-		@Body() optionalGroupIdDto: OptionalGroupIdDto,
+		@Body() optionalGroupIdDto: OptionalGroupIdDto
 	) {
 		return this.partyService.requestJoin(partyId, request.raw.decoded.id, optionalGroupIdDto);
 	}
@@ -238,13 +238,13 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async replacePartyImage(
 		@Param("partyId") partyId: string,
 		@Body() uploadImageDto: UploadImageDto,
-		@Req() request: any,
+		@Req() request: any
 	) {
 		return this.partyService.replacePartyImage(partyId, uploadImageDto, request.raw.decoded.id);
 	}
@@ -254,8 +254,8 @@ export class PartyController {
 		new ValidationPipe({
 			transform: true,
 			forbidNonWhitelisted: true,
-			disableErrorMessages: false,
-		}),
+			disableErrorMessages: false
+		})
 	)
 	async addMemberToModList(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.partyService.addMemberToModList(partyId, usernameDto, request.raw.decoded.id);

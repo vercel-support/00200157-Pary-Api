@@ -9,7 +9,7 @@ import { PartyController } from "./controllers/party.controller";
 @Module({
 	controllers: [PartyController],
 	providers: [PartyService],
-	imports: [PrismaModule, UtilsModule, NotificationsModule],
+	imports: [PrismaModule, UtilsModule, NotificationsModule]
 })
 export class PartyModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

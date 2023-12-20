@@ -6,6 +6,6 @@ import { ExpoService } from "./services/expo.service";
 @Module({
 	providers: [ExpoService],
 	exports: [ExpoService],
-	imports: [PrismaModule, UtilsModule],
+	imports: [PrismaModule, UtilsModule]
 })
 export class ExpoModule {}

@@ -1,6 +1,6 @@
-import {ConsumableType} from "@prisma/client";
-import {Type} from "class-transformer";
-import {IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min} from "class-validator";
+import { ConsumableType } from "@prisma/client";
+import { Type } from "class-transformer";
+import { IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min } from "class-validator";
 
 export class ConsumableItemDto {
 	@IsOptional()

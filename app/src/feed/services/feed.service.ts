@@ -14,7 +14,7 @@ export class FeedService {
 	constructor(
 		private prisma: PrismaService,
 		private utils: UtilsService,
-		private notifications: NotificationsService,
+		private notifications: NotificationsService
 	) {}
 
 	async search(searchDto: SearchDto, userId: string) {
@@ -24,8 +24,8 @@ export class FeedService {
 		const currentUser = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: {
-				location: true,
-			},
+				location: true
+			}
 		});
 
 		if (!currentUser) {
@@ -41,8 +41,8 @@ export class FeedService {
 					{ username: { contains: search, mode: "insensitive" } },
 					{ name: { contains: search, mode: "insensitive" } },
 					{ lastName: { contains: search, mode: "insensitive" } },
-					{ interests: { has: search } },
-				],
+					{ interests: { has: search } }
+				]
 			},
 			orderBy: [{ isCompany: "desc" }, { verified: "desc" }, { username: "desc" }, { userType: "desc" }],
 			select: {
@@ -54,8 +54,8 @@ export class FeedService {
 					take: 1,
 					select: {
 						url: true,
-						id: true,
-					},
+						id: true
+					}
 				},
 				verified: true,
 				isCompany: true,
@@ -66,8 +66,8 @@ export class FeedService {
 				interests: true,
 				location: true,
 				createdAt: true,
-				lastLogin: true,
-			},
+				lastLogin: true
+			}
 		});
 
 		const parties = await this.prisma.party.findMany({
@@ -78,27 +78,27 @@ export class FeedService {
 						owner: {
 							OR: [
 								{
-									username: { contains: search, mode: "insensitive" },
+									username: { contains: search, mode: "insensitive" }
 								},
 								{
-									name: { contains: search, mode: "insensitive" },
+									name: { contains: search, mode: "insensitive" }
 								},
 								{
-									lastName: { contains: search, mode: "insensitive" },
-								},
-							],
-						},
+									lastName: { contains: search, mode: "insensitive" }
+								}
+							]
+						}
 					},
 					{ tags: { has: search } },
 					{
 						location: {
-							name: { contains: search, mode: "insensitive" },
-						},
-					},
-				],
+							name: { contains: search, mode: "insensitive" }
+						}
+					}
+				]
 			},
 			include: PARTY_REQUEST,
-			orderBy: { advertisement: "desc" },
+			orderBy: { advertisement: "desc" }
 		});
 
 		const groups = await this.prisma.group.findMany({
@@ -109,18 +109,18 @@ export class FeedService {
 						leader: {
 							OR: [
 								{
-									username: { contains: search, mode: "insensitive" },
+									username: { contains: search, mode: "insensitive" }
 								},
 								{
-									name: { contains: search, mode: "insensitive" },
+									name: { contains: search, mode: "insensitive" }
 								},
 								{
-									lastName: { contains: search, mode: "insensitive" },
-								},
-							],
-						},
-					},
-				],
+									lastName: { contains: search, mode: "insensitive" }
+								}
+							]
+						}
+					}
+				]
 			},
 			include: {
 				members: {
@@ -135,16 +135,16 @@ export class FeedService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
-						},
-					},
+								userType: true
+							}
+						}
+					}
 				},
 				leader: {
 					select: {
@@ -156,14 +156,14 @@ export class FeedService {
 							take: 1,
 							select: {
 								url: true,
-								id: true,
-							},
+								id: true
+							}
 						},
 						verified: true,
 						isCompany: true,
 						gender: true,
-						userType: true,
-					},
+						userType: true
+					}
 				},
 				moderators: {
 					include: {
@@ -177,25 +177,25 @@ export class FeedService {
 									take: 1,
 									select: {
 										url: true,
-										id: true,
-									},
+										id: true
+									}
 								},
 								verified: true,
 								isCompany: true,
 								gender: true,
-								userType: true,
-							},
-						},
-					},
-				},
-			},
+								userType: true
+							}
+						}
+					}
+				}
+			}
 		});
 
 		const partiesToReturn = await Promise.all(
-			parties.map(async (party) => {
+			parties.map(async party => {
 				party.distance = this.utils.haversineDistance(currentUser.location, party.location);
 				return party;
-			}),
+			})
 		);
 
 		return { users, parties: partiesToReturn, groups };
@@ -217,17 +217,17 @@ export class FeedService {
 				interests: true,
 				followingUserList: {
 					select: {
-						followedUserId: true,
-					},
-				},
-			},
+						followedUserId: true
+					}
+				}
+			}
 		});
 
 		if (!currentUser) {
 			throw new NotFoundException("User not found.");
 		}
 
-		const followedUsers = currentUser.followingUserList.map((follow) => follow.followedUserId);
+		const followedUsers = currentUser.followingUserList.map(follow => follow.followedUserId);
 		const currentDateTime = new Date();
 
 		/*if (showGroups) {
@@ -321,7 +321,7 @@ export class FeedService {
 
 		const queryFilters = {
 			date: { gte: currentDateTime },
-			active: true,
+			active: true
 		};
 
 		const totalParties = await this.prisma.party.count({ where: queryFilters });
@@ -332,11 +332,11 @@ export class FeedService {
 				take: partyLimit,
 				orderBy: [{ date: "asc" }],
 				where: queryFilters,
-				include: PARTY_REQUEST,
+				include: PARTY_REQUEST
 			});
 
 			const partiesToReturn = await Promise.all(
-				parties.map(async (party) => {
+				parties.map(async party => {
 					const distance = this.utils.haversineDistance(currentUser.location, party.location);
 
 					let relevanceScore = 0;
@@ -345,22 +345,22 @@ export class FeedService {
 					}
 
 					if (followedUsers.includes(party.ownerId)) relevanceScore++;
-					if (party.members.some((member) => followedUsers.includes(member.userId))) relevanceScore++;
+					if (party.members.some(member => followedUsers.includes(member.userId))) relevanceScore++;
 
 					return { ...party, distance, relevanceScore };
-				}),
+				})
 			);
 
 			foundedParties.push(
 				...partiesToReturn
-					.filter((party) => {
+					.filter(party => {
 						return (
 							party && party.distance <= distanceLimit /*&&
                             party.ageRange.min >= minAge &&
                             party.ageRange.max <= maxAge*/
 						);
 					})
-					.sort((a, b) => b?.relevanceScore - a?.relevanceScore),
+					.sort((a, b) => b?.relevanceScore - a?.relevanceScore)
 			);
 			partyPage++;
 		}
@@ -370,7 +370,7 @@ export class FeedService {
 			partyPage,
 			groupPage,
 			reachedMaxPartiesInDB: partyPage * partyLimit >= totalParties,
-			reachedMaxGroupsInDB: groupPage * groupLimit >= totalGroups,
+			reachedMaxGroupsInDB: groupPage * groupLimit >= totalGroups
 		};
 	}
 
@@ -380,21 +380,21 @@ export class FeedService {
 		const user = await this.prisma.user.findUnique({
 			where: { username: username },
 			select: {
-				followerUserList: true,
-			},
+				followerUserList: true
+			}
 		});
 		if (user === null) {
 			throw new NotFoundException("User not found.");
 		}
-		const followers = user?.followerUserList.map((follower) => follower.followerUserId);
+		const followers = user?.followerUserList.map(follower => follower.followerUserId);
 
 		return await this.prisma.user.findMany({
 			take: limit,
 			skip,
 			where: {
 				id: {
-					in: followers,
-				},
+					in: followers
+				}
 			},
 			select: {
 				username: true,
@@ -405,14 +405,14 @@ export class FeedService {
 				profilePictures: {
 					take: 1,
 					select: {
-						url: true,
-					},
+						url: true
+					}
 				},
 				verified: true,
 				isCompany: true,
 				gender: true,
-				userType: true,
-			},
+				userType: true
+			}
 		});
 	}
 
@@ -422,21 +422,21 @@ export class FeedService {
 		const user = await this.prisma.user.findUnique({
 			where: { username: username },
 			select: {
-				followingUserList: true,
-			},
+				followingUserList: true
+			}
 		});
 		if (user === null) {
 			throw new NotFoundException("User not found.");
 		}
-		const followers = user?.followingUserList.map((follower) => follower.followedUserId);
+		const followers = user?.followingUserList.map(follower => follower.followedUserId);
 
 		return await this.prisma.user.findMany({
 			take: limit,
 			skip,
 			where: {
 				id: {
-					in: followers,
-				},
+					in: followers
+				}
 			},
 			select: {
 				username: true,
@@ -447,14 +447,14 @@ export class FeedService {
 				profilePictures: {
 					take: 1,
 					select: {
-						url: true,
-					},
+						url: true
+					}
 				},
 				verified: true,
 				isCompany: true,
 				gender: true,
-				userType: true,
-			},
+				userType: true
+			}
 		});
 	}
 }

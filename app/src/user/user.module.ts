@@ -9,7 +9,7 @@ import { UserController } from "./controllers/user.controller";
 @Module({
 	controllers: [UserController],
 	providers: [UserService],
-	imports: [PrismaModule, UtilsModule, NotificationsModule],
+	imports: [PrismaModule, UtilsModule, NotificationsModule]
 })
 export class UserModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
