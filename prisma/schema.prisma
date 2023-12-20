@@ -49,8 +49,21 @@ model User {
   // Variables de empresa
   consumables        Consumable[]         @relation("UserToConsumable")
   consumableItems    ConsumableItem[]     @relation("UserToConsumableItem")
+  staffs             UserStaff[]          @relation("UserToStaff")
+  userStaff          UserStaff[]          @relation("StaffToUser")
 
   @@index([username, email, assignedGoogleID])
+}
+
+model UserStaff {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @map("userId") @db.ObjectId
+  staffId   String   @map("staffId") @db.ObjectId
+  user      User     @relation("UserToStaff", fields: [userId], references: [id])
+  staff     User     @relation("StaffToUser", fields: [staffId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, staffId])
 }
 
 enum Gender {

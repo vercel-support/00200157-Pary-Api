@@ -284,4 +284,14 @@ export const PARTY_REQUEST = {
 			},
 		},
 	},
+	consumables: {
+		include: {
+			item: true,
+		},
+	},
+	covers: {
+		include: {
+			item: true,
+		},
+	},
 };

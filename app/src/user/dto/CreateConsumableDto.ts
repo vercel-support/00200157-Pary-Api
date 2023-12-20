@@ -1,9 +1,8 @@
-import { Optional } from "@nestjs/common";
-import { ConsumableType } from "@prisma/client";
-import { Type } from "class-transformer";
-import { IsArray, IsDate, IsInt, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Min } from "class-validator";
+import {ConsumableType} from "@prisma/client";
+import {Type} from "class-transformer";
+import {IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min} from "class-validator";
 
-class ConsumableItemDto {
+export class ConsumableItemDto {
 	@IsOptional()
 	@IsString()
 	id: string;
@@ -18,7 +17,7 @@ class ConsumableItemDto {
 	type: ConsumableType;
 }
 
-export class CreateConsumableItemDto {
+export class CreateConsumableDto {
 	@IsOptional()
 	@IsString()
 	id: string;

@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { Location } from "app/types";
+import {Injectable} from "@nestjs/common";
+import {Location} from "app/types";
 
 @Injectable()
 export class UtilsService {
@@ -57,8 +57,16 @@ export class UtilsService {
 									address: true,
 								},
 							},
-							consumables: true,
-							covers: true,
+							consumables: {
+								include: {
+									item: true,
+								},
+							},
+							covers: {
+								include: {
+									item: true,
+								},
+							},
 							owner: {
 								select: {
 									username: true,
@@ -150,8 +158,16 @@ export class UtilsService {
 									address: true,
 								},
 							},
-							consumables: true,
-							covers: true,
+							consumables: {
+								include: {
+									item: true,
+								},
+							},
+							covers: {
+								include: {
+									item: true,
+								},
+							},
 							date: true,
 							owner: {
 								select: {
@@ -219,8 +235,16 @@ export class UtilsService {
 									address: true,
 								},
 							},
-							consumables: true,
-							covers: true,
+							consumables: {
+								include: {
+									item: true,
+								},
+							},
+							covers: {
+								include: {
+									item: true,
+								},
+							},
 							date: true,
 							owner: {
 								select: {
@@ -350,8 +374,16 @@ export class UtilsService {
 									address: true,
 								},
 							},
-							consumables: true,
-							covers: true,
+							consumables: {
+								include: {
+									item: true,
+								},
+							},
+							covers: {
+								include: {
+									item: true,
+								},
+							},
 							date: true,
 							owner: {
 								select: {
@@ -541,8 +573,16 @@ export class UtilsService {
 													address: true,
 												},
 											},
-											consumables: true,
-											covers: true,
+											consumables: {
+												include: {
+													item: true,
+												},
+											},
+											covers: {
+												include: {
+													item: true,
+												},
+											},
 											owner: {
 												select: {
 													username: true,
@@ -856,8 +896,16 @@ export class UtilsService {
 									address: true,
 								},
 							},
-							consumables: true,
-							covers: true,
+							consumables: {
+								include: {
+									item: true,
+								},
+							},
+							covers: {
+								include: {
+									item: true,
+								},
+							},
 							date: true,
 							owner: {
 								select: {

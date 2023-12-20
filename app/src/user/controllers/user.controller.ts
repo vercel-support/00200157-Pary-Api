@@ -1,4 +1,4 @@
-import { FileFieldsInterceptor, MemoryStorageFile, UploadedFiles } from "@blazity/nest-file-fastify";
+import {FileFieldsInterceptor, MemoryStorageFile, UploadedFiles} from "@blazity/nest-file-fastify";
 import {
 	Body,
 	Controller,
@@ -14,17 +14,16 @@ import {
 	UsePipes,
 	ValidationPipe,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { Location } from "@prisma/client";
-import { UploadGuard } from "app/src/guard/upload.guard";
-import { File } from "../../decorators/file.decorator";
-import { SearchDto } from "../../feed/dto/Search.dto";
-import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
-import { UploadImageDto } from "../../party/dto/UploadImageDto";
-import { CreateConsumableItemDto } from "../dto/CreateConsumableItem.dto";
-import { UpdateUser } from "../dto/UpdateUser";
-import { UserService } from "../services/user.service";
-import { RemoveConsumableImageDto } from "../dto/RemoveConsumableImage.dto";
+import {ApiBearerAuth, ApiConsumes, ApiTags} from "@nestjs/swagger";
+import {Location} from "@prisma/client";
+import {UploadGuard} from "app/src/guard/upload.guard";
+import {File} from "../../decorators/file.decorator";
+import {SearchDto} from "../../feed/dto/Search.dto";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
+import {UpdateUser} from "../dto/UpdateUser";
+import {UserService} from "../services/user.service";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -180,11 +179,12 @@ export class UserController {
 		return await this.userService.uploadConsumablemage(file);
 	}
 
-	@Delete("remove-consumable-image")
-	@UseGuards(UploadGuard)
-	async deleteConsumableImage(@Param() removeConsumableImageDto: RemoveConsumableImageDto, @Req() request: any) {
-		console.log(removeConsumableImageDto);
-		return await this.userService.removeConsumableImage(removeConsumableImageDto, request.raw.decoded.id);
+	@Delete("/remove-consumable-image/:consumableId")
+	async deleteConsumableImage(@Param("consumableId") consumableId: string, @Req() request: any) {
+		if (!consumableId) {
+			throw new NotFoundException("consumableId not found");
+		}
+		return await this.userService.removeConsumableImage(consumableId, request.raw.decoded.id);
 	}
 
 	@Post("create-consumable")
@@ -195,8 +195,8 @@ export class UserController {
 			disableErrorMessages: false,
 		}),
 	)
-	async createConsumableItem(@Body() createConsumableItemDto: CreateConsumableItemDto, @Req() request: any) {
-		return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
+	async createConsumable(@Body() createConsumableItemDto: CreateConsumableDto, @Req() request: any) {
+		return this.userService.createConsumable(createConsumableItemDto, request.raw.decoded.id);
 	}
 
 	@Post("update-consumable")
@@ -207,12 +207,39 @@ export class UserController {
 			disableErrorMessages: false,
 		}),
 	)
-	async updateConsumableItem(@Body() createConsumableItemDto: CreateConsumableItemDto, @Req() request: any) {
-		return this.userService.updateConsumableItem(createConsumableItemDto, request.raw.decoded.id);
+	async updateConsumable(@Body() createConsumableItemDto: CreateConsumableDto, @Req() request: any) {
+		return this.userService.updateConsumable(createConsumableItemDto, request.raw.decoded.id);
 	}
 
 	@Get("consumables")
 	async getConsumables(@Req() request: any) {
 		return this.userService.getConsumables(request.raw.decoded.id);
+	}
+	@Get("consumable-items")
+	async getConsumableItems(@Req() request: any) {
+		return this.userService.getConsumableItems(request.raw.decoded.id);
+	}
+	@Post("create-consumable-item")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false,
+		}),
+	)
+	async createConsumableItem(@Body() createConsumableItemDto: ConsumableItemDto, @Req() request: any) {
+		return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
+	}
+
+	@Post("update-consumable-item")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false,
+		}),
+	)
+	async updateConsumableItem(@Body() createConsumableItemDto: ConsumableItemDto, @Req() request: any) {
+		return this.userService.updateConsumableItem(createConsumableItemDto, request.raw.decoded.id);
 	}
 }

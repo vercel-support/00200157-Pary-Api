@@ -1,19 +1,18 @@
-import { randomUUID } from "crypto";
-import { MemoryStorageFile } from "@blazity/nest-file-fastify";
-import { MultipartFile } from "@fastify/multipart";
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { Location } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { del, put } from "@vercel/blob";
-import { UpdateUser } from "app/src/user/dto/UpdateUser";
-import { PrismaService } from "../../db/services/prisma.service";
-import { SearchDto } from "../../feed/dto/Search.dto";
-import { NotificationsService } from "../../notifications/services/notifications.service";
-import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
-import { UploadImageDto } from "../../party/dto/UploadImageDto";
-import { UtilsService } from "../../utils/services/utils.service";
-import { RemoveConsumableImageDto } from "../dto/RemoveConsumableImage.dto";
-import { CreateConsumableItemDto } from "./../dto/CreateConsumableItem.dto";
+import {randomUUID} from "crypto";
+import {MemoryStorageFile} from "@blazity/nest-file-fastify";
+import {MultipartFile} from "@fastify/multipart";
+import {Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
+import {Location} from "@prisma/client";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
+import {del, put} from "@vercel/blob";
+import {UpdateUser} from "app/src/user/dto/UpdateUser";
+import {PrismaService} from "../../db/services/prisma.service";
+import {SearchDto} from "../../feed/dto/Search.dto";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {UtilsService} from "../../utils/services/utils.service";
+import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
 
 @Injectable()
 export class UserService {
@@ -527,26 +526,23 @@ export class UserService {
 		return await uploadImageToVercel();
 	}
 
-	async removeConsumableImage(removeConsumableImageDto: RemoveConsumableImageDto, userId: string) {
-		const { imageUrl, consumableId } = removeConsumableImageDto;
-
-		if (!imageUrl) {
-			throw new InternalServerErrorException("Falata la url de la imagen.");
-		}
-
-		const isOwnerOfConsumable = await this.prisma.consumable.findFirst({
+	async removeConsumableImage(consumableId: string, userId: string) {
+		const consumable = await this.prisma.consumableItem.findFirst({
 			where: {
 				creatorId: userId,
 				id: consumableId,
 			},
 		});
+		console.log("isOwnerOfConsumable", consumable);
 
-		if (!isOwnerOfConsumable) {
+		if (!consumable) {
 			throw new InternalServerErrorException("No tienes permiso para eliminar esta imagen.");
 		}
-		await del(imageUrl).catch(() => {
+		await del(consumable.pictureUrl).catch(() => {
+			console.log("Error al eliminar la imagen.");
 			throw new InternalServerErrorException("Error al eliminar la imagen.");
 		});
+		console.log("Eliminada la imagen de vercel.");
 
 		return true;
 	}
@@ -846,7 +842,7 @@ export class UserService {
 		});
 	}
 
-	async createConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
+	async createConsumable(createConsumableItemDto: CreateConsumableDto, userId: string) {
 		const { item, tags, stock, brand, weightOrVolume, price } = createConsumableItemDto;
 		const { name, description, pictureUrl, type } = item;
 
@@ -863,15 +859,15 @@ export class UserService {
 					},
 				},
 				item: {
-					create: {
-						name,
-						description,
-						pictureUrl,
-						type,
-						creator: {
-							connect: {
-								id: userId,
-							},
+					connectOrCreate: {
+						where: {
+							id: item.id,
+						},
+						create: {
+							name,
+							description,
+							pictureUrl,
+							type,
 						},
 					},
 				},
@@ -879,9 +875,9 @@ export class UserService {
 		});
 	}
 
-	async updateConsumableItem(createConsumableItemDto: CreateConsumableItemDto, userId: string) {
+	async updateConsumable(createConsumableItemDto: CreateConsumableDto, userId: string) {
 		const { id, item, tags, stock, brand, weightOrVolume, price } = createConsumableItemDto;
-		const { name, description, pictureUrl, type } = item;
+		const { id: itemId } = item;
 
 		return this.prisma.consumable.update({
 			where: {
@@ -895,25 +891,10 @@ export class UserService {
 				tags,
 				weightOrVolume,
 				item: {
-					update: {
-						name,
-						description,
-						pictureUrl,
-						type,
+					connect: {
+						id: itemId,
 					},
 				},
-			},
-		});
-	}
-
-	async getConsumableItems() {
-		return this.prisma.consumable.findMany({});
-	}
-
-	async getUserConsumableItems(creatorId: string) {
-		return this.prisma.consumable.findMany({
-			where: {
-				creatorId,
 			},
 		});
 	}
@@ -923,6 +904,46 @@ export class UserService {
 			include: {
 				item: true,
 			},
+			where: {
+				creatorId: userId,
+			},
+		});
+	}
+	async createConsumableItem(createConsumableItemDto: ConsumableItemDto, userId: string) {
+		const { name, description, pictureUrl, type } = createConsumableItemDto;
+		return this.prisma.consumableItem.create({
+			data: {
+				creator: {
+					connect: {
+						id: userId,
+					},
+				},
+				name,
+				description,
+				pictureUrl,
+				type,
+			},
+		});
+	}
+
+	async updateConsumableItem(createConsumableItemDto: ConsumableItemDto, userId: string) {
+		const { id, name, description, pictureUrl, type } = createConsumableItemDto;
+
+		return this.prisma.consumableItem.update({
+			where: {
+				id,
+				creatorId: userId,
+			},
+			data: {
+				name,
+				description,
+				pictureUrl,
+				type,
+			},
+		});
+	}
+	async getConsumableItems(userId: string) {
+		return this.prisma.consumableItem.findMany({
 			where: {
 				creatorId: userId,
 			},

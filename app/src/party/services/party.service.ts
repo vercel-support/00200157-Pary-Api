@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import {randomUUID} from "crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -8,18 +8,18 @@ import {
 	InternalServerErrorException,
 	NotFoundException,
 } from "@nestjs/common";
-import { del, put } from "@vercel/blob";
-import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
-import { PARTY_REQUEST } from "../../db/Requests";
-import { PrismaService } from "../../db/services/prisma.service";
-import { PaginationDto } from "../../group/dto/Pagination.dto";
-import { NotificationsService } from "../../notifications/services/notifications.service";
-import { UtilsService } from "../../utils/services/utils.service";
-import { OptionalGroupIdDto } from "../dto/Group.dto";
-import { JoinRequestDto } from "../dto/JoinRequestDto";
-import { UpdatePartyDto } from "../dto/UpdateParty.dto";
-import { UploadImageDto } from "../dto/UploadImageDto";
-import { UsernameDto } from "../dto/User.dto";
+import {del, put} from "@vercel/blob";
+import {CreatePartyDto} from "app/src/party/dto/CreateParty.dto";
+import {PARTY_REQUEST} from "../../db/Requests";
+import {PrismaService} from "../../db/services/prisma.service";
+import {PaginationDto} from "../../group/dto/Pagination.dto";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {UtilsService} from "../../utils/services/utils.service";
+import {OptionalGroupIdDto} from "../dto/Group.dto";
+import {JoinRequestDto} from "../dto/JoinRequestDto";
+import {UpdatePartyDto} from "../dto/UpdateParty.dto";
+import {UploadImageDto} from "../dto/UploadImageDto";
+import {UsernameDto} from "../dto/User.dto";
 
 @Injectable()
 export class PartyService {
@@ -754,86 +754,7 @@ export class PartyService {
 			},
 			include: {
 				party: {
-					include: {
-						location: {
-							select: {
-								id: true,
-								name: true,
-								latitude: true,
-								longitude: true,
-								timestamp: true,
-								address: true,
-							},
-						},
-						consumables: true,
-						covers: true,
-						owner: {
-							select: {
-								username: true,
-								socialMedia: true,
-								name: true,
-								lastName: true,
-								profilePictures: {
-									take: 1,
-									select: {
-										url: true,
-										id: true,
-									},
-								},
-								verified: true,
-								isCompany: true,
-								gender: true,
-								userType: true,
-							},
-						},
-						members: {
-							select: {
-								userId: true,
-								user: {
-									select: {
-										username: true,
-										socialMedia: true,
-										name: true,
-										lastName: true,
-										profilePictures: {
-											take: 1,
-											select: {
-												url: true,
-												id: true,
-											},
-										},
-										verified: true,
-										isCompany: true,
-										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-						moderators: {
-							include: {
-								user: {
-									select: {
-										username: true,
-										socialMedia: true,
-										name: true,
-										lastName: true,
-										profilePictures: {
-											take: 1,
-											select: {
-												url: true,
-												id: true,
-											},
-										},
-										verified: true,
-										isCompany: true,
-										gender: true,
-										userType: true,
-									},
-								},
-							},
-						},
-					},
+					include: PARTY_REQUEST,
 				},
 				user: {
 					select: {
