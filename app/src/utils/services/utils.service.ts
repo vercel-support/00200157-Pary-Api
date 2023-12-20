@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { Location } from "app/types";
+import {Injectable} from "@nestjs/common";
+import {Location} from "app/types";
 
 @Injectable()
 export class UtilsService {

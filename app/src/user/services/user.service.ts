@@ -1,18 +1,18 @@
-import { randomUUID } from "crypto";
-import { MemoryStorageFile } from "@blazity/nest-file-fastify";
-import { MultipartFile } from "@fastify/multipart";
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { Location } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { del, put } from "@vercel/blob";
-import { UpdateUser } from "app/src/user/dto/UpdateUser";
-import { PrismaService } from "../../db/services/prisma.service";
-import { SearchDto } from "../../feed/dto/Search.dto";
-import { NotificationsService } from "../../notifications/services/notifications.service";
-import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
-import { UploadImageDto } from "../../party/dto/UploadImageDto";
-import { UtilsService } from "../../utils/services/utils.service";
-import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
+import {randomUUID} from "crypto";
+import {MemoryStorageFile} from "@blazity/nest-file-fastify";
+import {MultipartFile} from "@fastify/multipart";
+import {Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
+import {Location} from "@prisma/client";
+import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
+import {del, put} from "@vercel/blob";
+import {UpdateUser} from "app/src/user/dto/UpdateUser";
+import {PrismaService} from "../../db/services/prisma.service";
+import {SearchDto} from "../../feed/dto/Search.dto";
+import {NotificationsService} from "../../notifications/services/notifications.service";
+import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
+import {UploadImageDto} from "../../party/dto/UploadImageDto";
+import {UtilsService} from "../../utils/services/utils.service";
+import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
 
 @Injectable()
 export class UserService {
