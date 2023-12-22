@@ -293,5 +293,19 @@ export const PARTY_REQUEST = {
 		include: {
 			item: true
 		}
+	},
+	tickets: {
+		include: {
+			ticket: {
+				include: {
+					base: true,
+					consumables: {
+						include: {
+							item: true
+						}
+					}
+				}
+			}
+		}
 	}
 };

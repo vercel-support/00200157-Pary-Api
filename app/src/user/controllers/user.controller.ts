@@ -22,8 +22,9 @@ import {SearchDto} from "../../feed/dto/Search.dto";
 import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
 import {UploadImageDto} from "../../party/dto/UploadImageDto";
 import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
-import { UpdateUser } from "../dto/UpdateUser";
-import { UserService } from "../services/user.service";
+import {UpdateUser} from "../dto/UpdateUser";
+import {UserService} from "../services/user.service";
+import {CreateTicketDto, TicketBaseDto} from "../dto/CreateTicketDto";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -242,4 +243,61 @@ export class UserController {
 	async updateConsumableItem(@Body() createConsumableItemDto: ConsumableItemDto, @Req() request: any) {
 		return this.userService.updateConsumableItem(createConsumableItemDto, request.raw.decoded.id);
 	}
+
+	@Post("create-ticket")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false
+		})
+	)
+	async createTicket(@Body() createTicketDto: CreateTicketDto, @Req() request: any) {
+		return this.userService.createTicket(createTicketDto, request.raw.decoded.id);
+	}
+
+	@Post("update-ticket")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false
+		})
+	)
+	async updateTicket(@Body() updateTicketDto: CreateTicketDto, @Req() request: any) {
+		return this.userService.updateTicket(updateTicketDto, request.raw.decoded.id);
+	}
+
+	@Get("tickets")
+	async getTickets(@Req() request: any) {
+		return this.userService.getTickets(request.raw.decoded.id);
+	}
+	@Get("ticket-bases")
+	async getTicketBases(@Req() request: any) {
+		return this.userService.getTicketBases(request.raw.decoded.id);
+	}
+	@Post("create-ticket-base")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false
+		})
+	)
+	async createTicketBase(@Body() createTicketBaseDto: TicketBaseDto, @Req() request: any) {
+		return this.userService.createTicketBase(createTicketBaseDto, request.raw.decoded.id);
+	}
+
+	@Post("update-ticket-base")
+	@UsePipes(
+		new ValidationPipe({
+			transform: true,
+			forbidNonWhitelisted: true,
+			disableErrorMessages: false
+		})
+	)
+	async updateTicketBase(@Body() updateTicketBaseDto: TicketBaseDto, @Req() request: any) {
+		return this.userService.updateTicketBase(updateTicketBaseDto, request.raw.decoded.id);
+	}
+
 }

@@ -1,4 +1,4 @@
-import { AgeRange, Consumable, Location, PartyPicture, PartyType } from "@prisma/client";
+import { AgeRange, Consumable, Location, PartyPicture, PartyType, Ticket } from "@prisma/client";
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdatePartyDto {
@@ -36,4 +36,7 @@ export class UpdatePartyDto {
 	@IsOptional()
 	@IsArray()
 	covers: Consumable[];
+	@IsOptional()
+	@IsArray()
+	tickets: Ticket[];
 }

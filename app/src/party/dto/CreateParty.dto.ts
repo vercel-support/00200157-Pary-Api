@@ -1,5 +1,5 @@
-import { AgeRange, Location, PartyPicture, PartyType } from "@prisma/client";
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty } from "class-validator";
+import { AgeRange, Consumable, Location, PartyPicture, PartyType, Ticket } from "@prisma/client";
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreatePartyDto {
 	@IsNotEmpty()
@@ -26,4 +26,13 @@ export class CreatePartyDto {
 	isPrivate: boolean;
 	@IsBoolean()
 	advertisement: boolean;
+	@IsOptional()
+	@IsArray()
+	consumables: Consumable[];
+	@IsOptional()
+	@IsArray()
+	covers: Consumable[];
+	@IsOptional()
+	@IsArray()
+	tickets: Ticket[];
 }

@@ -1,9 +1,9 @@
-import {Injectable} from "@nestjs/common";
-import {Location} from "app/types";
+import { Injectable } from "@nestjs/common";
+import { Location } from "app/types";
 
 @Injectable()
 export class UtilsService {
-	private imageCache = new Map<string, { url: string; expiry: number }>();
+	private imageCache = new Map<string, { url: string; expiry: number; }>();
 	private readonly CACHE_DURATION = 601800;
 	private readonly AMAZON_CACHE_DURATION = 604800;
 
@@ -32,6 +32,9 @@ export class UtilsService {
 			profilePictures: true,
 			followerUserList: true,
 			followingUserList: true,
+			tickets: true,
+			ticketsCreated: true,
+			ticketsBase: true,
 			location: {
 				select: {
 					id: true,
@@ -65,6 +68,20 @@ export class UtilsService {
 							covers: {
 								include: {
 									item: true
+								}
+							},
+							tickets: {
+								include: {
+									ticket: {
+										include: {
+											base: true,
+											consumables: {
+												include: {
+													item: true
+												}
+											}
+										}
+									}
 								}
 							},
 							owner: {

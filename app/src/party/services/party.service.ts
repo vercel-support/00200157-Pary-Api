@@ -1,4 +1,4 @@
-import {randomUUID} from "crypto";
+import { randomUUID } from "crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -8,18 +8,18 @@ import {
 	InternalServerErrorException,
 	NotFoundException
 } from "@nestjs/common";
-import {del, put} from "@vercel/blob";
-import {CreatePartyDto} from "app/src/party/dto/CreateParty.dto";
-import {PARTY_REQUEST} from "../../db/Requests";
-import {PrismaService} from "../../db/services/prisma.service";
-import {PaginationDto} from "../../group/dto/Pagination.dto";
-import {NotificationsService} from "../../notifications/services/notifications.service";
-import {UtilsService} from "../../utils/services/utils.service";
-import {OptionalGroupIdDto} from "../dto/Group.dto";
-import {JoinRequestDto} from "../dto/JoinRequestDto";
-import {UpdatePartyDto} from "../dto/UpdateParty.dto";
-import {UploadImageDto} from "../dto/UploadImageDto";
-import {UsernameDto} from "../dto/User.dto";
+import { del, put } from "@vercel/blob";
+import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
+import { PARTY_REQUEST } from "../../db/Requests";
+import { PrismaService } from "../../db/services/prisma.service";
+import { PaginationDto } from "../../group/dto/Pagination.dto";
+import { NotificationsService } from "../../notifications/services/notifications.service";
+import { UtilsService } from "../../utils/services/utils.service";
+import { OptionalGroupIdDto } from "../dto/Group.dto";
+import { JoinRequestDto } from "../dto/JoinRequestDto";
+import { UpdatePartyDto } from "../dto/UpdateParty.dto";
+import { UploadImageDto } from "../dto/UploadImageDto";
+import { UsernameDto } from "../dto/User.dto";
 
 @Injectable()
 export class PartyService {
@@ -27,7 +27,7 @@ export class PartyService {
 		private prisma: PrismaService,
 		private utils: UtilsService,
 		private notifications: NotificationsService
-	) {}
+	) { }
 
 	async createParty(partyBody: CreatePartyDto, userId: string) {
 		const {
@@ -41,21 +41,11 @@ export class PartyService {
 			image,
 			showAddressInFeed,
 			ageRange,
-			isPrivate
+			isPrivate,
+			consumables,
+			covers,
+			tickets
 		} = partyBody;
-		const userParties = await this.prisma.party.count({
-			where: {
-				ownerId: userId,
-				active: true,
-				date: {
-					gte: new Date()
-				}
-			}
-		});
-
-		if (userParties >= 15) {
-			throw new BadRequestException("You can only create up to 15 parties.");
-		}
 
 		const inviter = await this.prisma.user.findUnique({
 			where: { id: userId },
@@ -63,12 +53,22 @@ export class PartyService {
 				name: true,
 				username: true,
 				socialMedia: true,
-				id: true
+				id: true,
+				userType: true,
+				parties: {
+					select: {
+						id: true
+					}
+				}
 			}
 		});
 
 		if (!inviter) {
 			throw new NotFoundException("User not found");
+		}
+
+		if (inviter.parties.length >= 15 && inviter.userType === "Normal") {
+			throw new BadRequestException("You can only create up to 15 parties.");
 		}
 
 		// Resto de la lógica después de una carga exitosa
@@ -85,7 +85,7 @@ export class PartyService {
 				id: true,
 				username: true,
 				socialMedia: true,
-				expoPushToken: true // asumimos que usarás Expo para notificaciones push
+				expoPushToken: true,
 			}
 		});
 
@@ -109,7 +109,31 @@ export class PartyService {
 				image,
 				showAddressInFeed,
 				ageRange,
-				locationId: partyLocation.id
+				locationId: partyLocation.id,
+				consumables: {
+					connect: consumables.map(consumable => {
+						if (inviter.userType === "Normal") {
+							throw new BadRequestException("No tienes permisos para crear Carretes con Consumibles");
+						}
+						return { id: consumable.id };
+					})
+				},
+				covers: {
+					connect: covers.map(cover => {
+						if (inviter.userType === "Normal") {
+							throw new BadRequestException("No tienes permisos para crear Carretes con Covers");
+						}
+						return { id: cover.id };
+					})
+				},
+				tickets: {
+					connect: tickets.map(ticket => {
+						if (inviter.userType === "Normal") {
+							throw new BadRequestException("No tienes permisos para crear Carretes con Tickets");
+						}
+						return { id: ticket.id };
+					})
+				}
 			}
 		});
 
@@ -142,7 +166,6 @@ export class PartyService {
 				);
 			}
 
-			// Aquí podrías enviar una notificación push a cada usuario invitado
 		}
 
 		return party;
@@ -163,7 +186,8 @@ export class PartyService {
 			ageRange,
 			isPrivate,
 			consumables,
-			covers
+			covers,
+			tickets
 		} = partyBody;
 
 		const currentParty = await this.prisma.party.findUnique({
@@ -188,6 +212,16 @@ export class PartyService {
 					select: {
 						id: true
 					}
+				},
+				tickets: {
+					select: {
+						id: true
+					}
+				},
+				members: {
+					select: {
+						userId: true
+					}
 				}
 			}
 		});
@@ -204,10 +238,12 @@ export class PartyService {
 			consumable => !currentParty.consumables.some(c => c.id === consumable.id)
 		);
 		const newCovers = covers.filter(cover => !currentParty.covers.some(c => c.id === cover.id));
+		const newTickets = tickets.filter(ticket => !currentParty.tickets.some(t => t.id === ticket.id));
 		const consumablesToDelete = currentParty.consumables.filter(
 			consumable => !consumables.some(c => c.id === consumable.id)
 		);
 		const coversToDelete = currentParty.covers.filter(cover => !covers.some(c => c.id === cover.id));
+		const ticketsToDelete = currentParty.tickets.filter(ticket => !tickets.some(t => t.id === ticket.id));
 
 		const party = await this.prisma.party.update({
 			where: {
@@ -231,6 +267,10 @@ export class PartyService {
 				covers: {
 					connect: newCovers.map(cover => ({ id: cover.id })),
 					disconnect: coversToDelete.map(cover => ({ id: cover.id }))
+				},
+				tickets: {
+					connect: newTickets.map(ticket => ({ id: ticket.id })),
+					disconnect: ticketsToDelete.map(ticket => ({ id: ticket.id }))
 				}
 			}
 		});
@@ -977,7 +1017,7 @@ export class PartyService {
 					OR: [{ invitedUserId: userId }, { invitingUserId: userId }]
 				}
 			})
-			.catch(() => {});
+			.catch(() => { });
 
 		// Remove the user from the group
 		await this.prisma.partyMember
@@ -989,7 +1029,7 @@ export class PartyService {
 					}
 				}
 			})
-			.catch(() => {});
+			.catch(() => { });
 
 		await this.prisma.membershipRequest
 			.deleteMany({
@@ -998,7 +1038,7 @@ export class PartyService {
 					userId
 				}
 			})
-			.catch(() => {});
+			.catch(() => { });
 		return true;
 	}
 
@@ -1325,15 +1365,15 @@ export class PartyService {
 				}
 			});
 			/*for (const member of joinRequest.group.members) {
-                await this.prisma.partyMember.delete({
-                    where: {
-                        userId_partyId: {
-                            partyId,
-                            userId: member.userId,
-                        },
-                    },
-                });
-            }*/
+				await this.prisma.partyMember.delete({
+					where: {
+						userId_partyId: {
+							partyId,
+							userId: member.userId,
+						},
+					},
+				});
+			}*/
 			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
 		}
 		return true;

@@ -1,18 +1,19 @@
-import {randomUUID} from "crypto";
-import {MemoryStorageFile} from "@blazity/nest-file-fastify";
-import {MultipartFile} from "@fastify/multipart";
-import {Injectable, InternalServerErrorException, NotFoundException} from "@nestjs/common";
-import {Location} from "@prisma/client";
-import {PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
-import {del, put} from "@vercel/blob";
-import {UpdateUser} from "app/src/user/dto/UpdateUser";
-import {PrismaService} from "../../db/services/prisma.service";
-import {SearchDto} from "../../feed/dto/Search.dto";
-import {NotificationsService} from "../../notifications/services/notifications.service";
-import {DeleteUserProfilePictureDto} from "../../party/dto/DeleteUserProfilePicture.dto";
-import {UploadImageDto} from "../../party/dto/UploadImageDto";
-import {UtilsService} from "../../utils/services/utils.service";
-import {ConsumableItemDto, CreateConsumableDto} from "../dto/CreateConsumableDto";
+import { MemoryStorageFile } from "@blazity/nest-file-fastify";
+import { MultipartFile } from "@fastify/multipart";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Location } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { del, put } from "@vercel/blob";
+import { UpdateUser } from "app/src/user/dto/UpdateUser";
+import { randomUUID } from "crypto";
+import { PrismaService } from "../../db/services/prisma.service";
+import { SearchDto } from "../../feed/dto/Search.dto";
+import { NotificationsService } from "../../notifications/services/notifications.service";
+import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
+import { UploadImageDto } from "../../party/dto/UploadImageDto";
+import { UtilsService } from "../../utils/services/utils.service";
+import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
+import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,7 @@ export class UserService {
 		private prisma: PrismaService,
 		private utils: UtilsService,
 		private notifications: NotificationsService
-	) {}
+	) { }
 
 	async checkUsername(username: string) {
 		return this.prisma.user
@@ -909,6 +910,15 @@ export class UserService {
 			}
 		});
 	}
+
+	async getConsumableItems(userId: string) {
+		return this.prisma.consumableItem.findMany({
+			where: {
+				creatorId: userId
+			}
+		});
+	}
+
 	async createConsumableItem(createConsumableItemDto: ConsumableItemDto, userId: string) {
 		const { name, description, pictureUrl, type } = createConsumableItemDto;
 		return this.prisma.consumableItem.create({
@@ -942,10 +952,130 @@ export class UserService {
 			}
 		});
 	}
-	async getConsumableItems(userId: string) {
-		return this.prisma.consumableItem.findMany({
+
+	async createTicket(createTicketDto: CreateTicketDto, userId: string) {
+		const { base, tags, stock, price, color, consumables } = createTicketDto;
+		const { name, description, type, id } = base;
+
+		return this.prisma.ticket.create({
+			data: {
+				stock,
+				tags,
+				price,
+				color,
+				creator: {
+					connect: {
+						id: userId
+					}
+				},
+				consumables: {
+					connect: consumables.map(consumable => ({ id: consumable.id }))
+				},
+				base: {
+					connectOrCreate: {
+						where: {
+							id
+						},
+						create: {
+							name,
+							description,
+							type,
+							creator: {
+								connect: {
+									id: userId
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+	async updateTicket(updateTicketDto: CreateTicketDto, userId: string) {
+		const { base, tags, stock, price, id, color } = updateTicketDto;
+		const { id: baseId } = base;
+
+		return this.prisma.ticket.update({
+			where: {
+				id,
+				creatorId: userId
+			},
+			data: {
+				stock,
+				price,
+				tags,
+				color,
+				base: {
+					connect: {
+						id: baseId
+					}
+				}
+			}
+		});
+	}
+
+	async getTickets(userId: string) {
+		return this.prisma.ticket.findMany({
+			include: {
+				base: true,
+				consumables: {
+					include: {
+						item: true
+					}
+				}
+			},
+			where: {
+				OR: [{
+					creatorId: userId
+				},
+				{
+					creator: {
+						staffs: {
+							some: {
+								id: userId
+							}
+						}
+					}
+				}]
+			}
+		});
+	}
+	async getTicketBases(userId: string) {
+		return this.prisma.ticketBase.findMany({
 			where: {
 				creatorId: userId
+			}
+		});
+	}
+
+	async createTicketBase(createTicketBaseDto: TicketBaseDto, userId: string) {
+		const { name, description, type } = createTicketBaseDto;
+		return this.prisma.ticketBase.create({
+			data: {
+				creator: {
+					connect: {
+						id: userId
+					}
+				},
+				name,
+				description,
+				type
+			}
+		});
+	}
+
+	async updateTicketBase(updateTicketBaseDto: TicketBaseDto, userId: string) {
+		const { name, description, type, id } = updateTicketBaseDto;
+		return this.prisma.ticketBase.update({
+			where: {
+				id,
+				creatorId: userId
+			},
+			data: {
+				name,
+				description,
+				type
 			}
 		});
 	}

@@ -12,6 +12,11 @@
 			"trailingComma": "none"
 		}
 	},
+	"files": {
+		"ignore": [
+			"dist/**/*"
+		]
+	},
 	"formatter": {
 		"enabled": true,
 		"lineWidth": 120,
