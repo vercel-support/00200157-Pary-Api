@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import {
 	BadRequestException,
 	ForbiddenException,
@@ -10,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { del, put } from "@vercel/blob";
 import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
+import { randomUUID } from "crypto";
 import { PARTY_REQUEST } from "../../db/Requests";
 import { PrismaService } from "../../db/services/prisma.service";
 import { PaginationDto } from "../../group/dto/Pagination.dto";
@@ -27,7 +27,7 @@ export class PartyService {
 		private prisma: PrismaService,
 		private utils: UtilsService,
 		private notifications: NotificationsService
-	) { }
+	) {}
 
 	async createParty(partyBody: CreatePartyDto, userId: string) {
 		const {
@@ -85,7 +85,7 @@ export class PartyService {
 				id: true,
 				username: true,
 				socialMedia: true,
-				expoPushToken: true,
+				expoPushToken: true
 			}
 		});
 
@@ -165,7 +165,6 @@ export class PartyService {
 					party.type
 				);
 			}
-
 		}
 
 		return party;
@@ -239,6 +238,7 @@ export class PartyService {
 		);
 		const newCovers = covers.filter(cover => !currentParty.covers.some(c => c.id === cover.id));
 		const newTickets = tickets.filter(ticket => !currentParty.tickets.some(t => t.id === ticket.id));
+
 		const consumablesToDelete = currentParty.consumables.filter(
 			consumable => !consumables.some(c => c.id === consumable.id)
 		);
@@ -269,8 +269,8 @@ export class PartyService {
 					disconnect: coversToDelete.map(cover => ({ id: cover.id }))
 				},
 				tickets: {
-					connect: newTickets.map(ticket => ({ id: ticket.id })),
-					disconnect: ticketsToDelete.map(ticket => ({ id: ticket.id }))
+					connect: newTickets.length > 0 ? newTickets.map(ticket => ({ id: ticket.id })) : undefined,
+					disconnect: ticketsToDelete.length > 0 ? ticketsToDelete.map(({ id }) => ({ id })) : undefined
 				}
 			}
 		});
@@ -1017,7 +1017,7 @@ export class PartyService {
 					OR: [{ invitedUserId: userId }, { invitingUserId: userId }]
 				}
 			})
-			.catch(() => { });
+			.catch(() => {});
 
 		// Remove the user from the group
 		await this.prisma.partyMember
@@ -1029,7 +1029,7 @@ export class PartyService {
 					}
 				}
 			})
-			.catch(() => { });
+			.catch(() => {});
 
 		await this.prisma.membershipRequest
 			.deleteMany({
@@ -1038,7 +1038,7 @@ export class PartyService {
 					userId
 				}
 			})
-			.catch(() => { });
+			.catch(() => {});
 		return true;
 	}
 

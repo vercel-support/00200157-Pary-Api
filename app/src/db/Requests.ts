@@ -296,16 +296,12 @@ export const PARTY_REQUEST = {
 	},
 	tickets: {
 		include: {
-			ticket: {
+			base: true,
+			consumables: {
 				include: {
-					base: true,
-					consumables: {
+					consumable: {
 						include: {
-							consumable: {
-								include: {
-									item: true
-								}
-							}
+							item: true
 						}
 					}
 				}

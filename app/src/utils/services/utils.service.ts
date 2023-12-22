@@ -3,7 +3,7 @@ import { Location } from "app/types";
 
 @Injectable()
 export class UtilsService {
-	private imageCache = new Map<string, { url: string; expiry: number; }>();
+	private imageCache = new Map<string, { url: string; expiry: number }>();
 	private readonly CACHE_DURATION = 601800;
 	private readonly AMAZON_CACHE_DURATION = 604800;
 
@@ -72,16 +72,12 @@ export class UtilsService {
 							},
 							tickets: {
 								include: {
-									ticket: {
+									base: true,
+									consumables: {
 										include: {
-											base: true,
-											consumables: {
+											consumable: {
 												include: {
-													consumable: {
-														include: {
-															item: true
-														}
-													}
+													item: true
 												}
 											}
 										}

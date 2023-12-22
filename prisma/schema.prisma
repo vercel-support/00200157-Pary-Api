@@ -131,7 +131,8 @@ model Party {
   invitations        PartyInvitation[]
   consumables        Consumable[]         @relation("PartyToConsumable")
   covers             Consumable[]         @relation("PartyToCover")
-  tickets            TicketOwnership[]
+  ticketOwnerships   TicketOwnership[]
+  tickets            Ticket[]             @relation("PartyToTicket")
   locationId         String               @db.ObjectId
 }
 
@@ -350,6 +351,8 @@ model Ticket {
   creator     User?             @relation("UserToTicketCreated", fields: [creatorId], references: [id])
   base        TicketBase        @relation(fields: [baseId], references: [id])
   baseId      String            @map("baseId") @db.ObjectId
+  partyId     String?           @map("partyId") @db.ObjectId
+  party       Party?            @relation("PartyToTicket", fields: [partyId], references: [id])
   consumables ConsumableStack[] @relation("TicketToConsumableStack")
   ownerShips  TicketOwnership[]
 }
@@ -391,4 +394,6 @@ model TicketOwnership {
   groupId              String?        @map("groupId") @db.ObjectId
   type                 MembershipType @default(SOLO)
   createdAt            DateTime       @default(now())
+
+  @@unique([ticketId, partyId, userId])
 }
