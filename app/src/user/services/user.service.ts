@@ -21,7 +21,7 @@ export class UserService {
 		private prisma: PrismaService,
 		private utils: UtilsService,
 		private notifications: NotificationsService
-	) { }
+	) {}
 
 	async checkUsername(username: string) {
 		return this.prisma.user
@@ -767,7 +767,9 @@ export class UserService {
 		// Delete all profile pictures
 		for (const profilePicture of user.profilePictures) {
 			await del(profilePicture.url);
-			await this.prisma.profilePicture.delete({ where: { id: profilePicture.id } });
+			await this.prisma.profilePicture.delete({
+				where: { id: profilePicture.id }
+			});
 		}
 
 		// Delete all party memberships
@@ -781,12 +783,20 @@ export class UserService {
 		await this.prisma.userFollows.deleteMany({ where: { followedUserId: id } });
 
 		// Delete all party invitations
-		await this.prisma.partyInvitation.deleteMany({ where: { invitingUserId: id } });
-		await this.prisma.partyInvitation.deleteMany({ where: { invitedUserId: id } });
+		await this.prisma.partyInvitation.deleteMany({
+			where: { invitingUserId: id }
+		});
+		await this.prisma.partyInvitation.deleteMany({
+			where: { invitedUserId: id }
+		});
 
 		// Delete all group invitations
-		await this.prisma.groupInvitation.deleteMany({ where: { invitingUserId: id } });
-		await this.prisma.groupInvitation.deleteMany({ where: { invitedUserId: id } });
+		await this.prisma.groupInvitation.deleteMany({
+			where: { invitingUserId: id }
+		});
+		await this.prisma.groupInvitation.deleteMany({
+			where: { invitedUserId: id }
+		});
 
 		// Delete all membership requests
 		await this.prisma.membershipRequest.deleteMany({ where: { userId: id } });
@@ -798,20 +808,32 @@ export class UserService {
 		await this.prisma.userGroupModerator.deleteMany({ where: { userId: id } });
 
 		// Delete all owned parties
-		const ownedParties = await this.prisma.party.findMany({ where: { ownerId: id } });
+		const ownedParties = await this.prisma.party.findMany({
+			where: { ownerId: id }
+		});
 		for (const party of ownedParties) {
 			await this.prisma.partyGroup.deleteMany({ where: { partyId: party.id } });
-			await this.prisma.partyInvitation.deleteMany({ where: { partyId: party.id } });
-			await this.prisma.membershipRequest.deleteMany({ where: { partyId: party.id } });
+			await this.prisma.partyInvitation.deleteMany({
+				where: { partyId: party.id }
+			});
+			await this.prisma.membershipRequest.deleteMany({
+				where: { partyId: party.id }
+			});
 		}
 		await this.prisma.party.deleteMany({ where: { ownerId: id } });
 
 		// Delete all led groups
-		const ledGroups = await this.prisma.group.findMany({ where: { leaderId: id } });
+		const ledGroups = await this.prisma.group.findMany({
+			where: { leaderId: id }
+		});
 		for (const group of ledGroups) {
 			await this.prisma.partyGroup.deleteMany({ where: { groupId: group.id } });
-			await this.prisma.groupInvitation.deleteMany({ where: { groupId: group.id } });
-			await this.prisma.membershipRequest.deleteMany({ where: { groupId: group.id } });
+			await this.prisma.groupInvitation.deleteMany({
+				where: { groupId: group.id }
+			});
+			await this.prisma.membershipRequest.deleteMany({
+				where: { groupId: group.id }
+			});
 		}
 		await this.prisma.group.deleteMany({ where: { leaderId: id } });
 
@@ -969,7 +991,12 @@ export class UserService {
 					}
 				},
 				consumables: {
-					connect: consumables.map(consumable => ({ id: consumable.id }))
+					createMany: {
+						data: consumables.map(consumable => ({
+							quantity: consumable.quantity,
+							consumableId: consumable.consumable.id
+						}))
+					}
 				},
 				base: {
 					connectOrCreate: {
@@ -993,8 +1020,30 @@ export class UserService {
 	}
 
 	async updateTicket(updateTicketDto: CreateTicketDto, userId: string) {
-		const { base, tags, stock, price, id, color } = updateTicketDto;
+		const { base, tags, stock, price, id, color, consumables } = updateTicketDto;
 		const { id: baseId } = base;
+
+		const ticket = await this.prisma.ticket.findUnique({
+			where: {
+				id,
+				creatorId: userId
+			},
+			include: {
+				consumables: true
+			}
+		});
+
+		if (!ticket) {
+			throw new NotFoundException("Ticket no encontrado.");
+		}
+
+		const consumablesToDelete = ticket.consumables.filter(consumable => {
+			return !consumables.some(consumable2 => consumable2.id === consumable.id);
+		});
+
+		const consumablesToCreate = consumables.filter(consumable => {
+			return !ticket.consumables.some(consumable2 => consumable2.id === consumable.id);
+		});
 
 		return this.prisma.ticket.update({
 			where: {
@@ -1010,6 +1059,28 @@ export class UserService {
 					connect: {
 						id: baseId
 					}
+				},
+				consumables: {
+					updateMany: consumables.map(consumable => ({
+						where: {
+							id: consumable.id
+						},
+						data: {
+							quantity: consumable.quantity
+						}
+					})),
+					delete: consumablesToDelete.map(({ id }) => ({
+						id
+					})),
+					connectOrCreate: consumablesToCreate.map(consumable => ({
+						where: {
+							id: consumable.id
+						},
+						create: {
+							quantity: consumable.quantity,
+							consumableId: consumable.consumable.id
+						}
+					}))
 				}
 			}
 		});
@@ -1021,23 +1092,29 @@ export class UserService {
 				base: true,
 				consumables: {
 					include: {
-						item: true
+						consumable: {
+							include: {
+								item: true
+							}
+						}
 					}
 				}
 			},
 			where: {
-				OR: [{
-					creatorId: userId
-				},
-				{
-					creator: {
-						staffs: {
-							some: {
-								id: userId
+				OR: [
+					{
+						creatorId: userId
+					},
+					{
+						creator: {
+							staffs: {
+								some: {
+									id: userId
+								}
 							}
 						}
 					}
-				}]
+				]
 			}
 		});
 	}

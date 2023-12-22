@@ -291,6 +291,17 @@ type PartyPicture {
   url String
 }
 
+model ConsumableStack {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  quantity     Int        @default(0)
+  consumableId String     @map("consumableId") @db.ObjectId
+  consumable   Consumable @relation("ConsumableToStack", fields: [consumableId], references: [id])
+  ticketId     String?    @map("ticketId") @db.ObjectId
+  ticket       Ticket?    @relation("TicketToConsumableStack", fields: [ticketId], references: [id])
+
+  @@unique([consumableId, ticketId])
+}
+
 model ConsumableItem {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -303,23 +314,22 @@ model ConsumableItem {
 }
 
 model Consumable {
-  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
-  price                Int            @default(0)
-  stock                Int            @default(0)
-  tags                 String[]       @default([])
-  brand                String         @default("")
-  createdAt            DateTime       @default(now())
-  weightOrVolume       Int            @default(0)
-  partyIdForConsumable String?        @map("partyIdForConsumable") @db.ObjectId
-  partyForConsumable   Party?         @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
-  partyIdForCover      String?        @map("partyIdForCover") @db.ObjectId
-  partyForCover        Party?         @relation("PartyToCover", fields: [partyIdForCover], references: [id])
-  itemId               String         @map("consumableItemId") @db.ObjectId
-  item                 ConsumableItem @relation(fields: [itemId], references: [id])
-  creator              User?          @relation("UserToConsumable", fields: [creatorId], references: [id])
-  creatorId            String?        @db.ObjectId
-  ticket               Ticket?        @relation(fields: [ticketId], references: [id])
-  ticketId             String?        @db.ObjectId
+  id                   String            @id @default(auto()) @map("_id") @db.ObjectId
+  price                Int               @default(0)
+  stock                Int               @default(0)
+  tags                 String[]          @default([])
+  brand                String            @default("")
+  createdAt            DateTime          @default(now())
+  weightOrVolume       Int               @default(0)
+  partyIdForConsumable String?           @map("partyIdForConsumable") @db.ObjectId
+  partyForConsumable   Party?            @relation("PartyToConsumable", fields: [partyIdForConsumable], references: [id])
+  partyIdForCover      String?           @map("partyIdForCover") @db.ObjectId
+  partyForCover        Party?            @relation("PartyToCover", fields: [partyIdForCover], references: [id])
+  itemId               String            @map("consumableItemId") @db.ObjectId
+  item                 ConsumableItem    @relation(fields: [itemId], references: [id])
+  creator              User?             @relation("UserToConsumable", fields: [creatorId], references: [id])
+  creatorId            String?           @db.ObjectId
+  stack                ConsumableStack[] @relation("ConsumableToStack")
 }
 
 enum ConsumableType {
@@ -340,7 +350,7 @@ model Ticket {
   creator     User?             @relation("UserToTicketCreated", fields: [creatorId], references: [id])
   base        TicketBase        @relation(fields: [baseId], references: [id])
   baseId      String            @map("baseId") @db.ObjectId
-  consumables Consumable[]
+  consumables ConsumableStack[] @relation("TicketToConsumableStack")
   ownerShips  TicketOwnership[]
 }
 

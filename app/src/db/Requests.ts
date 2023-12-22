@@ -301,7 +301,11 @@ export const PARTY_REQUEST = {
 					base: true,
 					consumables: {
 						include: {
-							item: true
+							consumable: {
+								include: {
+									item: true
+								}
+							}
 						}
 					}
 				}

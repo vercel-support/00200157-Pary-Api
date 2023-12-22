@@ -1,6 +1,6 @@
-import {Type} from "class-transformer";
-import {IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min} from "class-validator";
-import {Consumable} from "@prisma/client";
+import { Type } from "class-transformer";
+import { IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min } from "class-validator";
+import { Consumable } from "@prisma/client";
 
 export class TicketBaseDto {
 	@IsOptional()
@@ -37,8 +37,21 @@ export class CreateTicketDto {
 	color: TicketColor;
 	@IsOptional()
 	@IsArray()
-	consumables: Consumable[] = [];
+	consumables: ConsumableStack[] = [];
 }
+
+export class ConsumableStack {
+	@IsOptional()
+	@IsString()
+	id: string;
+	@IsInt()
+	@Min(0)
+	@Type(() => Number)
+	quantity: number;
+	@IsObject()
+	consumable: Consumable;
+}
+
 export type TicketColor =
 	| "blue"
 	| "green"

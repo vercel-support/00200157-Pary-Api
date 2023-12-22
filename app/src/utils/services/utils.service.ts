@@ -77,7 +77,11 @@ export class UtilsService {
 											base: true,
 											consumables: {
 												include: {
-													item: true
+													consumable: {
+														include: {
+															item: true
+														}
+													}
 												}
 											}
 										}
