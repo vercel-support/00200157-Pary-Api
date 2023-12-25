@@ -59,6 +59,11 @@ export class PartyService {
 					select: {
 						id: true
 					}
+				},
+				staffs: {
+					select: {
+						id: true
+					}
 				}
 			}
 		});
@@ -88,6 +93,44 @@ export class PartyService {
 				expoPushToken: true
 			}
 		});
+
+		let defaultTicket = undefined;
+
+		if (tickets.length === 0) {
+			let baseTicket = await this.prisma.ticketBase.findFirst({
+				where: {
+					name: "Entrada General",
+					creatorId: userId
+				}
+			});
+			if (!baseTicket) {
+				baseTicket = await this.prisma.ticketBase.create({
+					data: {
+						name: "Entrada General",
+						description: "Entrada general.",
+						type: "GRATIS",
+						creator: {
+							connect: {
+								id: userId
+							}
+						}
+					}
+				});
+			}
+			defaultTicket = await this.prisma.ticket.create({
+				data: {
+					stock: 200,
+					price: 0,
+					base: {
+						connect: {
+							id: baseTicket.id
+						}
+					}
+				}
+			});
+
+			tickets.push(defaultTicket);
+		}
 
 		const partyLocation = await this.prisma.location.create({
 			data: {
@@ -128,7 +171,7 @@ export class PartyService {
 				},
 				tickets: {
 					connect: tickets.map(ticket => {
-						if (inviter.userType === "Normal") {
+						if (inviter.userType === "Normal" && defaultTicket.id !== ticket.id) {
 							throw new BadRequestException("No tienes permisos para crear Carretes con Tickets");
 						}
 						return { id: ticket.id };
@@ -147,24 +190,49 @@ export class PartyService {
 			}
 		});
 
-		for (const user of users) {
-			if (user.id === userId) continue;
-			const response = await this.prisma.partyInvitation.create({
+		await this.prisma.ticketOwnership.create({
+			data: {
+				userId,
+				ticketId: defaultTicket.id,
+				partyId: party.id
+			}
+		});
+
+		/* if (inviter.userType === "Enterprise") {
+			// connect all the staff members of the inviter to the moderators of the party
+			await this.prisma.party.update({
+				where: {
+					id: party.id
+				},
 				data: {
-					partyId: party.id,
-					invitedUserId: user.id,
-					invitingUserId: userId
+					moderators: {
+						create: inviter.staffs.map(staff => ({ userId: staff.id }))
+					}
 				}
 			});
-			if (response) {
-				this.notifications.sendPartyInviteNotification(
-					user.expoPushToken,
-					inviter,
-					party.name,
-					party.id,
-					party.type
-				);
-			}
+		} */
+
+		for (const user of users) {
+			if (user.id === userId) continue;
+			this.prisma.partyInvitation
+				.create({
+					data: {
+						partyId: party.id,
+						invitedUserId: user.id,
+						invitingUserId: userId
+					}
+				})
+				.then(response => {
+					if (response) {
+						this.notifications.sendPartyInviteNotification(
+							user.expoPushToken,
+							inviter,
+							party.name,
+							party.id,
+							party.type
+						);
+					}
+				});
 		}
 
 		return party;
@@ -393,7 +461,7 @@ export class PartyService {
 
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
+				const { url } = await put(`${process.env.NODE_ENV}-party-${randomUUID()}.${fileType}`, imageBuffer, {
 					access: "public",
 					contentType: `image/${fileType}`
 				});
@@ -442,7 +510,7 @@ export class PartyService {
 
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`party-${randomUUID()}.${fileType}`, imageBuffer, {
+				const { url } = await put(`${process.env.NODE_ENV}-party-${randomUUID()}.${fileType}`, imageBuffer, {
 					access: "public",
 					contentType: `image/${fileType}`
 				});
@@ -1461,7 +1529,10 @@ export class PartyService {
 		const { groupId } = optionalGroupIdDto;
 		// Obtenemos la información del party.
 		const party = await this.prisma.party.findUnique({
-			where: { id: partyId }
+			where: { id: partyId },
+			include: {
+				tickets: true
+			}
 		});
 
 		if (!party) {

@@ -18,7 +18,7 @@ if (EXPO_ACCESS_TOKEN === undefined) {
 	throw new Error("No EXPO_ACCESS_TOKEN env variable found.");
 }
 
-const SWAGGER_ENVS = ["local", "dev", "staging"];
+const SWAGGER_ENVS = ["local", "dev", "staging", "production"];
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(

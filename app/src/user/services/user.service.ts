@@ -299,9 +299,13 @@ export class UserService {
 		const fileType = image.match(/data:image\/(.*?);base64/)?.[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`profile-picture-${randomUUID()}.${fileType}`, imageBuffer, {
-					access: "public"
-				});
+				const { url } = await put(
+					`${process.env.NODE_ENV}-profile-picture-${randomUUID()}.${fileType}`,
+					imageBuffer,
+					{
+						access: "public"
+					}
+				);
 
 				if (!url || url === "") {
 					throw new InternalServerErrorException("Error uploading image.");
@@ -389,9 +393,13 @@ export class UserService {
 		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`profile-picture-${randomUUID()}.${fileType}`, image.buffer, {
-					access: "public"
-				}).catch(() => {
+				const { url } = await put(
+					`${process.env.NODE_ENV}-profile-picture-${randomUUID()}.${fileType}`,
+					image.buffer,
+					{
+						access: "public"
+					}
+				).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
 
@@ -481,9 +489,13 @@ export class UserService {
 		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`random-picture-${randomUUID()}.${fileType}`, image.file, {
-					access: "public"
-				}).catch(() => {
+				const { url } = await put(
+					`${process.env.NODE_ENV}-random-picture-${randomUUID()}.${fileType}`,
+					image.file,
+					{
+						access: "public"
+					}
+				).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
 
@@ -507,9 +519,13 @@ export class UserService {
 		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`consumable-picture-${randomUUID()}.${fileType}`, image.file, {
-					access: "public"
-				}).catch(() => {
+				const { url } = await put(
+					`${process.env.NODE_ENV}-consumable-picture-${randomUUID()}.${fileType}`,
+					image.file,
+					{
+						access: "public"
+					}
+				).catch(() => {
 					throw new InternalServerErrorException("Error uploading image into vercel.");
 				});
 
