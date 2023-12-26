@@ -4,7 +4,15 @@ import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./src/app.module";
 
-export const { JWT_SECRET, JWT_REFRESH_SECRET, EXPO_ACCESS_TOKEN, PUBLIC_API_URL, PUBLIC_API_PORT } = process.env;
+export const {
+	JWT_SECRET,
+	JWT_REFRESH_SECRET,
+	EXPO_ACCESS_TOKEN,
+	PUBLIC_API_URL,
+	PUBLIC_API_PORT,
+	MERCADO_PAGO_ACCESS_TOKEN,
+	MERCADO_PAGO_PUBLIC_KEY
+} = process.env;
 
 if (JWT_SECRET === undefined) {
 	throw new Error("No JWT_SECRET env variable found.");
@@ -16,6 +24,14 @@ if (JWT_REFRESH_SECRET === undefined) {
 
 if (EXPO_ACCESS_TOKEN === undefined) {
 	throw new Error("No EXPO_ACCESS_TOKEN env variable found.");
+}
+
+if (MERCADO_PAGO_ACCESS_TOKEN === undefined) {
+	throw new Error("No MERCADO_PAGO_ACCESS_TOKEN env variable found.");
+}
+
+if (MERCADO_PAGO_PUBLIC_KEY === undefined) {
+	throw new Error("No MERCADO_PAGO_PUBLIC_KEY env variable found.");
 }
 
 const SWAGGER_ENVS = ["local", "dev", "staging", "production"];

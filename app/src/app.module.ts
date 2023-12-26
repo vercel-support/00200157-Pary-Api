@@ -9,9 +9,10 @@ import { NotificationsService } from "./notifications/services/notifications.ser
 import { PartyModule } from "./party/party.module";
 import { UserModule } from "./user/user.module";
 import { UtilsService } from "./utils/services/utils.service";
+import { PaymentModule } from "./payment/payment.module";
 
 @Module({
-	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule],
+	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule],
 	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService]
 })
 export class AppModule {}

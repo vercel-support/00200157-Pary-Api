@@ -81,3 +81,8 @@ export type NotificationType =
 	| "groupInvite"
 	| "group"
 	| "groupNewMember";
+
+export interface MercadoPagoPreferenceId {
+	preferenceId: string;
+	publicKey: string;
+}

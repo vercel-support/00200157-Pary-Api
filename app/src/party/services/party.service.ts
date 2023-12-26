@@ -1610,9 +1610,9 @@ export class PartyService {
 		if (groupId) {
 			const existingRequest = await this.prisma.membershipRequest.findUnique({
 				where: {
-					partyId_groupId: {
-						partyId,
-						groupId
+					groupId_partyId: {
+						groupId,
+						partyId
 					}
 				},
 				select: {
@@ -1654,11 +1654,14 @@ export class PartyService {
 				throw new Error("Ya has solicitado unirte a este party");
 			}
 
+			console.log("groupId", groupId, "partyId", partyId, "request:", existingRequest);
+
 			await this.prisma.membershipRequest.create({
 				data: {
 					userId,
 					partyId,
-					type: "SOLO"
+					type: "SOLO",
+					groupId
 				}
 			});
 		}

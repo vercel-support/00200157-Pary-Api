@@ -261,9 +261,9 @@ model MembershipRequest {
   party     Party?           @relation(fields: [partyId], references: [id])
   user      User?            @relation(fields: [userId], references: [id])
 
-  @@unique([userId, groupId])
   @@unique([userId, partyId])
-  @@unique([partyId, groupId])
+  @@unique([userId, groupId])
+  @@unique([groupId, partyId])
 }
 
 enum MembershipType {

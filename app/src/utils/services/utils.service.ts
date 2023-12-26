@@ -1,12 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Location } from "app/types";
+import { MERCADO_PAGO_ACCESS_TOKEN, MERCADO_PAGO_PUBLIC_KEY } from "app/main";
+import { Location, MercadoPagoPreferenceId } from "app/types";
 
 @Injectable()
 export class UtilsService {
-	private imageCache = new Map<string, { url: string; expiry: number }>();
-	private readonly CACHE_DURATION = 601800;
-	private readonly AMAZON_CACHE_DURATION = 604800;
-
 	haversineDistance(location1: Location, location2: Location): number {
 		const R = 6371; // Radio de la Tierra en kilómetros
 		const lat1 = (location1.latitude * Math.PI) / 180; // Convertir a radianes
@@ -998,5 +995,27 @@ export class UtilsService {
 		const ageDate = new Date(ageDifMs);
 
 		return Math.abs(ageDate.getUTCFullYear() - 1970);
+	}
+
+	async getMercadoPagoPreferenceId(payerEmail: string, items: any): Promise<MercadoPagoPreferenceId> {
+		const response = await fetch(
+			`https://api.mercadopago.com/checkout/preferences?access_token=${MERCADO_PAGO_ACCESS_TOKEN}`,
+			{
+				method: "POST",
+				body: JSON.stringify({
+					items,
+					payer: {
+						email: payerEmail
+					}
+				})
+			}
+		);
+
+		const preference = await response.json();
+
+		return {
+			preferenceId: preference.id,
+			publicKey: MERCADO_PAGO_PUBLIC_KEY
+		};
 	}
 }
