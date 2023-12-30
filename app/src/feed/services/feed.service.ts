@@ -330,7 +330,7 @@ export class FeedService {
 			const parties = await this.prisma.party.findMany({
 				skip: partyPage * partyLimit,
 				take: partyLimit,
-				orderBy: [{ date: "asc" }],
+				orderBy: [{ date: "desc" }],
 				where: queryFilters,
 				include: PARTY_REQUEST
 			});

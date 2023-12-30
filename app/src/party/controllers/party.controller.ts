@@ -260,4 +260,8 @@ export class PartyController {
 	async addMemberToModList(@Param("partyId") partyId: string, @Body() usernameDto: UsernameDto, @Req() request: any) {
 		return this.partyService.addMemberToModList(partyId, usernameDto, request.raw.decoded.id);
 	}
+	@Get("update-party-tickets")
+	async updatePartyTickets(@Req() request: any) {
+		return this.partyService.updatePartiesTickets(request.raw.decoded.id);
+	}
 }
