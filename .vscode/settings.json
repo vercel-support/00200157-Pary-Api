@@ -1,21 +1,21 @@
 {
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
-    "amplify/.config": false,
-    "amplify/**/*-parameters.json": false,
-    "amplify/**/amplify.state": false,
-    "amplify/**/transform.conf.json": false,
-    "amplify/#current-cloud-backend": false,
-    "amplify/backend/amplify-meta.json": false,
-    "amplify/backend/awscloudformation": false,
-    "**/node_modules": true,
-    "**/dist": false,
-    "**/.idea": true
-  },
-  "explorerExclude.backup": {}
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"amplify/.config": false,
+		"amplify/**/*-parameters.json": false,
+		"amplify/**/amplify.state": false,
+		"amplify/**/transform.conf.json": false,
+		"amplify/#current-cloud-backend": false,
+		"amplify/backend/amplify-meta.json": false,
+		"amplify/backend/awscloudformation": false,
+		"**/node_modules": true,
+		"**/dist": false,
+		"**/.idea": true
+	},
+	"explorerExclude.backup": {}
 }

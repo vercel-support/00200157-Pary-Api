@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { MERCADO_PAGO_ACCESS_TOKEN, MERCADO_PAGO_PUBLIC_KEY } from "app/main";
 import { Location, MercadoPagoPreferenceId } from "app/types";
 
 @Injectable()
@@ -995,27 +994,5 @@ export class UtilsService {
 		const ageDate = new Date(ageDifMs);
 
 		return Math.abs(ageDate.getUTCFullYear() - 1970);
-	}
-
-	async getMercadoPagoPreferenceId(payerEmail: string, items: any): Promise<MercadoPagoPreferenceId> {
-		const response = await fetch(
-			`https://api.mercadopago.com/checkout/preferences?access_token=${MERCADO_PAGO_ACCESS_TOKEN}`,
-			{
-				method: "POST",
-				body: JSON.stringify({
-					items,
-					payer: {
-						email: payerEmail
-					}
-				})
-			}
-		);
-
-		const preference = await response.json();
-
-		return {
-			preferenceId: preference.id,
-			publicKey: MERCADO_PAGO_PUBLIC_KEY
-		};
 	}
 }

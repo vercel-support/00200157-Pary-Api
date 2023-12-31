@@ -10,10 +10,8 @@ export const {
 	EXPO_ACCESS_TOKEN,
 	PUBLIC_API_URL,
 	PUBLIC_API_PORT,
-	MERCADO_PAGO_ACCESS_TOKEN,
-	MERCADO_PAGO_PUBLIC_KEY,
-	FINTOK_PUBLIC_TOKEN,
-	FINTOK_PRIVATE_TOKEN
+	FINTOC_PUBLIC_KEY,
+	FINTOC_SECRET_KEY
 } = process.env;
 
 if (JWT_SECRET === undefined) {
@@ -28,12 +26,12 @@ if (EXPO_ACCESS_TOKEN === undefined) {
 	throw new Error("No EXPO_ACCESS_TOKEN env variable found.");
 }
 
-if (MERCADO_PAGO_ACCESS_TOKEN === undefined) {
-	throw new Error("No MERCADO_PAGO_ACCESS_TOKEN env variable found.");
+if (FINTOC_PUBLIC_KEY === undefined) {
+	throw new Error("No FINTOC_PUBLIC_KEY env variable found.");
 }
 
-if (MERCADO_PAGO_PUBLIC_KEY === undefined) {
-	throw new Error("No MERCADO_PAGO_PUBLIC_KEY env variable found.");
+if (FINTOC_SECRET_KEY === undefined) {
+	throw new Error("No FINTOC_SECRET_KEY env variable found.");
 }
 
 const SWAGGER_ENVS = ["local", "dev", "staging", "production"];

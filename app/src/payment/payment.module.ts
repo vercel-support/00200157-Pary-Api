@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { AuthTokenMiddleware } from "app/middlewares/auth-token/auth-token.middleware";
 import { NotificationsModule } from "app/src/notifications/notifications.module";
 import { PrismaModule } from "app/src/prisma/prisma.module";
@@ -13,6 +13,9 @@ import { PaymentService } from "./services/payment.service";
 })
 export class PaymentModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthTokenMiddleware).forRoutes(PaymentController);
+		consumer.apply(AuthTokenMiddleware).forRoutes({
+			path: "payment/init-payment",
+			method: RequestMethod.POST
+		});
 	}
 }

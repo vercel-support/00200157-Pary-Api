@@ -20,7 +20,7 @@ import { JoinRequestDto } from "../dto/JoinRequestDto";
 import { UpdatePartyDto } from "../dto/UpdateParty.dto";
 import { UploadImageDto } from "../dto/UploadImageDto";
 import { UsernameDto } from "../dto/User.dto";
-import { FINTOK_PRIVATE_TOKEN, MERCADO_PAGO_ACCESS_TOKEN } from "app/main";
+import { FINTOC_SECRET_KEY } from "app/main";
 import axios from "axios";
 
 @Injectable()
@@ -1879,35 +1879,5 @@ export class PartyService {
 		if (!isUserMember) {
 			throw new InternalServerErrorException("El usuario ya es mod de este grupo");
 		}
-	}
-
-	async updatePartiesTickets(userId: string) {
-		const user = await this.prisma.user.findUnique({
-			where: {
-				id: userId
-			},
-			select: {
-				parties: {
-					take: 1,
-					select: {
-						id: true,
-						party: {
-							select: {
-								tickets: {
-									take: 1,
-									include: {
-										base: true
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		});
-		console.log(user.parties[0].party.tickets[0]);
-		const ticket = user.parties[0].party.tickets[0];
-		console.log(FINTOK_PRIVATE_TOKEN);
-
 	}
 }
