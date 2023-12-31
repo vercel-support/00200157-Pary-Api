@@ -676,7 +676,7 @@ export class GroupService {
 			});
 		}
 
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.groupMembershipRequest.findFirst({
 			where: {
 				groupId,
 				userId
@@ -684,7 +684,7 @@ export class GroupService {
 		});
 
 		if (joinRequest) {
-			await this.prisma.membershipRequest.delete({
+			await this.prisma.groupMembershipRequest.delete({
 				where: { id: joinRequest.id }
 			});
 		}
@@ -777,7 +777,7 @@ export class GroupService {
 		if (!group) {
 			throw new NotFoundException("Group not found");
 		}
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.groupMembershipRequest.findFirst({
 			where: {
 				groupId,
 				userId: requesterUserId
@@ -788,7 +788,7 @@ export class GroupService {
 			throw new NotFoundException("Join request not found");
 		}
 
-		await this.prisma.membershipRequest.update({
+		await this.prisma.groupMembershipRequest.update({
 			where: {
 				id: joinRequest.id
 			},
@@ -820,7 +820,7 @@ export class GroupService {
 			throw new NotFoundException("Group not found");
 		}
 
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.groupMembershipRequest.findFirst({
 			where: {
 				groupId,
 				OR: [
@@ -841,7 +841,7 @@ export class GroupService {
 		if (joinRequest.status === "ACCEPTED" || joinRequest.status === "DECLINED") {
 			throw new BadRequestException("Solicitud ya procesada");
 		}
-		await this.prisma.membershipRequest.update({
+		await this.prisma.groupMembershipRequest.update({
 			where: {
 				id: joinRequest.id
 			},
@@ -918,9 +918,8 @@ export class GroupService {
 	}
 
 	async getJoinRequests(userId: string) {
-		return await this.prisma.membershipRequest.findMany({
+		return await this.prisma.groupMembershipRequest.findMany({
 			where: {
-				partyId: null,
 				OR: [
 					{
 						group: {
@@ -1063,7 +1062,7 @@ export class GroupService {
 	}
 
 	async getGroupInvitations(userId: string) {
-		return await this.prisma.membershipRequest.findMany({
+		return await this.prisma.groupMembershipRequest.findMany({
 			where: {
 				OR: [
 					{
@@ -1212,7 +1211,7 @@ export class GroupService {
 			return true;
 		}
 		// Verificar si el usuario o grupo ya ha solicitado unirse al grupo.
-		const existingRequest = await this.prisma.membershipRequest.findUnique({
+		const existingRequest = await this.prisma.groupMembershipRequest.findUnique({
 			where: {
 				userId_groupId: {
 					userId,
@@ -1225,11 +1224,10 @@ export class GroupService {
 		if (existingRequest) {
 			throw new Error("Ya has solicitado unirte a este grupo");
 		}
-		await this.prisma.membershipRequest.create({
+		await this.prisma.groupMembershipRequest.create({
 			data: {
 				userId,
-				groupId,
-				type: "SOLO"
+				groupId
 			}
 		});
 
@@ -1298,7 +1296,7 @@ export class GroupService {
 			}
 		});
 
-		await this.prisma.membershipRequest.deleteMany({
+		await this.prisma.groupMembershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
 				groupId
@@ -1358,7 +1356,7 @@ export class GroupService {
 			throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
 		}
 
-		await this.prisma.membershipRequest.deleteMany({
+		await this.prisma.groupMembershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
 				groupId

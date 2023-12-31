@@ -658,7 +658,7 @@ export class PartyService {
 	}
 
 	async getJoinRequests(userId: string) {
-		return await this.prisma.membershipRequest.findMany({
+		return await this.prisma.partyMembershipRequest.findMany({
 			where: {
 				OR: [
 					{
@@ -842,7 +842,7 @@ export class PartyService {
 	}
 
 	async getPartyInvitations(userId: string) {
-		return await this.prisma.membershipRequest.findMany({
+		return await this.prisma.partyMembershipRequest.findMany({
 			where: {
 				OR: [
 					{
@@ -1029,7 +1029,7 @@ export class PartyService {
 				where: { partyId }
 			});
 
-			await this.prisma.membershipRequest.deleteMany({
+			await this.prisma.partyMembershipRequest.deleteMany({
 				where: { partyId }
 			});
 
@@ -1101,7 +1101,7 @@ export class PartyService {
 			})
 			.catch(() => {});
 
-		await this.prisma.membershipRequest
+		await this.prisma.partyMembershipRequest
 			.deleteMany({
 				where: {
 					partyId,
@@ -1303,7 +1303,7 @@ export class PartyService {
 			});
 		}
 
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 			where: {
 				partyId,
 				userId
@@ -1311,7 +1311,7 @@ export class PartyService {
 		});
 
 		if (joinRequest) {
-			await this.prisma.membershipRequest.delete({
+			await this.prisma.partyMembershipRequest.delete({
 				where: { id: joinRequest.id }
 			});
 		}
@@ -1364,7 +1364,7 @@ export class PartyService {
 			throw new NotFoundException("Carrete no encontrado");
 		}
 		if (type === "SOLO") {
-			const joinRequest = await this.prisma.membershipRequest.findFirst({
+			const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 				where: {
 					partyId,
 					userId: requesterUserId
@@ -1375,7 +1375,7 @@ export class PartyService {
 				throw new NotFoundException("Join request not found");
 			}
 
-			await this.prisma.membershipRequest.update({
+			await this.prisma.partyMembershipRequest.update({
 				where: {
 					id: joinRequest.id
 				},
@@ -1392,7 +1392,7 @@ export class PartyService {
 			});
 			this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party);
 		} else {
-			const joinRequest = await this.prisma.membershipRequest.findFirst({
+			const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 				where: {
 					partyId,
 					groupId
@@ -1419,7 +1419,7 @@ export class PartyService {
 				throw new NotFoundException("Join request not found");
 			}
 
-			await this.prisma.membershipRequest.update({
+			await this.prisma.partyMembershipRequest.update({
 				where: {
 					id: joinRequest.id
 				},
@@ -1538,7 +1538,7 @@ export class PartyService {
 			throw new NotFoundException("Carrete no encontrado");
 		}
 
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 			where: {
 				partyId,
 				OR: [
@@ -1556,7 +1556,7 @@ export class PartyService {
 			throw new NotFoundException("Join request not found");
 		}
 
-		await this.prisma.membershipRequest.update({
+		await this.prisma.partyMembershipRequest.update({
 			where: {
 				id: joinRequest.id
 			},
@@ -1577,7 +1577,7 @@ export class PartyService {
 			throw new NotFoundException("Carrete no encontrado");
 		}
 
-		const joinRequest = await this.prisma.membershipRequest.findFirst({
+		const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 			where: {
 				partyId,
 				userId
@@ -1588,7 +1588,7 @@ export class PartyService {
 			throw new NotFoundException("Join request not found");
 		}
 
-		await this.prisma.membershipRequest.delete({
+		await this.prisma.partyMembershipRequest.delete({
 			where: {
 				id: joinRequest.id
 			}
@@ -1679,7 +1679,7 @@ export class PartyService {
 			return true;
 		}
 		if (groupId) {
-			const existingRequest = await this.prisma.membershipRequest.findUnique({
+			const existingRequest = await this.prisma.partyMembershipRequest.findUnique({
 				where: {
 					groupId_partyId: {
 						groupId,
@@ -1702,7 +1702,7 @@ export class PartyService {
 			}
 
 			// Crear una solicitud para unirse al party.
-			await this.prisma.membershipRequest.create({
+			await this.prisma.partyMembershipRequest.create({
 				data: {
 					groupId,
 					partyId,
@@ -1712,7 +1712,7 @@ export class PartyService {
 			});
 		} else {
 			// Verificar si el usuario o grupo ya ha solicitado unirse al party.
-			const existingRequest = await this.prisma.membershipRequest.findUnique({
+			const existingRequest = await this.prisma.partyMembershipRequest.findUnique({
 				where: {
 					userId_partyId: {
 						userId,
@@ -1725,14 +1725,13 @@ export class PartyService {
 				throw new Error("Ya has solicitado unirte a este party");
 			}
 
-			console.log("groupId", groupId, "partyId", partyId, "request:", existingRequest);
+			console.log("partyId", partyId, "request:", existingRequest);
 
-			await this.prisma.membershipRequest.create({
+			await this.prisma.partyMembershipRequest.create({
 				data: {
 					userId,
 					partyId,
-					type: "SOLO",
-					groupId
+					type: "SOLO"
 				}
 			});
 		}
@@ -1801,7 +1800,7 @@ export class PartyService {
 			}
 		});
 
-		await this.prisma.membershipRequest.deleteMany({
+		await this.prisma.partyMembershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
 				partyId
@@ -1842,7 +1841,7 @@ export class PartyService {
 			}
 		});
 
-		await this.prisma.membershipRequest.deleteMany({
+		await this.prisma.partyMembershipRequest.deleteMany({
 			where: {
 				groupId,
 				partyId
@@ -1902,7 +1901,7 @@ export class PartyService {
 			throw new InternalServerErrorException("El usuario ya es miembro de este grupo");
 		}
 
-		await this.prisma.membershipRequest.deleteMany({
+		await this.prisma.partyMembershipRequest.deleteMany({
 			where: {
 				userId: targetUser.id,
 				partyId

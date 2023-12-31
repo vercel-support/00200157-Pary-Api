@@ -815,7 +815,8 @@ export class UserService {
 		});
 
 		// Delete all membership requests
-		await this.prisma.membershipRequest.deleteMany({ where: { userId: id } });
+		await this.prisma.partyMembershipRequest.deleteMany({ where: { userId: id } });
+		await this.prisma.groupMembershipRequest.deleteMany({ where: { userId: id } });
 
 		// Delete all party moderations
 		await this.prisma.userPartyModerator.deleteMany({ where: { userId: id } });
@@ -832,7 +833,7 @@ export class UserService {
 			await this.prisma.partyInvitation.deleteMany({
 				where: { partyId: party.id }
 			});
-			await this.prisma.membershipRequest.deleteMany({
+			await this.prisma.partyMembershipRequest.deleteMany({
 				where: { partyId: party.id }
 			});
 		}
@@ -847,7 +848,7 @@ export class UserService {
 			await this.prisma.groupInvitation.deleteMany({
 				where: { groupId: group.id }
 			});
-			await this.prisma.membershipRequest.deleteMany({
+			await this.prisma.groupMembershipRequest.deleteMany({
 				where: { groupId: group.id }
 			});
 		}

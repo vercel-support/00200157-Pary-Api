@@ -1,41 +1,41 @@
 import { Optional } from "@nestjs/common";
 import { Transform, Type } from "class-transformer";
-import { IsBoolean, IsInt, Min } from "class-validator";
+import { IsBoolean, IsInt, IsNumber, Min } from "class-validator";
 
 export class PersonalizedPartiesDto {
-	@IsInt()
+	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
 	partyPage = 0;
 
-	@IsInt()
+	@IsNumber()
 	@Min(1)
 	@Type(() => Number)
 	partyLimit = 15;
 
 	@Optional()
-	@IsInt()
+	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
 	groupPage?: number = 0;
 
 	@Optional()
-	@IsInt()
+	@IsNumber()
 	@Min(1)
 	@Type(() => Number)
 	groupLimit?: number = 10;
 
-	@IsInt()
+	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
 	maxAge = 100;
 
-	@IsInt()
+	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
 	minAge = 18;
 
-	@IsInt()
+	@IsNumber()
 	@Min(0)
 	@Type(() => Number)
 	distanceLimit = 100;

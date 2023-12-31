@@ -8,53 +8,54 @@ datasource db {
 }
 
 model User {
-  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID   String               @unique
-  username           String               @unique
-  email              String               @unique
-  name               String               @default("")
-  lastName           String               @default("")
-  signedIn           Boolean              @default(false)
-  profilePictures    ProfilePicture[]
-  socialMedia        SocialMedia
-  accessToken        String               @default("")
-  refreshToken       String               @default("")
-  gender             Gender               @default(Femenino)
-  userType           UserType             @default(Normal)
-  description        String               @default("")
-  birthDate          DateTime
-  interests          String[]             @default([])
-  verified           Boolean              @default(false)
-  phoneNumber        String               @default("")
-  location           Location             @relation(fields: [locationId], references: [id])
-  locationId         String               @db.ObjectId
-  createdAt          DateTime             @default(now())
-  lastLogin          DateTime             @default(now())
-  isCompany          Boolean              @default(false)
-  expoPushToken      String               @default("")
-  webSocketId        String               @default("")
-  followingUserList  UserFollows[]        @relation("FollowerToFollowed")
-  followerUserList   UserFollows[]        @relation("FollowedToFollower")
-  parties            PartyMember[]        @relation("PartyMembershipToUser")
-  ownedParties       Party[]
-  invitedParties     PartyInvitation[]    @relation("PartyInvitedToInviting")
-  invitingParties    PartyInvitation[]    @relation("PartyInvitingToInvited")
-  partiesModerating  UserPartyModerator[] @relation("UserToPartyModerator")
-  groups             GroupMember[]        @relation("MembershipToUser")
-  ledGroups          Group[]              @relation("LeaderToGroup")
-  groupsModerating   UserGroupModerator[] @relation("UserToGroupModerator")
-  invitedGroups      GroupInvitation[]    @relation("InvitedToInviting")
-  invitingGroups     GroupInvitation[]    @relation("InvitingToInvited")
-  membershipRequests MembershipRequest[]
-  tickets            TicketOwnership[]
+  id                      String                   @id @default(auto()) @map("_id") @db.ObjectId
+  assignedGoogleID        String                   @unique
+  username                String                   @unique
+  email                   String                   @unique
+  name                    String                   @default("")
+  lastName                String                   @default("")
+  signedIn                Boolean                  @default(false)
+  profilePictures         ProfilePicture[]
+  socialMedia             SocialMedia
+  accessToken             String                   @default("")
+  refreshToken            String                   @default("")
+  gender                  Gender                   @default(Femenino)
+  userType                UserType                 @default(Normal)
+  description             String                   @default("")
+  birthDate               DateTime
+  interests               String[]                 @default([])
+  verified                Boolean                  @default(false)
+  phoneNumber             String                   @default("")
+  location                Location                 @relation(fields: [locationId], references: [id])
+  locationId              String                   @db.ObjectId
+  createdAt               DateTime                 @default(now())
+  lastLogin               DateTime                 @default(now())
+  isCompany               Boolean                  @default(false)
+  expoPushToken           String                   @default("")
+  webSocketId             String                   @default("")
+  followingUserList       UserFollows[]            @relation("FollowerToFollowed")
+  followerUserList        UserFollows[]            @relation("FollowedToFollower")
+  parties                 PartyMember[]            @relation("PartyMembershipToUser")
+  ownedParties            Party[]
+  invitedParties          PartyInvitation[]        @relation("PartyInvitedToInviting")
+  invitingParties         PartyInvitation[]        @relation("PartyInvitingToInvited")
+  partiesModerating       UserPartyModerator[]     @relation("UserToPartyModerator")
+  groups                  GroupMember[]            @relation("MembershipToUser")
+  ledGroups               Group[]                  @relation("LeaderToGroup")
+  groupsModerating        UserGroupModerator[]     @relation("UserToGroupModerator")
+  invitedGroups           GroupInvitation[]        @relation("InvitedToInviting")
+  invitingGroups          GroupInvitation[]        @relation("InvitingToInvited")
+  partyMembershipRequests PartyMembershipRequest[]
+  groupMembershipRequests GroupMembershipRequest[]
+  tickets                 TicketOwnership[]
   // Variables de empresa
-  consumables        Consumable[]         @relation("UserToConsumable")
-  consumableItems    ConsumableItem[]     @relation("UserToConsumableItem")
-  staffs             UserStaff[]          @relation("UserToStaff")
-  userStaff          UserStaff[]          @relation("StaffToUser")
-  ticketsBase        TicketBase[]         @relation("UserToTicketBase")
-  ticketsCreated     Ticket[]             @relation("UserToTicketCreated")
-  paymentIntents     PaymentIntent[]      @relation("UserToPayment")
+  consumables             Consumable[]             @relation("UserToConsumable")
+  consumableItems         ConsumableItem[]         @relation("UserToConsumableItem")
+  staffs                  UserStaff[]              @relation("UserToStaff")
+  userStaff               UserStaff[]              @relation("StaffToUser")
+  ticketsBase             TicketBase[]             @relation("UserToTicketBase")
+  ticketsCreated          Ticket[]                 @relation("UserToTicketCreated")
+  paymentIntents          PaymentIntent[]          @relation("UserToPayment")
 
   @@index([username, email, assignedGoogleID])
 }
@@ -109,34 +110,34 @@ model ProfilePicture {
 }
 
 model Party {
-  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
-  location           Location             @relation(fields: [locationId], references: [id])
+  id                 String                   @id @default(auto()) @map("_id") @db.ObjectId
+  location           Location                 @relation(fields: [locationId], references: [id])
   name               String
   description        String
   image              PartyPicture
   tags               String[]
   type               PartyType
   date               DateTime
-  private            Boolean              @default(false)
+  private            Boolean                  @default(false)
   advertisement      Boolean
   members            PartyMember[]
   moderators         UserPartyModerator[]
   ageRange           AgeRange
   distance           Int? // optional field to be used in the query
-  active             Boolean              @default(true)
-  showAddressInFeed  Boolean              @default(false)
-  ownerId            String               @map("ownerId") @db.ObjectId
-  owner              User                 @relation(fields: [ownerId], references: [id])
-  groups             PartyGroup[]         @relation("PartyToPartyGroup")
-  createdAt          DateTime             @default(now())
-  membershipRequests MembershipRequest[]
+  active             Boolean                  @default(true)
+  showAddressInFeed  Boolean                  @default(false)
+  ownerId            String                   @map("ownerId") @db.ObjectId
+  owner              User                     @relation(fields: [ownerId], references: [id])
+  groups             PartyGroup[]             @relation("PartyToPartyGroup")
+  createdAt          DateTime                 @default(now())
+  membershipRequests PartyMembershipRequest[]
   invitations        PartyInvitation[]
-  consumables        Consumable[]         @relation("PartyToConsumable")
-  covers             Consumable[]         @relation("PartyToCover")
+  consumables        Consumable[]             @relation("PartyToConsumable")
+  covers             Consumable[]             @relation("PartyToCover")
   ticketOwnerships   TicketOwnership[]
-  tickets            Ticket[]             @relation("PartyToTicket")
-  locationId         String               @db.ObjectId
-  paymentIntents     PaymentIntent[]      @relation("PartyToPayment")
+  tickets            Ticket[]                 @relation("PartyToTicket")
+  locationId         String                   @db.ObjectId
+  paymentIntents     PaymentIntent[]          @relation("PartyToPayment")
 }
 
 enum PartyType {
@@ -200,23 +201,24 @@ model UserPartyModerator {
 }
 
 model Group {
-  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
-  name               String
-  description        String               @default("")
-  leader             User                 @relation("LeaderToGroup", fields: [leaderId], references: [id])
-  leaderId           String               @map("leaderId") @db.ObjectId
-  private            Boolean              @default(false)
-  showInFeed         Boolean              @default(true)
-  createdAt          DateTime             @default(now())
-  invitedParties     PartyInvitation[]    @relation("PartyInvitingToGroup")
-  ageRange           AgeRange
-  members            GroupMember[]
-  moderators         UserGroupModerator[]
-  invitations        GroupInvitation[]
-  parties            PartyGroup[]         @relation("GroupToPartyGroup")
-  membershipRequests MembershipRequest[]
-  tickets            TicketOwnership[]
-  paymentIntents     PaymentIntent[]      @relation("GroupToPayment")
+  id                      String                   @id @default(auto()) @map("_id") @db.ObjectId
+  name                    String
+  description             String                   @default("")
+  leader                  User                     @relation("LeaderToGroup", fields: [leaderId], references: [id])
+  leaderId                String                   @map("leaderId") @db.ObjectId
+  private                 Boolean                  @default(false)
+  showInFeed              Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  invitedParties          PartyInvitation[]        @relation("PartyInvitingToGroup")
+  ageRange                AgeRange
+  members                 GroupMember[]
+  moderators              UserGroupModerator[]
+  invitations             GroupInvitation[]
+  parties                 PartyGroup[]             @relation("GroupToPartyGroup")
+  partyMembershipRequests PartyMembershipRequest[]
+  groupMembershipRequests GroupMembershipRequest[]
+  tickets                 TicketOwnership[]
+  paymentIntents          PaymentIntent[]          @relation("GroupToPayment")
 }
 
 model GroupMember {
@@ -253,7 +255,7 @@ model UserGroupModerator {
   @@unique([userId, groupId])
 }
 
-model MembershipRequest {
+model PartyMembershipRequest {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId
   groupId   String?          @map("groupId") @db.ObjectId
   partyId   String?          @map("partyId") @db.ObjectId
@@ -268,6 +270,18 @@ model MembershipRequest {
   @@unique([userId, partyId])
   @@unique([userId, groupId])
   @@unique([groupId, partyId])
+}
+
+model GroupMembershipRequest {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  groupId   String           @map("groupId") @db.ObjectId
+  userId    String           @map("userId") @db.ObjectId
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  group     Group            @relation(fields: [groupId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@unique([userId, groupId])
 }
 
 enum MembershipType {

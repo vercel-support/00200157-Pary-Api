@@ -246,83 +246,6 @@ export class UtilsService {
 					}
 				}
 			},
-			invitingParties: {
-				select: {
-					partyId: true,
-					party: {
-						select: {
-							name: true,
-							description: true,
-							image: true,
-							id: true,
-							location: {
-								select: {
-									id: true,
-									name: true,
-									latitude: true,
-									longitude: true,
-									timestamp: true,
-									address: true
-								}
-							},
-							consumables: {
-								include: {
-									item: true
-								}
-							},
-							covers: {
-								include: {
-									item: true
-								}
-							},
-							date: true,
-							owner: {
-								select: {
-									username: true,
-									socialMedia: true,
-									name: true,
-									lastName: true,
-									profilePictures: {
-										take: 1,
-										select: {
-											url: true,
-											id: true
-										}
-									},
-									verified: true,
-									isCompany: true,
-									gender: true,
-									userType: true
-								}
-							},
-							members: {
-								select: {
-									userId: true,
-									user: {
-										select: {
-											username: true,
-											socialMedia: true,
-											name: true,
-											lastName: true,
-											profilePictures: {
-												take: 1,
-												select: {
-													url: true,
-													id: true
-												}
-											},
-											verified: true,
-											isCompany: true,
-											gender: true,
-											userType: true
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			},
 			ownedParties: {
 				select: {
 					name: true,
@@ -416,62 +339,6 @@ export class UtilsService {
 							},
 							date: true,
 							owner: {
-								select: {
-									username: true,
-									socialMedia: true,
-									name: true,
-									lastName: true,
-									profilePictures: {
-										take: 1,
-										select: {
-											url: true,
-											id: true
-										}
-									},
-									verified: true,
-									isCompany: true,
-									gender: true,
-									userType: true
-								}
-							},
-							members: {
-								select: {
-									userId: true,
-									user: {
-										select: {
-											username: true,
-											socialMedia: true,
-											name: true,
-											lastName: true,
-											profilePictures: {
-												take: 1,
-												select: {
-													url: true,
-													id: true
-												}
-											},
-											verified: true,
-											isCompany: true,
-											gender: true,
-											userType: true
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			},
-			groupsModerating: {
-				select: {
-					groupId: true,
-					group: {
-						select: {
-							id: true,
-							name: true,
-							description: true,
-							leaderId: true,
-							leader: {
 								select: {
 									username: true,
 									socialMedia: true,
@@ -764,82 +631,7 @@ export class UtilsService {
 					}
 				}
 			},
-			invitingGroups: {
-				select: {
-					groupId: true,
-					group: {
-						include: {
-							leader: {
-								select: {
-									username: true,
-									socialMedia: true,
-									name: true,
-									lastName: true,
-									profilePictures: {
-										take: 1,
-										select: {
-											url: true,
-											id: true
-										}
-									},
-									verified: true,
-									isCompany: true,
-									gender: true,
-									userType: true
-								}
-							},
-							members: {
-								select: {
-									userId: true,
-									user: {
-										select: {
-											username: true,
-											socialMedia: true,
-											name: true,
-											lastName: true,
-											profilePictures: {
-												take: 1,
-												select: {
-													url: true,
-													id: true
-												}
-											},
-											verified: true,
-											isCompany: true,
-											gender: true,
-											userType: true
-										}
-									}
-								}
-							},
-							moderators: {
-								include: {
-									user: {
-										select: {
-											username: true,
-											socialMedia: true,
-											name: true,
-											lastName: true,
-											profilePictures: {
-												take: 1,
-												select: {
-													url: true,
-													id: true
-												}
-											},
-											verified: true,
-											isCompany: true,
-											gender: true,
-											userType: true
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			},
-			membershipRequests: {
+			partyMembershipRequests: {
 				include: {
 					group: {
 						include: {
@@ -959,6 +751,98 @@ export class UtilsService {
 							members: {
 								select: {
 									userId: true,
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
+										}
+									}
+								}
+							}
+						}
+					},
+					user: {
+						select: {
+							username: true,
+							socialMedia: true,
+							name: true,
+							lastName: true,
+							profilePictures: {
+								take: 1,
+								select: {
+									url: true,
+									id: true
+								}
+							},
+							verified: true,
+							isCompany: true,
+							gender: true,
+							userType: true
+						}
+					}
+				}
+			},
+			groupMembershipRequests: {
+				include: {
+					group: {
+						include: {
+							leader: {
+								select: {
+									username: true,
+									socialMedia: true,
+									name: true,
+									lastName: true,
+									profilePictures: {
+										take: 1,
+										select: {
+											url: true,
+											id: true
+										}
+									},
+									verified: true,
+									isCompany: true,
+									gender: true,
+									userType: true
+								}
+							},
+							members: {
+								include: {
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
+										}
+									}
+								}
+							},
+							moderators: {
+								include: {
 									user: {
 										select: {
 											username: true,
