@@ -1449,6 +1449,75 @@ export class PartyService {
 		return true;
 	}
 
+	async joinUserOrGroupToParty(partyId: string, userId: string, ticketId: string, groupId?: string) {
+		const party = await this.prisma.party.findUnique({
+			where: {
+				id: partyId
+			},
+			include: {
+				moderators: {
+					select: {
+						user: {
+							select: {
+								expoPushToken: true
+							}
+						}
+					}
+				}
+			}
+		});
+		if (!party) {
+			throw new NotFoundException("Carrete no encontrado");
+		}
+
+		const ticket = await this.prisma.ticket.findUnique({
+			where: {
+				id: ticketId
+			},
+			select: {
+				id: true
+			}
+		});
+		if (!ticket) {
+			throw new NotFoundException("No default ticket found");
+		}
+
+		if (!groupId) {
+			await this.prisma.partyMember.create({
+				data: {
+					partyId,
+					userId
+				}
+			});
+
+			await this.prisma.ticketOwnership.create({
+				data: {
+					userId,
+					ticketId,
+					partyId
+				}
+			});
+
+			this.notifications.sendPartyJoinAcceptedSoloNotification(userId, party);
+		} else {
+			await this.prisma.partyGroup.create({
+				data: {
+					partyId,
+					groupId
+				}
+			});
+			await this.prisma.ticketOwnership.create({
+				data: {
+					groupId,
+					ticketId,
+					partyId
+				}
+			});
+			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
+		}
+		return true;
+	}
+
 	async declineJoinRequest(partyId: string, userId: string, joinRequestDto: JoinRequestDto) {
 		const { userId: requesterUserId, groupId, type } = joinRequestDto;
 		if (type !== "SOLO" && type !== "GROUP") {

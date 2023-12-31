@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PartyType } from "@prisma/client";
+import { Party, PartyType } from "@prisma/client";
 import { User } from "app/types";
 import Expo, { ExpoPushMessage } from "expo-server-sdk";
 import { PrismaService } from "../../db/services/prisma.service";
@@ -7,7 +7,10 @@ import { ExpoService } from "../../expo/services/expo.service";
 
 @Injectable()
 export class NotificationsService {
-	constructor(private prisma: PrismaService, private expo: ExpoService) {}
+	constructor(
+		private prisma: PrismaService,
+		private expo: ExpoService
+	) {}
 
 	async sendNewFollowerNotification(pushToken: string, followerId: string) {
 		if (pushToken === "" || !Expo.isExpoPushToken(pushToken)) {
@@ -197,7 +200,7 @@ export class NotificationsService {
 			where: { id: userId },
 			select: { expoPushToken: true, username: true }
 		});
-		if (user === null) return;
+		if (user === null || !party.moderators) return;
 		const pushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
 		const userMessage: ExpoPushMessage = {
 			to: [user.expoPushToken, ...pushTokens],
@@ -231,7 +234,7 @@ export class NotificationsService {
 		try {
 			await this.expo.sendPushNotificationsAsync([userMessage, modMessage]);
 		} catch (error) {
-			console.error("Error sending push notification:", error);
+			//console.error("Error sending push notification:", error);
 			return false;
 		}
 	}

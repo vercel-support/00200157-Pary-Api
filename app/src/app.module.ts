@@ -10,9 +10,11 @@ import { PartyModule } from "./party/party.module";
 import { UserModule } from "./user/user.module";
 import { UtilsService } from "./utils/services/utils.service";
 import { PaymentModule } from "./payment/payment.module";
+import { WebsocketGateway } from "./websockets/websocket.gateway";
+import { WebSocketsModule } from "./websockets/websockets.module";
 
 @Module({
-	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule],
+	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule, WebSocketsModule],
 	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService]
 })
 export class AppModule {}

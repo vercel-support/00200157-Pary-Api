@@ -32,6 +32,7 @@ model User {
   lastLogin          DateTime             @default(now())
   isCompany          Boolean              @default(false)
   expoPushToken      String               @default("")
+  webSocketId        String               @default("")
   followingUserList  UserFollows[]        @relation("FollowerToFollowed")
   followerUserList   UserFollows[]        @relation("FollowedToFollower")
   parties            PartyMember[]        @relation("PartyMembershipToUser")
@@ -398,8 +399,6 @@ model TicketOwnership {
   groupId              String?        @map("groupId") @db.ObjectId
   type                 MembershipType @default(SOLO)
   createdAt            DateTime       @default(now())
-
-  @@unique([ticketId, partyId, userId])
 }
 
 model PaymentIntent {
@@ -409,7 +408,7 @@ model PaymentIntent {
   status          PaymentStatus @default(pending)
   type            PaymentType   @default(FINTOC)
   widgetToken     String?
-  paymentIntentId String?
+  paymentIntentId String
   createdAt       DateTime      @default(now())
   partyId         String        @map("partyId") @db.ObjectId
   party           Party         @relation("PartyToPayment", fields: [partyId], references: [id])
@@ -419,6 +418,8 @@ model PaymentIntent {
   ticket          Ticket        @relation("TicketToPayment", fields: [ticketId], references: [id])
   groupId         String?       @map("groupId") @db.ObjectId
   group           Group?        @relation("GroupToPayment", fields: [groupId], references: [id])
+
+  @@unique([paymentIntentId])
 }
 
 enum PaymentStatus {
