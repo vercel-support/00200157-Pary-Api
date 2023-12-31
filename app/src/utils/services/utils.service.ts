@@ -28,7 +28,24 @@ export class UtilsService {
 			profilePictures: true,
 			followerUserList: true,
 			followingUserList: true,
-			tickets: true,
+			tickets: {
+				include: {
+					ticket: {
+						include: {
+							base: true,
+							consumables: {
+								include: {
+									consumable: {
+										include: {
+											item: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
 			ticketsCreated: true,
 			ticketsBase: true,
 			location: {

@@ -99,4 +99,77 @@ export class PaymentController {
 		}
 		return "ok";
 	}
+
+	/* @Post("test")
+	async test(@Body() body: any) {
+		console.log(body);
+		const parties = await this.prisma.party.findMany({
+			include: {
+				tickets: true,
+				members: true
+			}
+		});
+
+		for (const party of parties) {
+			if (party.tickets.length > 0) {
+				party.members.forEach(async member => {
+					if (!member.userId || !party.tickets[0] || !party.id) return;
+					console.log("Creating ownership", member.userId, party.tickets[0].id, party.id);
+
+					await this.prisma.ticketOwnership.create({
+						data: {
+							userId: member.userId,
+							ticketId: party.tickets[0].id,
+							partyId: party.id
+						}
+					});
+				});
+			} else {
+				let baseTicket = await this.prisma.ticketBase.findFirst({
+					where: {
+						name: "Entrada General",
+						creatorId: party.ownerId
+					}
+				});
+				if (!baseTicket) {
+					baseTicket = await this.prisma.ticketBase.create({
+						data: {
+							name: "Entrada General",
+							description: "Entrada general.",
+							type: "GRATIS",
+							creator: {
+								connect: {
+									id: party.ownerId
+								}
+							}
+						}
+					});
+				}
+				const defaultTicket = await this.prisma.ticket.create({
+					data: {
+						stock: 200,
+						price: 0,
+						base: {
+							connect: {
+								id: baseTicket.id
+							}
+						}
+					}
+				});
+				await this.prisma.party.update({
+					where: {
+						id: party.id
+					},
+					data: {
+						tickets: {
+							connect: {
+								id: defaultTicket.id
+							}
+						}
+					}
+				});
+			}
+		}
+		return "ok";
+	} */
 }

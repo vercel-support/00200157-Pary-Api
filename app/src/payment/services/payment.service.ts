@@ -16,12 +16,6 @@ export class PaymentService {
 	) {}
 	async initPayment(initPaymentDto: InitPaymentDto, userId: string) {
 		const { partyId, ticketId, groupId } = initPaymentDto;
-		const user = await this.prisma.user.findUnique({
-			where: {
-				id: userId
-			}
-		});
-
 		const party = await this.prisma.party.findUnique({
 			where: {
 				id: partyId,
@@ -47,6 +41,9 @@ export class PaymentService {
 			throw new InternalServerErrorException("Ticket no encontrado");
 		}
 
+		if (ticket.price === 0) {
+			throw new InternalServerErrorException("Ticket gratis");
+		}
 		let groupConnection = {};
 		if (groupId) {
 			const group = await this.prisma.group.findUnique({
@@ -70,7 +67,7 @@ export class PaymentService {
 			.post(
 				"https://api.fintoc.com/v1/payment_intents",
 				{
-					amount: 5000,
+					amount: ticket.price,
 					currency: "clp",
 					metadata: {
 						partyId,
