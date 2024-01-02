@@ -23,21 +23,21 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
 
-      - name: Install Yarn
+      - name: Install Pnpm
         run: corepack enable |
-          corepack prepare yarn@4.0.2 --activate
+          corepack prepare pnpm@8.12.1 --activate
 
-      # Yarn dependencies cannot be cached until yarn is installed
+      # Pnpm dependencies cannot be cached until pnpm is installed
       # WORKAROUND: https://github.com/actions/setup-node/issues/531
       - name: Extract Cached Dependencies
         uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
-        run: yarn --immutable
+        run: pnpm install --frozen-lockfile
 
       - name: Set Git user to Actions Bot
         run: |
@@ -47,4 +47,4 @@ jobs:
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn semantic-release
+        run: pnpm semantic-release
