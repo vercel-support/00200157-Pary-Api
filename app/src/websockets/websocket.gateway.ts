@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -9,8 +10,6 @@ import {
 import { PUBLIC_API_PORT } from "app/main";
 import { Server, Socket } from "socket.io";
 import { PrismaService } from "../db/services/prisma.service";
-import { UtilsService } from "../utils/services/utils.service";
-import { Injectable } from "@nestjs/common";
 
 @WebSocketGateway(parseInt(PUBLIC_API_PORT), {
 	cors: {
@@ -19,19 +18,14 @@ import { Injectable } from "@nestjs/common";
 })
 @Injectable()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-	constructor(
-		private prisma: PrismaService,
-		private utils: UtilsService
-	) {}
+	constructor(private prisma: PrismaService) {}
 	@WebSocketServer() server: Server;
 
 	afterInit(server: any) {
 		this.server = server;
 	}
 
-	handleDisconnect(client: Socket) {
-		console.log("WebsocketGateway disconnected:", client.id);
-	}
+	handleDisconnect(client: Socket) {}
 
 	handleConnection(client: Socket, ...args: any[]) {}
 
@@ -45,7 +39,6 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 				webSocketId: client.id
 			}
 		});
-		console.log("Usuario Conectado", client.id, userId);
 		client.emit("payment", "ok");
 	}
 }

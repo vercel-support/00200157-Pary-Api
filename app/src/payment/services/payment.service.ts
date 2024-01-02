@@ -62,7 +62,6 @@ export class PaymentService {
 			};
 		}
 
-		console.log(ticket.price);
 		const response = await axios
 			.post(
 				"https://api.fintoc.com/v1/payment_intents",
@@ -84,14 +83,11 @@ export class PaymentService {
 				}
 			)
 			.catch(error => {
-				console.log(JSON.stringify(error.response.data));
 				throw new InternalServerErrorException(error);
 			})
 			.then(response => {
 				return response.data;
 			});
-
-		console.log("FinToc Response: ", response);
 
 		if (response.widget_token) {
 			const newPayment = await this.prisma.paymentIntent.create({
@@ -118,7 +114,6 @@ export class PaymentService {
 					group: groupConnection
 				}
 			});
-			console.log(newPayment);
 			return newPayment;
 		}
 		throw new InternalServerErrorException("Error al crear el pago");

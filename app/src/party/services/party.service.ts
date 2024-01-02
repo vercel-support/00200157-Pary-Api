@@ -469,7 +469,6 @@ export class PartyService {
 				});
 
 				if (!url || url === "") {
-					console.log(" uploading image.2");
 					throw new InternalServerErrorException("Error uploading image.");
 				}
 
@@ -1054,14 +1053,10 @@ export class PartyService {
 		});
 
 		if (!isMember) {
-			console.log("A");
 			if (party.groups.some(partyGroup => partyGroup.group.members.some(member => member.userId === userId))) {
-				console.log("b");
 				if (party.groups.some(partyGroup => partyGroup.group.leaderId === userId)) {
-					console.log("c");
 					const groups = party.groups.filter(partyGroup => partyGroup.group.leaderId === userId);
 					for (const group of groups) {
-						console.log("d", group.groupId);
 						await this.prisma.partyGroup.delete({
 							where: {
 								partyId_groupId: {
@@ -1691,7 +1686,6 @@ export class PartyService {
 				}
 			});
 
-			console.log("groupId", groupId, "partyId", partyId, "request:", existingRequest);
 			if (existingRequest) {
 				if (existingRequest.status === "PENDING") {
 					throw new ForbiddenException("El grupo ya ha solicitado unirse al party");
@@ -1724,8 +1718,6 @@ export class PartyService {
 			if (existingRequest) {
 				throw new Error("Ya has solicitado unirte a este party");
 			}
-
-			console.log("partyId", partyId, "request:", existingRequest);
 
 			await this.prisma.partyMembershipRequest.create({
 				data: {

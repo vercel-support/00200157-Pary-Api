@@ -550,16 +550,12 @@ export class UserService {
 				id: consumableId
 			}
 		});
-		console.log("isOwnerOfConsumable", consumable);
-
 		if (!consumable) {
 			throw new InternalServerErrorException("No tienes permiso para eliminar esta imagen.");
 		}
 		await del(consumable.pictureUrl).catch(() => {
-			console.log("Error al eliminar la imagen.");
 			throw new InternalServerErrorException("Error al eliminar la imagen.");
 		});
-		console.log("Eliminada la imagen de vercel.");
 
 		return true;
 	}

@@ -26,7 +26,6 @@ export class PaymentController {
 		})
 	)
 	async initPayment(@Body() initPaymentDto: InitPaymentDto, @Req() request: any) {
-		console.log(initPaymentDto);
 		return await this.paymentService.initPayment(initPaymentDto, request.raw.decoded.id);
 	}
 
@@ -44,13 +43,6 @@ export class PaymentController {
 						select: {
 							webSocketId: true
 						}
-					});
-					console.log("Pago aceptado", user.webSocketId, {
-						partyId,
-						userId,
-						ticketId,
-						paymentId,
-						groupId
 					});
 
 					await this.partyService.joinUserOrGroupToParty(partyId, userId, ticketId, groupId);
@@ -73,22 +65,20 @@ export class PaymentController {
 					break;
 				}
 				case "payment_intent.failed": {
-					console.log("Pago Fallido", body.data);
 					const { id: paymentId } = body.data;
-					await this.prisma.paymentIntent.update({
-						where: {
-							paymentIntentId: paymentId
-						},
-						data: {
-							status: "failed"
-						}
-					});
+					await this.prisma.paymentIntent
+						.update({
+							where: {
+								paymentIntentId: paymentId
+							},
+							data: {
+								status: "failed"
+							}
+						})
+						.catch(err => console.log(err));
 					break;
 				}
 				case "link.refresh_intent.succeeded": {
-					const linkIdRefreshSucceeded = body.data.id;
-					console.log(linkIdRefreshSucceeded);
-					// Luego define y llama a un método para manejar el evento de actualización de enlace.
 					break;
 				}
 				// ... manejar otros tipos de eventos
