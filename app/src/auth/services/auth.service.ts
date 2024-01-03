@@ -10,7 +10,10 @@ const client = new OAuth2Client();
 
 @Injectable()
 export class AuthService {
-	constructor(private prisma: PrismaService, private utils: UtilsService) {}
+	constructor(
+		private prisma: PrismaService,
+		private utils: UtilsService
+	) {}
 
 	async signInUser(googleUser: GoogleUser) {
 		const { idToken } = googleUser;
@@ -87,14 +90,23 @@ export class AuthService {
 	}
 
 	async logoutUser(userId: string) {
-		return this.prisma.user.update({
+		const response = await this.prisma.user.update({
 			where: { id: userId },
 			data: {
 				accessToken: "",
 				refreshToken: "",
-				expoPushToken: ""
+				expoPushToken: "",
+				webSocketId: ""
 			}
 		});
+
+		const currentToken = await this.prisma.user.findUnique({
+			where: { id: userId },
+			select: {
+				accessToken: true
+			}
+		});
+		return true;
 	}
 
 	async refreshToken(userId: string) {

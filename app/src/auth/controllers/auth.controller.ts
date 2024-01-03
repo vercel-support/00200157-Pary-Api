@@ -22,7 +22,10 @@ import { UtilsService } from "../../utils/services/utils.service";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
-	constructor(private authService: AuthService, private utils: UtilsService) {}
+	constructor(
+		private authService: AuthService,
+		private utils: UtilsService
+	) {}
 
 	@Post("signIn")
 	@UsePipes(
@@ -33,17 +36,17 @@ export class AuthController {
 		})
 	)
 	async signIn(@Body() googleUser: GoogleUserDto): Promise<User> {
-		return this.authService.signInUser(googleUser);
+		return await this.authService.signInUser(googleUser);
 	}
 
 	@Post("logout")
 	async logout(@Req() request: any) {
-		return this.authService.logoutUser(request.raw.decoded.id);
+		return await this.authService.logoutUser(request.raw.decoded.id);
 	}
 
 	@Post("refresh-token")
 	async refreshToken(@Req() request: any): Promise<any> {
-		return this.authService.refreshToken(request.raw.decoded.id);
+		return await this.authService.refreshToken(request.raw.decoded.id);
 	}
 
 	@Post("test-token")

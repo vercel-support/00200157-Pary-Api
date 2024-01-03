@@ -32,6 +32,7 @@ export class PaymentController {
 	@Post("webhook")
 	async webhook(@Body() body: any) {
 		if (body.type) {
+			console.log("Nuevo WebHook", body.type, body.data?.metadata);
 			switch (body.type) {
 				case "payment_intent.succeeded": {
 					const { id: paymentId, metadata } = body.data;
@@ -66,10 +67,13 @@ export class PaymentController {
 				}
 				case "payment_intent.failed": {
 					const { id: paymentId } = body.data;
-					await this.prisma.paymentIntent
+					this.prisma.paymentIntent
 						.update({
 							where: {
-								paymentIntentId: paymentId
+								paymentIntentId: paymentId,
+								status: {
+									not: "succeeded"
+								}
 							},
 							data: {
 								status: "failed"
