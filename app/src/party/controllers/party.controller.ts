@@ -103,7 +103,7 @@ export class PartyController {
 			disableErrorMessages: false
 		})
 	)
-	async inviteToGroup(@Param("partyId") partyId: string, @Body() inviteToPartyDto: UsernameDto, @Req() request: any) {
+	async inviteToParty(@Param("partyId") partyId: string, @Body() inviteToPartyDto: UsernameDto, @Req() request: any) {
 		return await this.partyService.inviteToParty(partyId, inviteToPartyDto, request.raw.decoded.id);
 	}
 

@@ -841,31 +841,16 @@ export class PartyService {
 	}
 
 	async getPartyInvitations(userId: string) {
-		return await this.prisma.partyMembershipRequest.findMany({
+		const invitations = await this.prisma.partyInvitation.findMany({
 			where: {
-				OR: [
-					{
-						party: {
-							ownerId: userId
-						}
-					},
-					{
-						party: {
-							moderators: {
-								some: {
-									userId: userId
-								}
-							}
-						}
-					}
-				],
+				invitedUserId: userId,
 				status: "PENDING"
 			},
 			include: {
 				party: {
 					include: PARTY_REQUEST
 				},
-				user: {
+				invitedUser: {
 					select: {
 						username: true,
 						socialMedia: true,
@@ -954,6 +939,15 @@ export class PartyService {
 					}
 				}
 			}
+		});
+		return invitations.map(inv => {
+			const { party, invitedUser, group, invitedUserId } = inv;
+			return {
+				party,
+				user: invitedUser,
+				userId: invitedUserId,
+				group
+			};
 		});
 	}
 
@@ -1104,6 +1098,13 @@ export class PartyService {
 				}
 			})
 			.catch(() => {});
+
+		await this.prisma.ticketOwnership.deleteMany({
+			where: {
+				partyId,
+				userId
+			}
+		});
 		return true;
 	}
 
@@ -1863,7 +1864,7 @@ export class PartyService {
 		});
 
 		if (!party) {
-			throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+			throw new NotFoundException("Carrete no encontrado, o no tienes permisos");
 		}
 
 		const targetUser = await this.prisma.user.findUnique({
@@ -1912,7 +1913,7 @@ export class PartyService {
 		});
 
 		if (!party) {
-			throw new NotFoundException("Grupo no encontrado, o no tienes permisos");
+			throw new NotFoundException("Carrete no encontrado, o no tienes permisos");
 		}
 
 		const targetUser = await this.prisma.user.findUnique({
