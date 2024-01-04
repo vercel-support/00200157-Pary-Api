@@ -4,13 +4,28 @@ module.exports = {
 		[
 			"@semantic-release/commit-analyzer",
 			{
-				preset: "conventionalcommits"
+				preset: "angular",
+				releaseRules: [
+					{ breaking: true, release: "major" },
+					{ revert: true, release: "patch" },
+					{ type: "feat", release: "minor" },
+					{ type: "fix", release: "patch" },
+					{ type: "docs", scope: "README", release: "patch" },
+					{ type: "refactor", release: "patch" },
+					{ type: "style", release: "patch" }
+				],
+				parserOpts: {
+					noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
+				}
 			}
 		],
 		[
 			"@semantic-release/release-notes-generator",
 			{
-				preset: "conventionalcommits",
+				preset: "angular",
+				parserOpts: {
+					noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
+				},
 				presetConfig: {
 					types: [
 						{
@@ -37,6 +52,10 @@ module.exports = {
 							type: "chore",
 							section: ":broom: Chore",
 							hidden: false
+						},
+						{
+							type: "breaking",
+							section: ":boom: Breaking changes"
 						}
 					]
 				}
