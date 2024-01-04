@@ -327,6 +327,9 @@ export class GroupService {
 					}
 				},
 				members: {
+					orderBy: {
+						createdAt: "asc"
+					},
 					include: {
 						user: {
 							select: {
@@ -1062,28 +1065,13 @@ export class GroupService {
 	}
 
 	async getGroupInvitations(userId: string) {
-		return await this.prisma.groupMembershipRequest.findMany({
+		const invitations = await this.prisma.groupInvitation.findMany({
 			where: {
-				OR: [
-					{
-						group: {
-							leaderId: userId
-						}
-					},
-					{
-						group: {
-							moderators: {
-								some: {
-									userId: userId
-								}
-							}
-						}
-					}
-				],
+				invitedUserId: userId,
 				status: "PENDING"
 			},
 			include: {
-				user: {
+				invitedUser: {
 					select: {
 						username: true,
 						socialMedia: true,
@@ -1124,6 +1112,9 @@ export class GroupService {
 							}
 						},
 						members: {
+							orderBy: {
+								createdAt: "asc"
+							},
 							include: {
 								user: {
 									select: {
@@ -1172,6 +1163,14 @@ export class GroupService {
 					}
 				}
 			}
+		});
+		return invitations.map(inv => {
+			const { invitedUser, group, invitedUserId } = inv;
+			return {
+				user: invitedUser,
+				userId: invitedUserId,
+				group
+			};
 		});
 	}
 
