@@ -872,7 +872,7 @@ export class PartyService {
 					}
 				},
 				group: {
-					select: {
+					include: {
 						leader: {
 							select: {
 								username: true,
@@ -946,9 +946,11 @@ export class PartyService {
 			const { party, invitedUser, group, invitedUserId } = inv;
 			return {
 				party,
+				partyId: party?.id,
 				user: invitedUser,
 				userId: invitedUserId,
-				group
+				group,
+				groupId: group?.id
 			};
 		});
 	}

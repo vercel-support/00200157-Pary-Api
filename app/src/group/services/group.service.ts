@@ -1091,7 +1091,7 @@ export class GroupService {
 					}
 				},
 				group: {
-					select: {
+					include: {
 						leader: {
 							select: {
 								username: true,
@@ -1169,7 +1169,8 @@ export class GroupService {
 			return {
 				user: invitedUser,
 				userId: invitedUserId,
-				group
+				group,
+				groupId: group.id
 			};
 		});
 	}
