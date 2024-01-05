@@ -971,6 +971,39 @@ export class UserService {
 		});
 	}
 
+	async deleteConsumableItem(itemId: string, userId: string) {
+		const consumableItem = await this.prisma.consumableItem.findUnique({
+			where: {
+				id: itemId,
+				creatorId: userId
+			}
+		});
+
+		if (!consumableItem) {
+			throw new NotFoundException("Consumable item not found.");
+		}
+
+		const consumables = await this.prisma.consumable.count({
+			where: {
+				itemId
+			}
+		});
+
+		if (consumables > 0) {
+			throw new InternalServerErrorException("Este item está relacionado a un ticket, no puedes borrarlo.");
+		}
+
+		await this.prisma.consumableItem.delete({
+			where: {
+				id: itemId
+			}
+		});
+
+		await del(consumableItem.pictureUrl);
+
+		return true;
+	}
+
 	async updateConsumableItem(createConsumableItemDto: ConsumableItemDto, userId: string) {
 		const { id, name, description, pictureUrl, type } = createConsumableItemDto;
 
@@ -992,43 +1025,70 @@ export class UserService {
 		const { base, tags, stock, price, color, consumables } = createTicketDto;
 		const { name, description, type, id } = base;
 
-		return this.prisma.ticket.create({
-			data: {
-				stock,
-				tags,
-				price,
-				color,
-				creator: {
-					connect: {
-						id: userId
-					}
-				},
-				consumables: {
-					createMany: {
-						data: consumables.map(consumable => ({
-							quantity: consumable.quantity,
-							consumableId: consumable.consumable.id
-						}))
-					}
-				},
-				base: {
-					connectOrCreate: {
-						where: {
-							id
-						},
-						create: {
-							name,
-							description,
-							type,
-							creator: {
-								connect: {
-									id: userId
-								}
+		const user = await this.prisma.user.findUnique({
+			where: {
+				id: userId
+			},
+			select: {
+				userType: true
+			}
+		});
+
+		if (!user) {
+			throw new NotFoundException("Usuario no encontrado.");
+		}
+
+		if (consumables.length > 0 && user.userType === "Normal") {
+			throw new InternalServerErrorException(
+				"No puedes crear tickets con consumibles, tienes que tener una cuenta de empresa."
+			);
+		}
+
+		const ticketData = {
+			stock,
+			tags,
+			price,
+			color,
+			creator: {
+				connect: {
+					id: userId
+				}
+			},
+			base: {
+				connectOrCreate: {
+					where: {
+						id
+					},
+					create: {
+						name,
+						description,
+						type,
+						creator: {
+							connect: {
+								id: userId
 							}
 						}
 					}
 				}
 			}
+		};
+
+		if (consumables.length > 0) {
+			// biome-ignore lint/complexity/useLiteralKeys: <explanation>
+			ticketData["consumables"] = {
+				createMany: {
+					data: consumables.map(consumable => ({
+						quantity: consumable.quantity,
+						consumableId: consumable.consumable.id
+					}))
+				}
+			};
+		}
+
+		console.log("Creando ticket:", createTicketDto, userId);
+
+		return this.prisma.ticket.create({
+			data: ticketData
 		});
 	}
 
@@ -1153,6 +1213,38 @@ export class UserService {
 				type
 			}
 		});
+	}
+	async deleteTicketBase(ticketId: string, userId: string) {
+		const ticketBase = await this.prisma.ticketBase.findUnique({
+			where: {
+				id: ticketId,
+				creatorId: userId
+			}
+		});
+
+		if (!ticketBase) {
+			throw new NotFoundException("Ticket base no encontrado.");
+		}
+
+		const tickets = await this.prisma.ticket.count({
+			where: {
+				baseId: ticketId
+			}
+		});
+
+		if (tickets > 0) {
+			throw new InternalServerErrorException(
+				"Este ticket base está relacionado a un ticket, no puedes borrarlo."
+			);
+		}
+
+		await this.prisma.ticketBase.delete({
+			where: {
+				id: ticketId
+			}
+		});
+
+		return true;
 	}
 
 	async updateTicketBase(updateTicketBaseDto: TicketBaseDto, userId: string) {

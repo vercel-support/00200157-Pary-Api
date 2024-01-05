@@ -120,6 +120,7 @@ model Party {
   date               DateTime
   private            Boolean                  @default(false)
   advertisement      Boolean
+  payInDoor          Boolean                  @default(true)
   members            PartyMember[]
   moderators         UserPartyModerator[]
   ageRange           AgeRange

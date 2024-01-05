@@ -232,6 +232,14 @@ export class UserController {
 		return this.userService.createConsumableItem(createConsumableItemDto, request.raw.decoded.id);
 	}
 
+	@Delete("delete-consumable-item/:itemId")
+	async deleteConsumableItem(@Param("itemId") itemId: string, @Req() request: any) {
+		if (!itemId) {
+			throw new NotFoundException("itemId not found");
+		}
+		return this.userService.deleteConsumableItem(itemId, request.raw.decoded.id);
+	}
+
 	@Post("update-consumable-item")
 	@UsePipes(
 		new ValidationPipe({
@@ -286,6 +294,14 @@ export class UserController {
 	)
 	async createTicketBase(@Body() createTicketBaseDto: TicketBaseDto, @Req() request: any) {
 		return this.userService.createTicketBase(createTicketBaseDto, request.raw.decoded.id);
+	}
+
+	@Delete("delete-ticket-base/:ticketId")
+	async deleteTicketBase(@Param("ticketId") ticketId: string, @Req() request: any) {
+		if (!ticketId) {
+			throw new NotFoundException("ticketId not found");
+		}
+		return this.userService.deleteTicketBase(ticketId, request.raw.decoded.id);
 	}
 
 	@Post("update-ticket-base")

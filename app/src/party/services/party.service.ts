@@ -46,7 +46,8 @@ export class PartyService {
 			isPrivate,
 			consumables,
 			covers,
-			tickets
+			tickets,
+			payInDoor
 		} = partyBody;
 
 		const inviter = await this.prisma.user.findUnique({
@@ -155,6 +156,7 @@ export class PartyService {
 				showAddressInFeed,
 				ageRange,
 				locationId: partyLocation.id,
+				payInDoor,
 				consumables: {
 					connect: consumables.map(consumable => {
 						if (inviter.userType === "Normal") {
