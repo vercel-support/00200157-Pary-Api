@@ -39,6 +39,5 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 				webSocketId: client.id
 			}
 		});
-		client.emit("payment", "ok");
 	}
 }
