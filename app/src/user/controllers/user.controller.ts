@@ -141,7 +141,7 @@ export class UserController {
 		return await this.userService.getUserById(id);
 	}
 
-	@Get(":id/purge")
+	@Delete(":id/purge")
 	async purgeUserById(@Param("id") id: string) {
 		if (!id) {
 			throw new NotFoundException("User not found");

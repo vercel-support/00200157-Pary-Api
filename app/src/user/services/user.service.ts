@@ -833,7 +833,16 @@ export class UserService {
 				where: { partyId: party.id }
 			});
 		}
-		await this.prisma.party.deleteMany({ where: { ownerId: id } });
+		for (const party of ownedParties) {
+			// Primero, elimina o cambia la TicketOwnership asociada
+			await this.prisma.ticketOwnership.deleteMany({
+				where: { partyId: party.id }
+			});
+
+			// Luego, puedes eliminar la Party
+			await this.prisma.party.deleteMany({ where: { id: party.id } });
+			await del(party.image.url);
+		}
 
 		// Delete all led groups
 		const ledGroups = await this.prisma.group.findMany({
@@ -848,7 +857,37 @@ export class UserService {
 				where: { groupId: group.id }
 			});
 		}
-		await this.prisma.group.deleteMany({ where: { leaderId: id } });
+		// Delete all ticket ownerships
+		const ticketOwnerships = await this.prisma.ticketOwnership.findMany({
+			where: { userId: id }
+		});
+		for (const ticketOwnership of ticketOwnerships) {
+			await this.prisma.ticketOwnership.delete({ where: { id: ticketOwnership.id } });
+		}
+
+		// Delete all tickets
+
+		const tickets = await this.prisma.ticket.findMany({
+			where: { creatorId: id }
+		});
+		for (const ticket of tickets) {
+			await this.prisma.ticket.delete({ where: { id: ticket.id } });
+		}
+
+		// Delete all ticket bases
+		const ticketBases = await this.prisma.ticketBase.findMany({
+			where: { creatorId: id },
+			include: {
+				tickets: true
+			}
+		});
+
+		for (const ticketBase of ticketBases) {
+			await this.prisma.ticketBase.delete({ where: { id: ticketBase.id } });
+		}
+		for (const group of ledGroups) {
+			await this.prisma.group.deleteMany({ where: { id: group.id } });
+		}
 
 		// Delete user
 		await this.prisma.user.delete({ where: { id } });
