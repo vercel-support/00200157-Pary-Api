@@ -43,11 +43,9 @@ export class PartyService {
 			image,
 			showAddressInFeed,
 			ageRange,
-			isPrivate,
 			consumables,
 			covers,
-			tickets,
-			payInDoor
+			tickets
 		} = partyBody;
 
 		const inviter = await this.prisma.user.findUnique({
@@ -124,6 +122,7 @@ export class PartyService {
 				data: {
 					stock: 200,
 					price: 0,
+					payInDoor: true,
 					base: {
 						connect: {
 							id: baseTicket.id
@@ -150,13 +149,11 @@ export class PartyService {
 				advertisement: false,
 				active: true,
 				date: new Date(date),
-				private: isPrivate,
 				ownerId: userId,
 				image,
 				showAddressInFeed,
 				ageRange,
 				locationId: partyLocation.id,
-				payInDoor,
 				consumables: {
 					connect: consumables.map(consumable => {
 						if (inviter.userType === "Normal") {
@@ -255,7 +252,6 @@ export class PartyService {
 			oldImage,
 			showAddressInFeed,
 			ageRange,
-			isPrivate,
 			consumables,
 			covers,
 			tickets
@@ -328,7 +324,6 @@ export class PartyService {
 				tags,
 				active: true,
 				date: new Date(date),
-				private: isPrivate,
 				image,
 				showAddressInFeed,
 				ageRange,
@@ -1657,27 +1652,6 @@ export class PartyService {
 			}
 		}
 
-		// Si el party es público
-		if (!party.private) {
-			if (groupId) {
-				// Unir el grupo al party
-				await this.prisma.partyGroup.create({
-					data: {
-						partyId,
-						groupId
-					}
-				});
-			} else {
-				// Unir el usuario al party
-				await this.prisma.partyMember.create({
-					data: {
-						partyId,
-						userId
-					}
-				});
-			}
-			return true;
-		}
 		if (groupId) {
 			const existingRequest = await this.prisma.partyMembershipRequest.findUnique({
 				where: {

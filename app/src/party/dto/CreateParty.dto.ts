@@ -23,8 +23,6 @@ export class CreatePartyDto {
 	@IsNotEmpty()
 	ageRange: AgeRange;
 	@IsBoolean()
-	isPrivate: boolean;
-	@IsBoolean()
 	advertisement: boolean;
 	@IsOptional()
 	@IsArray()
@@ -35,7 +33,4 @@ export class CreatePartyDto {
 	@IsOptional()
 	@IsArray()
 	tickets: Ticket[];
-	@IsBoolean()
-	@IsNotEmpty()
-	payInDoor: boolean;
 }

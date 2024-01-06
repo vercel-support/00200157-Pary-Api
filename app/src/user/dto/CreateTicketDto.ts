@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsArray, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min } from "class-validator";
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min } from "class-validator";
 import { Consumable } from "@prisma/client";
 
 export class TicketBaseDto {
@@ -38,6 +38,8 @@ export class CreateTicketDto {
 	@IsOptional()
 	@IsArray()
 	consumables: ConsumableStack[] = [];
+	@IsBoolean()
+	payInDoor: boolean;
 }
 
 export class ConsumableStack {

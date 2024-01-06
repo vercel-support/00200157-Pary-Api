@@ -27,8 +27,6 @@ export class UpdatePartyDto {
 	@IsNotEmpty()
 	ageRange: AgeRange;
 	@IsBoolean()
-	isPrivate: boolean;
-	@IsBoolean()
 	advertisement: boolean;
 	@IsOptional()
 	@IsArray()

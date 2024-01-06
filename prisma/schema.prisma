@@ -118,9 +118,7 @@ model Party {
   tags               String[]
   type               PartyType
   date               DateTime
-  private            Boolean                  @default(false)
   advertisement      Boolean
-  payInDoor          Boolean                  @default(true)
   members            PartyMember[]
   moderators         UserPartyModerator[]
   ageRange           AgeRange
@@ -362,10 +360,11 @@ enum ConsumableType {
 model Ticket {
   id             String            @id @default(auto()) @map("_id") @db.ObjectId
   price          Int               @default(0)
-  stock          Int               @default(0)
+  stock          Int               @default(200)
   tags           String[]          @default([])
   createdAt      DateTime          @default(now())
   color          TicketColor       @default(grey)
+  payInDoor      Boolean           @default(true)
   creatorId      String?           @map("creatorId") @db.ObjectId
   creator        User?             @relation("UserToTicketCreated", fields: [creatorId], references: [id])
   base           TicketBase        @relation(fields: [baseId], references: [id])

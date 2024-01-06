@@ -22,7 +22,6 @@ describe("PartyController", () => {
 {
     name: 'Carrete de mega prueba ',
         description: 'Naaa tranquilos que este sera el mejor carrete de la vida existencia de todos los tiempos',
-    isPrivate: true,
     image: {
     url: 'https://jerxlwr0kfoy9du0.public.blob.vercel-storage.com/party-182e6a0f-d78c-4897-86b9-80a83f414be5-4T4EJlDjFL1jfhjyvdQIvysDvGLOEt.jpeg'
 },

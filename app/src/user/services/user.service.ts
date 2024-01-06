@@ -1022,7 +1022,7 @@ export class UserService {
 	}
 
 	async createTicket(createTicketDto: CreateTicketDto, userId: string) {
-		const { base, tags, stock, price, color, consumables } = createTicketDto;
+		const { base, tags, stock, price, color, consumables, payInDoor } = createTicketDto;
 		const { name, description, type, id } = base;
 
 		const user = await this.prisma.user.findUnique({
@@ -1049,6 +1049,7 @@ export class UserService {
 			tags,
 			price,
 			color,
+			payInDoor,
 			creator: {
 				connect: {
 					id: userId
