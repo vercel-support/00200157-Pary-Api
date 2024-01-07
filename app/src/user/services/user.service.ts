@@ -1,4 +1,3 @@
-import { MemoryStorageFile } from "@blazity/nest-file-fastify";
 import { MultipartFile } from "@fastify/multipart";
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { Location } from "@prisma/client";
@@ -10,7 +9,6 @@ import { PrismaService } from "../../db/services/prisma.service";
 import { SearchDto } from "../../feed/dto/Search.dto";
 import { NotificationsService } from "../../notifications/services/notifications.service";
 import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
-import { UploadImageDto } from "../../party/dto/UploadImageDto";
 import { UtilsService } from "../../utils/services/utils.service";
 import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
@@ -53,9 +51,17 @@ export class UserService {
 			expoPushToken,
 			socialMedia
 		} = user;
+		const { locationId } = await this.prisma.user.findFirst({
+			where: {
+				id: userId
+			},
+			select: {
+				locationId: true
+			}
+		});
 		await this.prisma.location.update({
 			where: {
-				id: location.id
+				id: locationId
 			},
 			data: {
 				latitude: location.latitude,
@@ -289,232 +295,102 @@ export class UserService {
 			});
 	}
 
-	async uploadProfilePicture(uploadImageDto: UploadImageDto, userId: string) {
-		const { image } = uploadImageDto;
+	async uploadProfilePicture(image: MultipartFile, userId: string) {
 		if (!image) {
-			throw new InternalServerErrorException("No image provided.");
-		}
-
-		const imageBuffer = Buffer.from(image.split(",")[1], "base64");
-		const fileType = image.match(/data:image\/(.*?);base64/)?.[1];
-		const uploadImageToVercel = async (retry = true) => {
-			try {
-				const { url } = await put(
-					`${process.env.NODE_ENV}-profile-picture-${randomUUID()}.${fileType}`,
-					imageBuffer,
-					{
-						access: "public"
-					}
-				);
-
-				if (!url || url === "") {
-					throw new InternalServerErrorException("Error uploading image.");
-				}
-
-				this.prisma.profilePicture
-					.create({
-						data: {
-							url,
-							user: {
-								connect: {
-									id: userId
-								}
-							}
-						}
-					})
-					.catch(() => {
-						throw new InternalServerErrorException("Error uploading image into the db.");
-					})
-					.then(async profilePicture => {
-						if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
-							const user = await this.prisma.user
-								.findUnique({
-									where: { id: userId },
-									select: {
-										profilePictures: true
-									}
-								})
-								.catch(() => {
-									throw new InternalServerErrorException("Error updating user.");
-								})
-								.then(user => user);
-
-							if (user && "profilePictures" in user && user.profilePictures) {
-								const profilePictures = [...user.profilePictures];
-
-								profilePictures.push(profilePicture);
-								await this.prisma.user
-									.update({
-										where: { id: userId },
-										data: {
-											profilePictures: {
-												set: profilePictures
-											}
-										},
-										include: {
-											profilePictures: true
-										}
-									})
-									.catch(() => {
-										throw new InternalServerErrorException(
-											"Error al agregar la imagen al usuario."
-										);
-									})
-									.then(async updatedUser => {
-										if ("id" in updatedUser) {
-											return profilePicture;
-										}
-										throw new InternalServerErrorException(
-											"Error al obtener las imágenes del usuario 2."
-										);
-									});
-							} else {
-								throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
-							}
-						} else {
-							throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
-						}
-					});
-			} catch (error) {
-				if (retry) {
-					await uploadImageToVercel(false);
-				} else {
-					throw new InternalServerErrorException("Error uploading image.");
-				}
-			}
-		};
-		await uploadImageToVercel();
-	}
-
-	async uploadProfilePicture2(image: MemoryStorageFile, userId: string) {
-		if (!image) {
-			throw new InternalServerErrorException("No image provided.");
+			throw new InternalServerErrorException("Debe proporcionar una imagen.");
 		}
 		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
 				const { url } = await put(
 					`${process.env.NODE_ENV}-profile-picture-${randomUUID()}.${fileType}`,
-					image.buffer,
-					{
-						access: "public"
-					}
-				).catch(() => {
-					throw new InternalServerErrorException("Error uploading image into vercel.");
-				});
-
-				if (!url || url === "") {
-					throw new InternalServerErrorException("Error uploading image.");
-				}
-
-				this.prisma.profilePicture
-					.create({
-						data: {
-							url,
-							user: {
-								connect: {
-									id: userId
-								}
-							}
-						}
-					})
-					.catch(() => {
-						throw new InternalServerErrorException("Error uploading image into the db.");
-					})
-					.then(async profilePicture => {
-						if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
-							const user = await this.prisma.user
-								.findUnique({
-									where: { id: userId },
-									select: {
-										profilePictures: true
-									}
-								})
-								.catch(() => {
-									throw new InternalServerErrorException("Error updating user.");
-								})
-								.then(user => user);
-
-							if (user && "profilePictures" in user && user.profilePictures) {
-								const profilePictures = [...user.profilePictures];
-
-								profilePictures.push(profilePicture);
-								await this.prisma.user
-									.update({
-										where: { id: userId },
-										data: {
-											profilePictures: {
-												set: profilePictures
-											}
-										},
-										include: {
-											profilePictures: true
-										}
-									})
-									.catch(() => {
-										throw new InternalServerErrorException(
-											"Error al agregar la imagen al usuario."
-										);
-									})
-									.then(async updatedUser => {
-										if ("id" in updatedUser) {
-											return profilePicture;
-										}
-										throw new InternalServerErrorException(
-											"Error al obtener las imágenes del usuario 2."
-										);
-									});
-							} else {
-								throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
-							}
-						} else {
-							throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
-						}
-					});
-			} catch (error) {
-				if (retry) {
-					await uploadImageToVercel(false);
-				} else {
-					throw new InternalServerErrorException("Error uploading image.");
-				}
-			}
-		};
-		await uploadImageToVercel();
-	}
-
-	async uploadImage(image: MultipartFile) {
-		if (!image) {
-			throw new InternalServerErrorException("No image provided.");
-		}
-		const fileType = image.mimetype.split("/")[1];
-		const uploadImageToVercel = async (retry = true) => {
-			try {
-				const { url } = await put(
-					`${process.env.NODE_ENV}-random-picture-${randomUUID()}.${fileType}`,
 					image.file,
 					{
 						access: "public"
 					}
 				).catch(() => {
-					throw new InternalServerErrorException("Error uploading image into vercel.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				});
 
 				if (!url || url === "") {
-					throw new InternalServerErrorException("Error uploading image.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				}
+				return await this.prisma.profilePicture
+					.create({
+						data: {
+							url,
+							user: {
+								connect: {
+									id: userId
+								}
+							}
+						}
+					})
+					.catch(() => {
+						throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
+					})
+					.then(async profilePicture => {
+						if ("id" in profilePicture && "url" in profilePicture && "userId" in profilePicture) {
+							const user = await this.prisma.user
+								.findUnique({
+									where: { id: userId },
+									select: {
+										profilePictures: true
+									}
+								})
+								.catch(() => {
+									throw new InternalServerErrorException("Error updating user.");
+								})
+								.then(user => user);
+
+							if (user && "profilePictures" in user && user.profilePictures) {
+								const profilePictures = [...user.profilePictures];
+
+								profilePictures.push(profilePicture);
+								return await this.prisma.user
+									.update({
+										where: { id: userId },
+										data: {
+											profilePictures: {
+												set: profilePictures
+											}
+										},
+										include: {
+											profilePictures: true
+										}
+									})
+									.catch(() => {
+										throw new InternalServerErrorException(
+											"Error al agregar la imagen al usuario."
+										);
+									})
+									.then(async updatedUser => {
+										if ("id" in updatedUser) {
+											return profilePicture;
+										}
+										throw new InternalServerErrorException(
+											"Error al obtener las imágenes del usuario 2."
+										);
+									});
+							}
+							throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
+						}
+						throw new InternalServerErrorException("Error al obtener las imágenes del usuario.");
+					});
 			} catch (error) {
 				if (retry) {
 					await uploadImageToVercel(false);
 				} else {
-					throw new InternalServerErrorException("Error uploading image.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				}
 			}
 		};
 		return await uploadImageToVercel();
 	}
+
 	async uploadConsumablemage(image: MultipartFile) {
 		if (!image) {
-			throw new InternalServerErrorException("No image provided.");
+			throw new InternalServerErrorException("Debe proporcionar una imagen.");
 		}
 		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
@@ -526,18 +402,18 @@ export class UserService {
 						access: "public"
 					}
 				).catch(() => {
-					throw new InternalServerErrorException("Error uploading image into vercel.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				});
 
 				if (!url || url === "") {
-					throw new InternalServerErrorException("Error uploading image.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				}
 				return url;
 			} catch (error) {
 				if (retry) {
 					return await uploadImageToVercel(false);
 				}
-				throw new InternalServerErrorException("Error uploading image.");
+				throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 			}
 		};
 		return await uploadImageToVercel();

@@ -22,6 +22,7 @@ import { UploadImageDto } from "../dto/UploadImageDto";
 import { UsernameDto } from "../dto/User.dto";
 import { FINTOC_SECRET_KEY } from "app/main";
 import axios from "axios";
+import { MultipartFile } from "@fastify/multipart";
 
 @Injectable()
 export class PartyService {
@@ -448,35 +449,29 @@ export class PartyService {
 		};
 	}
 
-	async uploadPartyImage(uploadImageDto: UploadImageDto) {
-		const { image } = uploadImageDto;
-
+	async uploadPartyImage(image: MultipartFile) {
 		if (!image) {
-			throw new BadRequestException("No image provided.");
+			throw new BadRequestException("Debe subir una imagen.");
 		}
 
-		const imageBuffer = Buffer.from(image.split(",")[1], "base64");
-		const fileType = image.match(/data:image\/(.*?);base64/)?.[1]; // obtiene el tipo de imagen (png, jpeg, etc.)
-
+		const fileType = image.mimetype.split("/")[1];
 		const uploadImageToVercel = async (retry = true) => {
 			try {
-				const { url } = await put(`${process.env.NODE_ENV}-party-${randomUUID()}.${fileType}`, imageBuffer, {
-					access: "public",
-					contentType: `image/${fileType}`
+				const { url } = await put(`${process.env.NODE_ENV}-party-${randomUUID()}.${fileType}`, image.file, {
+					access: "public"
+				}).catch(() => {
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				});
 
 				if (!url || url === "") {
-					throw new InternalServerErrorException("Error uploading image.");
+					throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 				}
-
-				return {
-					url
-				};
+				return url;
 			} catch (error) {
 				if (retry) {
 					return await uploadImageToVercel(false);
 				}
-				throw new InternalServerErrorException("Error uploading image.");
+				throw new InternalServerErrorException("Error al guardar la imagen en la base de datos.");
 			}
 		};
 		return await uploadImageToVercel();
@@ -486,7 +481,7 @@ export class PartyService {
 		const { image } = uploadImageDto;
 
 		if (!image) {
-			throw new BadRequestException("No image provided.");
+			throw new BadRequestException("Debe subir una imagen.");
 		}
 
 		const party = await this.prisma.party.findUnique({

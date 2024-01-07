@@ -48,16 +48,7 @@ export class UtilsService {
 			},
 			ticketsCreated: true,
 			ticketsBase: true,
-			location: {
-				select: {
-					id: true,
-					name: true,
-					latitude: true,
-					longitude: true,
-					timestamp: true,
-					address: true
-				}
-			},
+			location: true,
 			parties: {
 				select: {
 					partyId: true,

@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UsePipes, ValidationPipe } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { UploadGuard } from "app/src/guard/upload.guard";
 import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
 import { PartyService } from "app/src/party/services/party.service";
+import { File } from "../../decorators/file.decorator";
 import { PaginationDto } from "../../group/dto/Pagination.dto";
 import { OptionalGroupIdDto } from "../dto/Group.dto";
 import { JoinRequestDto } from "../dto/JoinRequestDto";
@@ -51,16 +53,11 @@ export class PartyController {
 		return this.partyService.getOwnParties(paginationDto, request.raw.decoded.id);
 	}
 
+	@ApiConsumes("multipart/form-data")
 	@Post("upload-party-image")
-	@UsePipes(
-		new ValidationPipe({
-			transform: true,
-			forbidNonWhitelisted: true,
-			disableErrorMessages: false
-		})
-	)
-	async uploadPartyImage(@Body() uploadImageDto: UploadImageDto) {
-		return this.partyService.uploadPartyImage(uploadImageDto);
+	@UseGuards(UploadGuard)
+	async uploadPartyImage(@File() file) {
+		return this.partyService.uploadPartyImage(file);
 	}
 
 	@Get("invited-parties")

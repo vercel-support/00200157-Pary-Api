@@ -64,26 +64,14 @@ export class UserController {
 		return await this.userService.getBasicUserInfo(username);
 	}
 
+	@ApiConsumes("multipart/form-data")
 	@Post("upload-profile-picture")
-	@UsePipes(
-		new ValidationPipe({
-			transform: true,
-			forbidNonWhitelisted: true,
-			disableErrorMessages: false
-		})
-	)
-	async uploadProfilePicture(@Body() uploadImageDto: UploadImageDto, @Req() request: any) {
-		return await this.userService.uploadProfilePicture(uploadImageDto, request.raw.decoded.id);
+	@UseGuards(UploadGuard)
+	async uploadProfilePicture(@File() file, @Req() request: any) {
+		return await this.userService.uploadProfilePicture(file, request.raw.decoded.id);
 	}
 
-	@Delete("delete-profile-picture")
-	@UsePipes(
-		new ValidationPipe({
-			transform: true,
-			forbidNonWhitelisted: true,
-			disableErrorMessages: false
-		})
-	)
+	@Delete("/delete-profile-picture")
 	async deleteProfilePicture(@Query() deleteUserProfilePictureDto: DeleteUserProfilePictureDto, @Req() request: any) {
 		return await this.userService.deleteProfilePicture(deleteUserProfilePictureDto, request.raw.decoded.id);
 	}
@@ -147,30 +135,6 @@ export class UserController {
 			throw new NotFoundException("User not found");
 		}
 		return await this.userService.purgeUserById(id);
-	}
-
-	@Post(":id/upload-profile-picture")
-	@UseInterceptors(FileFieldsInterceptor([{ name: "image", maxCount: 1 }]))
-	async register(
-		@Param("id") id: string,
-		@UploadedFiles()
-		files: {
-			image?: MemoryStorageFile;
-		}
-	) {
-		return this.userService.uploadProfilePicture2(files.image[0], id);
-	}
-
-	@Post("upload-image")
-	@UseInterceptors(FileFieldsInterceptor([{ name: "image", maxCount: 1 }]))
-	async uploadImage(
-		@Param("id") id: string,
-		@UploadedFiles()
-		files: {
-			image?: MemoryStorageFile;
-		}
-	) {
-		return this.userService.uploadImage(files.image[0]);
 	}
 
 	@ApiConsumes("multipart/form-data")
