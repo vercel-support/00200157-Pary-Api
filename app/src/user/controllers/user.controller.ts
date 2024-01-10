@@ -1,4 +1,3 @@
-import { FileFieldsInterceptor, MemoryStorageFile, UploadedFiles } from "@blazity/nest-file-fastify";
 import {
 	Body,
 	Controller,
@@ -10,7 +9,6 @@ import {
 	Query,
 	Req,
 	UseGuards,
-	UseInterceptors,
 	UsePipes,
 	ValidationPipe
 } from "@nestjs/common";
@@ -20,7 +18,6 @@ import { UploadGuard } from "app/src/guard/upload.guard";
 import { File } from "../../decorators/file.decorator";
 import { SearchDto } from "../../feed/dto/Search.dto";
 import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
-import { UploadImageDto } from "../../party/dto/UploadImageDto";
 import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
 import { UpdateUser } from "../dto/UpdateUser";

@@ -75,7 +75,7 @@ export class PartyService {
 		}
 
 		if (inviter.parties.length >= 15 && inviter.userType === "Normal") {
-			throw new BadRequestException("You can only create up to 15 parties.");
+			throw new BadRequestException("No puedes crear más de 15 carretes.");
 		}
 
 		// Resto de la lógica después de una carga exitosa
@@ -141,46 +141,65 @@ export class PartyService {
 			}
 		});
 
-		const party = await this.prisma.party.create({
-			data: {
-				name,
-				description,
-				type,
-				tags,
-				advertisement: false,
-				active: true,
-				date: new Date(date),
-				ownerId: userId,
-				image,
-				showAddressInFeed,
-				ageRange,
-				locationId: partyLocation.id,
-				consumables: {
-					connect: consumables.map(consumable => {
-						if (inviter.userType === "Normal") {
-							throw new BadRequestException("No tienes permisos para crear Carretes con Consumibles");
-						}
-						return { id: consumable.id };
-					})
-				},
-				covers: {
-					connect: covers.map(cover => {
-						if (inviter.userType === "Normal") {
-							throw new BadRequestException("No tienes permisos para crear Carretes con Covers");
-						}
-						return { id: cover.id };
-					})
-				},
-				tickets: {
-					connect: tickets.map(ticket => {
-						if (inviter.userType === "Normal" && defaultTicket.id !== ticket.id) {
-							throw new BadRequestException("No tienes permisos para crear Carretes con Tickets");
-						}
-						return { id: ticket.id };
-					})
-				}
-			}
+		const partyChat = await this.prisma.chat.create({
+			data: {}
 		});
+
+		const party = await this.prisma.party
+			.create({
+				data: {
+					name,
+					description,
+					type,
+					tags,
+					advertisement: false,
+					active: true,
+					date: new Date(date),
+					ownerId: userId,
+					image,
+					showAddressInFeed,
+					ageRange,
+					locationId: partyLocation.id,
+					chatId: partyChat.id,
+					consumables: {
+						connect: consumables.map(consumable => {
+							if (inviter.userType === "Normal") {
+								throw new BadRequestException("No tienes permisos para crear Carretes con Consumibles");
+							}
+							return { id: consumable.id };
+						})
+					},
+					covers: {
+						connect: covers.map(cover => {
+							if (inviter.userType === "Normal") {
+								throw new BadRequestException("No tienes permisos para crear Carretes con Covers");
+							}
+							return { id: cover.id };
+						})
+					},
+					tickets: {
+						connect: tickets.map(ticket => {
+							if (inviter.userType === "Normal" && defaultTicket.id !== ticket.id) {
+								throw new BadRequestException("No tienes permisos para crear Carretes con Tickets");
+							}
+							return { id: ticket.id };
+						})
+					}
+				}
+			})
+			.catch(async () => {
+				await this.prisma.location.delete({
+					where: {
+						id: partyLocation.id
+					}
+				});
+				await this.prisma.chat.delete({
+					where: {
+						id: partyChat.id
+					}
+				});
+				throw new InternalServerErrorException("Error al crear el carrete.");
+			});
 
 		if (!party) {
 			throw new InternalServerErrorException("Error creating party.");
