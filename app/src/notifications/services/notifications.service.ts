@@ -156,26 +156,29 @@ export class NotificationsService {
 		}
 	}
 
-	async sendNewPartyMemberNotification(pushTokens: string[], newMemberId: string, partyId: string) {
-		// Comprueba si el token es válido
-		if (!pushTokens.every(token => token !== "" && Expo.isExpoPushToken(token))) {
-			console.error(`Push token ${pushTokens} is not a valid Expo push token`);
-			return;
-		}
-
+	async sendUserAcceptedPartyInvitationNotification(newMemberId: string, partyId: string) {
 		const newMember = await this.prisma.user.findUnique({
 			where: { id: newMemberId },
 			select: { name: true, username: true }
 		});
-		const party = await this.prisma.party.findUnique({ where: { id: partyId }, select: { name: true } });
+		const party = await this.prisma.party.findUnique({
+			where: { id: partyId },
+			select: {
+				name: true,
+				owner: {
+					select: {
+						expoPushToken: true
+					}
+				}
+			}
+		});
 		if (newMember === null || party === null) return;
 
-		// Configura el mensaje de la notificación
 		const message: ExpoPushMessage = {
-			to: pushTokens,
+			to: party.owner.expoPushToken,
 			sound: "default",
-			title: "Nuevo miembro en el evento",
-			body: `@${newMember.username} se ha unido al grupo ${party.name}.`,
+			title: "Invitacion a carrete aceptada",
+			body: `@${newMember.username} se ha unido al carrete ${party.name}.`,
 			priority: "normal",
 			data: {
 				url: `/news/party/${partyId}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
@@ -189,7 +192,6 @@ export class NotificationsService {
 		// Envía la notificación
 		try {
 			const receipts = await this.expo.sendPushNotificationsAsync([message]);
-			console.log(receipts);
 		} catch (error) {
 			console.error("Error sending push notification:", error);
 		}

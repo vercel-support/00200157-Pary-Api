@@ -240,7 +240,8 @@ export class PartyService {
 					data: {
 						partyId: party.id,
 						invitedUserId: user.id,
-						invitingUserId: userId
+						invitingUserId: userId,
+						ticketId: defaultTicket.id
 					}
 				})
 				.then(response => {
@@ -948,6 +949,11 @@ export class PartyService {
 							}
 						}
 					}
+				},
+				ticket: {
+					include: {
+						base: true
+					}
 				}
 			}
 		});
@@ -1041,6 +1047,12 @@ export class PartyService {
 
 			await this.prisma.partyGroup.deleteMany({
 				where: { partyId }
+			});
+
+			await this.prisma.ticketOwnership.deleteMany({
+				where: {
+					partyId
+				}
 			});
 
 			// Delete the group itself
@@ -1169,15 +1181,24 @@ export class PartyService {
 					select: {
 						userId: true
 					}
+				},
+				tickets: {
+					take: 1,
+					select: {
+						id: true
+					}
 				}
 			}
 		});
+
+		const defaultTicket = party.tickets[0];
 
 		const invitation = await this.prisma.partyInvitation.create({
 			data: {
 				partyId,
 				invitedUserId: invitedUser.id,
-				invitingUserId: userId
+				invitingUserId: userId,
+				ticketId: defaultTicket.id
 			}
 		});
 
@@ -1256,14 +1277,19 @@ export class PartyService {
 			where: {
 				partyId,
 				invitedUserId: userId
+			},
+			include: {
+				ticket: true
 			}
 		});
 
-		if (invitation) {
-			await this.prisma.partyInvitation.delete({
-				where: { id: invitation.id }
-			});
+		if (!invitation) {
+			throw new NotFoundException("Invitación no encontrada");
 		}
+
+		await this.prisma.partyInvitation.delete({
+			where: { id: invitation.id }
+		});
 
 		await this.prisma.partyMember.create({
 			data: {
@@ -1272,29 +1298,15 @@ export class PartyService {
 			}
 		});
 
-		const members = await this.prisma.party.findMany({
-			where: {
-				id: partyId
-			},
-			select: {
-				members: {
-					select: {
-						user: {
-							select: {
-								expoPushToken: true
-							}
-						}
-					}
-				}
+		await this.prisma.ticketOwnership.create({
+			data: {
+				userId,
+				ticketId: invitation.ticketId,
+				partyId: invitation.partyId
 			}
 		});
 
-		if (members) {
-			const expoTokens = members.flatMap(member =>
-				member.members.map(partyMember => partyMember.user.expoPushToken)
-			);
-			this.notifications.sendNewPartyMemberNotification(expoTokens, userId, partyId);
-		}
+		this.notifications.sendUserAcceptedPartyInvitationNotification(userId, partyId);
 		return true;
 	}
 
@@ -1312,20 +1324,6 @@ export class PartyService {
 			});
 		}
 
-		const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
-			where: {
-				partyId,
-				userId
-			}
-		});
-
-		if (joinRequest) {
-			await this.prisma.partyMembershipRequest.delete({
-				where: { id: joinRequest.id }
-			});
-		}
-
-		//TODO: Enviar notificacion al usuario que invito
 		return true;
 	}
 
@@ -1366,6 +1364,12 @@ export class PartyService {
 							}
 						}
 					}
+				},
+				tickets: {
+					take: 1,
+					select: {
+						id: true
+					}
 				}
 			}
 		});
@@ -1397,6 +1401,14 @@ export class PartyService {
 				data: {
 					partyId,
 					userId: requesterUserId
+				}
+			});
+
+			await this.prisma.ticketOwnership.create({
+				data: {
+					userId: requesterUserId,
+					ticketId: party.tickets[0].id,
+					partyId: party.id
 				}
 			});
 			this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party);
@@ -1443,16 +1455,13 @@ export class PartyService {
 					groupId
 				}
 			});
-			/*for (const member of joinRequest.group.members) {
-				await this.prisma.partyMember.delete({
-					where: {
-						userId_partyId: {
-							partyId,
-							userId: member.userId,
-						},
-					},
-				});
-			}*/
+			await this.prisma.ticketOwnership.create({
+				data: {
+					groupId,
+					ticketId: party.tickets[0].id,
+					partyId
+				}
+			});
 			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
 		}
 		return true;
@@ -1791,6 +1800,13 @@ export class PartyService {
 				partyId
 			}
 		});
+
+		await this.prisma.ticketOwnership.deleteMany({
+			where: {
+				userId: targetUser.id,
+				partyId
+			}
+		});
 	}
 
 	async deleteGroupMember(partyId: string, groupIdDto: OptionalGroupIdDto, userId: string) {
@@ -1823,6 +1839,13 @@ export class PartyService {
 					partyId,
 					groupId
 				}
+			}
+		});
+
+		await this.prisma.ticketOwnership.deleteMany({
+			where: {
+				groupId,
+				partyId
 			}
 		});
 

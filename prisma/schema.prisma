@@ -191,6 +191,8 @@ model PartyInvitation {
   groupId        String?          @map("groupId") @db.ObjectId
   status         InvitationStatus @default(PENDING)
   createdAt      DateTime         @default(now())
+  ticket         Ticket?          @relation(fields: [ticketId], references: [id])
+  ticketId       String?          @db.ObjectId
 }
 
 model UserPartyModerator {
@@ -365,22 +367,23 @@ enum ConsumableType {
 }
 
 model Ticket {
-  id             String            @id @default(auto()) @map("_id") @db.ObjectId
-  price          Int               @default(0)
-  stock          Int               @default(200)
-  tags           String[]          @default([])
-  createdAt      DateTime          @default(now())
-  color          TicketColor       @default(grey)
-  payInDoor      Boolean           @default(true)
-  creatorId      String?           @map("creatorId") @db.ObjectId
-  creator        User?             @relation("UserToTicketCreated", fields: [creatorId], references: [id])
-  base           TicketBase        @relation(fields: [baseId], references: [id])
-  baseId         String            @map("baseId") @db.ObjectId
-  partyId        String?           @map("partyId") @db.ObjectId
-  party          Party?            @relation("PartyToTicket", fields: [partyId], references: [id])
-  consumables    ConsumableStack[] @relation("TicketToConsumableStack")
-  ownerShips     TicketOwnership[]
-  paymentIntents PaymentIntent[]   @relation("TicketToPayment")
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  price            Int               @default(0)
+  stock            Int               @default(200)
+  tags             String[]          @default([])
+  createdAt        DateTime          @default(now())
+  color            TicketColor       @default(grey)
+  payInDoor        Boolean           @default(true)
+  creatorId        String?           @map("creatorId") @db.ObjectId
+  creator          User?             @relation("UserToTicketCreated", fields: [creatorId], references: [id])
+  base             TicketBase        @relation(fields: [baseId], references: [id])
+  baseId           String            @map("baseId") @db.ObjectId
+  partyId          String?           @map("partyId") @db.ObjectId
+  party            Party?            @relation("PartyToTicket", fields: [partyId], references: [id])
+  consumables      ConsumableStack[] @relation("TicketToConsumableStack")
+  ownerShips       TicketOwnership[]
+  paymentIntents   PaymentIntent[]   @relation("TicketToPayment")
+  partyInvitations PartyInvitation[]
 }
 
 enum TicketColor {
