@@ -460,14 +460,14 @@ enum PaymentType {
 }
 
 model Message {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @map("_id")
   text      String
-  createdAt DateTime @default(now())
+  createdAt DateTime
   image     String?
   video     String?
   audio     String?
   system    Boolean  @default(false)
-  sent      Boolean? @default(false)
+  sent      Boolean? @default(true)
   received  Boolean? @default(false)
   pending   Boolean? @default(false)
   user      User     @relation(fields: [userId], references: [id])

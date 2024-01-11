@@ -80,7 +80,22 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 
 	@SubscribeMessage("user-message")
 	async userMessage(client: Socket, chatRoom: ChatRoom) {
-		console.log(client.id, "Sent a message:", chatRoom);
+		for (const message of chatRoom.messages) {
+			await this.prisma.message.create({
+				data: {
+					id: message._id,
+					chatId: chatRoom.chatId,
+					userId: chatRoom.userId,
+					text: message.text,
+					createdAt: message.createdAt,
+					image: message.image,
+					video: message.video,
+					system: message.system,
+					sent: message.sent,
+					received: message.received
+				}
+			});
+		}
 		return true;
 	}
 
