@@ -49,28 +49,13 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 	}
 
 	async handleConnection(client: Socket, ...args: any[]) {
-		console.log("New client connected, id:", client.id);
-		const user = await this.prisma.user.findFirst({
-			where: {
-				webSocketId: client.id
-			},
-			select: {
-				id: true
-			}
-		});
-
-		if (!user) {
-			client.send("reconnect-user");
-			console.log("User not found, reconnecting user:", client.id);
+		console.log("New client connected, id:", client.id, client.handshake.query?.userId);
+		if (!client.handshake.query?.userId) {
+			throw new Error("No user id provided");
 		}
-	}
-
-	@SubscribeMessage("connect-user")
-	async connectUser(client: Socket, userId: string) {
-		console.log("User connectedd:", client.id, userId);
 		await this.prisma.user.update({
 			where: {
-				id: userId
+				id: client.handshake.query.userId as string
 			},
 			data: {
 				webSocketId: client.id
