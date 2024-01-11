@@ -12,7 +12,7 @@ import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePi
 import { UtilsService } from "../../utils/services/utils.service";
 import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
-import { ChatRoom } from "app/src/websockets/dto/Chat.dto";
+import { ChatRoom } from "app/src/pusher/dto/Chat.dto";
 import { PusherService } from "app/src/pusher/services/pusher.service";
 
 @Injectable()

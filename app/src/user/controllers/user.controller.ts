@@ -15,7 +15,7 @@ import {
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Location } from "@prisma/client";
 import { UploadGuard } from "app/src/guard/upload.guard";
-import { ChatRoom } from "app/src/websockets/dto/Chat.dto";
+import { ChatRoom } from "app/src/pusher/dto/Chat.dto";
 import { File } from "../../decorators/file.decorator";
 import { SearchDto } from "../../feed/dto/Search.dto";
 import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";

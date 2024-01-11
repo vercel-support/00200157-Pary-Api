@@ -3,16 +3,16 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { PaymentService } from "../services/payment.service";
 import { GetPreferenceIdDto } from "../dto/GetPreferenceId.dto";
 import { InitPaymentDto } from "../dto/InitPayment.dto";
-import { WebsocketGateway } from "app/src/websockets/websocket.gateway";
 import { PrismaService } from "app/src/db/services/prisma.service";
 import { PartyService } from "app/src/party/services/party.service";
+import { PusherService } from "app/src/pusher/services/pusher.service";
 
 @ApiTags("Payment")
 @Controller("payment")
 export class PaymentController {
 	constructor(
 		private readonly paymentService: PaymentService,
-		private readonly websocketService: WebsocketGateway,
+		private readonly pusherService: PusherService,
 		private readonly prisma: PrismaService,
 		private readonly partyService: PartyService
 	) {}
@@ -56,7 +56,7 @@ export class PaymentController {
 						}
 					});
 
-					this.websocketService.server.to(user.webSocketId).emit("payment-completed", {
+					this.pusherService.triggerToUser(userId, "payment-completed", {
 						partyId,
 						userId,
 						ticketId,

@@ -7,14 +7,17 @@ export class PusherService {
 
 	constructor() {
 		this.pusher = new Pusher({
-			appId: "1739436",
-			key: "a55eb409c047fc6b53c0",
-			secret: "df61837d925570f85035",
-			cluster: "sa1"
+			appId: process.env.PUSHER_APP_ID,
+			key: process.env.PUSHER_KEY,
+			secret: process.env.PUSHER_SECRET,
+			cluster: process.env.PUSHER_CLUSTER
 		});
 	}
 	async trigger(channel: string, event: string, data: any) {
-		console.log("triggering pusher", channel, event, data);
 		return await this.pusher.trigger(channel, event, data);
+	}
+
+	async triggerToUser(userId: string, event: string, data: any) {
+		return await this.pusher.trigger(`user-${userId}`, event, data);
 	}
 }
