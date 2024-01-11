@@ -65,7 +65,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 
 	@SubscribeMessage("user-message")
 	async userMessage(client: Socket, chatRoom: ChatRoom) {
-		for (const message of chatRoom.messages) {
+		/* for (const message of chatRoom.messages) {
 			await this.prisma.message.create({
 				data: {
 					id: message._id,
@@ -81,7 +81,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 				}
 			});
 		}
-		this.server.to(chatRoom.chatId).emit("new-messages", chatRoom.messages);
+		this.server.to(chatRoom.chatId).emit("new-messages", chatRoom.messages); */
 		return true;
 	}
 

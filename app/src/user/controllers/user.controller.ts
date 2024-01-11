@@ -15,6 +15,7 @@ import {
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Location } from "@prisma/client";
 import { UploadGuard } from "app/src/guard/upload.guard";
+import { ChatRoom } from "app/src/websockets/dto/Chat.dto";
 import { File } from "../../decorators/file.decorator";
 import { SearchDto } from "../../feed/dto/Search.dto";
 import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePicture.dto";
@@ -275,5 +276,10 @@ export class UserController {
 	)
 	async updateTicketBase(@Body() updateTicketBaseDto: TicketBaseDto, @Req() request: any) {
 		return this.userService.updateTicketBase(updateTicketBaseDto, request.raw.decoded.id);
+	}
+
+	@Post("send-message-to-chat-room")
+	async sendMessageToChannel(@Body() chatRoom: ChatRoom, @Req() request: any) {
+		return this.userService.sendMessageToChatRoom(chatRoom, request.raw.decoded.id);
 	}
 }

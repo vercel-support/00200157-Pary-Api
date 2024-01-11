@@ -12,13 +12,16 @@ import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePi
 import { UtilsService } from "../../utils/services/utils.service";
 import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
+import { ChatRoom } from "app/src/websockets/dto/Chat.dto";
+import { PusherService } from "app/src/pusher/services/pusher.service";
 
 @Injectable()
 export class UserService {
 	constructor(
 		private prisma: PrismaService,
 		private utils: UtilsService,
-		private notifications: NotificationsService
+		private notifications: NotificationsService,
+		private readonly pusherService: PusherService
 	) {}
 
 	async checkUsername(username: string) {
@@ -1176,5 +1179,25 @@ export class UserService {
 				type
 			}
 		});
+	}
+
+	async sendMessageToChatRoom(chatRoom: ChatRoom, userId: string) {
+		for (const message of chatRoom.messages) {
+			await this.prisma.message.create({
+				data: {
+					id: message._id,
+					chatId: chatRoom.chatId,
+					userId,
+					text: message.text,
+					createdAt: message.createdAt,
+					image: message.image,
+					video: message.video,
+					system: message.system,
+					sent: message.sent,
+					received: message.received
+				}
+			});
+		}
+		return await this.pusherService.trigger(`chat-${chatRoom.chatId}`, "chat-message", chatRoom.messages);
 	}
 }

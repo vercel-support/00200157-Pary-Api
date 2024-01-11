@@ -49,5 +49,4 @@ export class ChatRoom {
 	@IsNotEmpty()
 	messages: MessageDto[];
 	chatId: string;
-	userId: string;
 }
