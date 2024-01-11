@@ -61,6 +61,7 @@ model User {
   chatIds                 String[]                 @db.ObjectId
 
   @@index([username, email, assignedGoogleID])
+  @@index([webSocketId])
 }
 
 enum UserType {
