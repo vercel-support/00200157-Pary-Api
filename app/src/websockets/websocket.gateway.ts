@@ -96,6 +96,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
 				}
 			});
 		}
+		this.server.to(chatRoom.chatId).emit("new-messages", chatRoom.messages);
 		return true;
 	}
 
