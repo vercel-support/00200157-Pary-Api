@@ -282,4 +282,9 @@ export class UserController {
 	async sendMessageToChannel(@Body() chatRoom: ChatRoom, @Req() request: any) {
 		return this.userService.sendMessageToChatRoom(chatRoom, request.raw.decoded.id);
 	}
+
+	@Get("request-messages/:chatId")
+	async requestMessages(@Param("chatId") chatId: string, @Query("lastTimeChecked") lastTimeChecked: string | null) {
+		return this.userService.requestMessagesFromLastMessageId(chatId, lastTimeChecked);
+	}
 }

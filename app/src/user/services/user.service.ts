@@ -1196,10 +1196,49 @@ export class UserService {
 					system: message.system,
 					received: message.received,
 					sent: true,
-					pending: false
+					pending: false,
+					avatar: message.user.avatar
 				}
 			});
 		}
 		return await this.pusherService.trigger(`chat-${chatRoom.chatId}`, "new-messages", { ...chatRoom, userId });
+	}
+
+	async requestMessagesFromLastMessageId(chatId: string, lastTimeChecked: string | null) {
+		const cleanedDate = lastTimeChecked ? lastTimeChecked.replace(" 00:00", "") : "2021-01-01";
+		const parsedDate = new Date(cleanedDate);
+		if (Number.isNaN(parsedDate.getTime())) {
+			throw new Error("Invalid date format");
+		}
+		const messages = await this.prisma.message.findMany({
+			where: {
+				chatId: chatId,
+				createdAt: {
+					gt: parsedDate
+				}
+			},
+			orderBy: {
+				createdAt: "desc"
+			}
+		});
+		console.log(messages);
+
+		return messages.map(message => {
+			return {
+				_id: message.id,
+				createdAt: message.createdAt,
+				image: message.image,
+				received: true,
+				sent: true,
+				system: message.system,
+				text: message.text,
+				user: {
+					_id: message.userId,
+					username: message.username,
+					avatar: message.avatar
+				},
+				video: message.video
+			};
+		});
 	}
 }
