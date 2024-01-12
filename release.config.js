@@ -4,25 +4,13 @@ module.exports = {
 		[
 			"@semantic-release/commit-analyzer",
 			{
-				preset: "angular",
-				releaseRules: [
-					{ breaking: true, release: "major" },
-					{ revert: true, release: "patch" },
-					{ type: "feat", release: "minor" },
-					{ type: "fix", release: "patch" },
-				],
-				parserOpts: {
-					noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
-				}
+				preset: "conventionalcommits"
 			}
 		],
 		[
 			"@semantic-release/release-notes-generator",
 			{
-				preset: "angular",
-				parserOpts: {
-					noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
-				},
+				preset: "conventionalcommits",
 				presetConfig: {
 					types: [
 						{
@@ -49,10 +37,6 @@ module.exports = {
 							type: "chore",
 							section: ":broom: Chore",
 							hidden: false
-						},
-						{
-							type: "breaking",
-							section: ":boom: Breaking changes"
 						}
 					]
 				}
@@ -79,7 +63,7 @@ module.exports = {
 			"@semantic-release/git",
 			{
 				assets: ["package.json", "app/main.ts", "yarn.lock", "CHANGELOG.md"],
-				message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+				message: "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
 			}
 		],
 		"@semantic-release/github"

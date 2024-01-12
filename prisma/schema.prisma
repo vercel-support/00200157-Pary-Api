@@ -463,6 +463,7 @@ model Message {
   id        String   @id @map("_id")
   text      String
   createdAt DateTime
+  username  String
   image     String?
   video     String?
   audio     String?

@@ -10,6 +10,9 @@ export class ChatUser {
 	@IsString()
 	@IsNotEmpty()
 	avatar: string;
+	@IsString()
+	@IsNotEmpty()
+	username: string;
 }
 
 export class MessageDto {

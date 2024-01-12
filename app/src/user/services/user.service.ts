@@ -1188,16 +1188,18 @@ export class UserService {
 					id: message._id,
 					chatId: chatRoom.chatId,
 					userId,
+					username: message.user.username,
 					text: message.text,
 					createdAt: message.createdAt,
 					image: message.image,
 					video: message.video,
 					system: message.system,
-					sent: message.sent,
-					received: message.received
+					received: message.received,
+					sent: true,
+					pending: false
 				}
 			});
 		}
-		return await this.pusherService.trigger(`chat-${chatRoom.chatId}`, "chat-message", chatRoom.messages);
+		return await this.pusherService.trigger(`chat-${chatRoom.chatId}`, "new-messages", { ...chatRoom, userId });
 	}
 }
