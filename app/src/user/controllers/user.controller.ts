@@ -238,6 +238,15 @@ export class UserController {
 		return this.userService.updateTicket(updateTicketDto, request.raw.decoded.id);
 	}
 
+	
+	@Delete("delete-ticket/:ticketId")
+	async deleteTicket(@Param("ticketId") ticketId: string, @Req() request: any) {
+		if (!ticketId) {
+			throw new NotFoundException("ticketId not found");
+		}
+		return this.userService.deleteTicket(ticketId, request.raw.decoded.id);
+	}
+
 	@Get("tickets")
 	async getTickets(@Req() request: any) {
 		return this.userService.getTickets(request.raw.decoded.id);
@@ -286,5 +295,10 @@ export class UserController {
 	@Get("request-messages/:chatId")
 	async requestMessages(@Param("chatId") chatId: string, @Query("lastTimeChecked") lastTimeChecked: string | null) {
 		return this.userService.requestMessagesFromLastMessageId(chatId, lastTimeChecked);
+	}
+
+	@Get("create-chat-room/:username")
+	async createChatRoom(@Param("username") username: string, @Req() request: any) {
+		return this.userService.createChatRoom(username, request.raw.decoded.id);
 	}
 }

@@ -1078,6 +1078,55 @@ export class UserService {
 		});
 	}
 
+	async deleteTicket(ticketId: string, userId: string) {
+		const ticket = await this.prisma.ticket.findUnique({
+			where: {
+				id: ticketId,
+				creatorId: userId
+			}
+		});
+
+		if (!ticket) {
+			throw new NotFoundException("Ticket base no encontrado.");
+		}
+
+		const ticketOwnerships = await this.prisma.ticketOwnership.count({
+			where: {
+				ticketId: ticketId
+			}
+		});
+
+		if (ticketOwnerships > 0) {
+			throw new InternalServerErrorException(
+				"Hay usuarios que tienen asignado este ticket, no puedes borrarlo."
+			);
+		}
+
+		const ticketRelatedToParties = await this.prisma.party.findMany({
+			where: {
+				tickets: {
+					some: {
+						id: ticketId
+					}
+				}			
+			}
+		})
+
+		if (ticketRelatedToParties.length > 0) {
+			throw new InternalServerErrorException(
+				"Este ticket está relacionado a un carrete, no puedes borrarlo."
+			);
+		}
+
+		await this.prisma.ticket.delete({
+			where: {
+				id: ticketId
+			}
+		});
+
+		return true;
+	}
+
 	async getTickets(userId: string) {
 		return this.prisma.ticket.findMany({
 			include: {
@@ -1240,5 +1289,47 @@ export class UserService {
 				video: message.video
 			};
 		});
+	}
+
+	async createChatRoom(username: string, userId: string) {
+		const user = await this.prisma.user.findUnique({
+			where: {
+				username
+			}
+		});
+		if (!user) {
+			throw new NotFoundException("User not found");
+		}
+
+		let chat = await this.prisma.chat.findFirst({
+			where: {
+				users: {
+					every: {
+						id: {
+							in: [userId, user.id]
+						}
+					}
+				}
+			}
+		});
+
+		if (chat) {
+			return chat.id;
+		}
+		chat = await this.prisma.chat.create({
+			data: {
+				users: {
+					connect: [
+						{
+							id: userId
+						},
+						{
+							id: user.id
+						}
+					]
+				}
+			}
+		});
+		return chat.id;
 	}
 }
