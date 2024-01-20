@@ -52,7 +52,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.5.0",
-		"@google/semantic-release-replace-plugin": "^1.2.7",
 		"@nestjs/cli": "^10.2.1",
 		"@nestjs/schematics": "^10.0.3",
 		"@nestjs/testing": "^10.2.10",

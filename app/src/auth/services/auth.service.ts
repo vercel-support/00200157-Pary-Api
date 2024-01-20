@@ -18,27 +18,21 @@ export class AuthService {
 	async signInUser(googleUser: GoogleUser) {
 		const { idToken } = googleUser;
 
-		async function verify() {
-			const ticket = await client.verifyIdToken({
-				idToken,
-				audience: process.env.GOOGLE_AUTH_WEN_TOKEN
-			});
-			const payload = ticket.getPayload();
-			if (!payload) throw new InternalServerErrorException("Invalid access token.");
-		}
-
-		await verify().catch(() => {
-			throw new InternalServerErrorException("Invalid access token.");
+		const ticket = await client.verifyIdToken({
+			idToken,
+			audience: process.env.GOOGLE_AUTH_WEN_TOKEN
 		});
+		const payload = ticket.getPayload();
+		if (!payload) throw new InternalServerErrorException("Invalid access token.");
 
-		let user = (await this.prisma.user.findUnique({
+		let user: any = await this.prisma.user.findUnique({
 			where: {
 				assignedGoogleID: googleUser.user.id
 			},
 			select: {
 				id: true
 			}
-		})) as User;
+		});
 
 		if (!user) {
 			const generatedUsername = `${googleUser.user.givenName ?? ""}${
@@ -54,23 +48,26 @@ export class AuthService {
 					address: ""
 				}
 			});
-			user = await this.prisma.user.create({
-				data: {
-					username: generatedUsername,
-					name: googleUser.user.givenName ?? "",
-					email: googleUser.user.email,
-					lastName: googleUser.user.familyName ?? "",
-					assignedGoogleID: googleUser.user.id,
-					lastLogin: new Date(),
-					createdAt: new Date(),
-					birthDate: new Date(),
-					socialMedia: {
-						instagram: ""
+
+			user = await this.prisma.$transaction([
+				this.prisma.user.create({
+					data: {
+						username: generatedUsername,
+						name: googleUser.user.givenName ?? "",
+						email: googleUser.user.email,
+						lastName: googleUser.user.familyName ?? "",
+						assignedGoogleID: googleUser.user.id,
+						lastLogin: new Date(),
+						createdAt: new Date(),
+						birthDate: new Date(),
+						socialMedia: {
+							instagram: ""
+						},
+						locationId: userLocation.id
 					},
-					locationId: userLocation.id
-				},
-				include: this.utils.getUserFields()
-			});
+					include: this.utils.getUserFields()
+				})
+			]);
 		}
 
 		const accessToken = sign({ id: user.id }, JWT_SECRET, { expiresIn: "1d" });
@@ -85,6 +82,8 @@ export class AuthService {
 			},
 			include: this.utils.getUserFields()
 		});
+
+		console.log("User: ", user)
 
 		return user;
 	}

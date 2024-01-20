@@ -79,9 +79,6 @@ devDependencies:
   '@biomejs/biome':
     specifier: ^1.5.0
     version: 1.5.0
-  '@google/semantic-release-replace-plugin':
-    specifier: ^1.2.7
-    version: 1.2.7(semantic-release@22.0.12)
   '@nestjs/cli':
     specifier: ^10.2.1
     version: 10.2.1
@@ -808,19 +805,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /@google/semantic-release-replace-plugin@1.2.7(semantic-release@22.0.12):
-    resolution: {integrity: sha512-zE+ep9d221O6Rrjw6wA2ffEJfVqrheaTltfFlNO4oQqPTicjTusxG/vxLRoVWjLsyrJzQKyJsbPfGKQ/r9rl+w==}
-    engines: {node: '>=18'}
-    deprecated: This package has been renamed to semantic-release-replace-plugin.
-    peerDependencies:
-      semantic-release: '>=20.1.0'
-    dependencies:
-      jest-diff: 29.7.0
-      lodash-es: 4.17.21
-      replace-in-file: 7.1.0
-      semantic-release: 22.0.12(typescript@5.3.3)
-    dev: true
 
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -4439,6 +4423,7 @@ packages:
       inherits: 2.0.4
       minimatch: 5.1.6
       once: 1.4.0
+    dev: false
 
   /glob@9.3.5:
     resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
@@ -5818,6 +5803,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+    dev: false
 
   /minimatch@8.0.4:
     resolution: {integrity: sha512-W0Wvr9HyFXZRGIDgCicunpQ299OKXs9RgZfaukz4qAW/pJhcpUfupc9c+OObPOFueNy8VSrZgEmDtk6Kh4WzDA==}
@@ -6790,16 +6776,6 @@ packages:
   /repeat-string@1.6.1:
     resolution: {integrity: sha512-PV0dzCYDNfRi1jCDbJzpW7jNNDRuCOG/jI5ctQcGKt/clZD+YcPS3yIlWuTJMmESC8aevCFmWJy5wjAFgNqN6w==}
     engines: {node: '>=0.10'}
-    dev: true
-
-  /replace-in-file@7.1.0:
-    resolution: {integrity: sha512-1uZmJ78WtqNYCSuPC9IWbweXkGxPOtk2rKuar8diTw7naVIQZiE3Tm8ACx2PCMXDtVH6N+XxwaRY2qZ2xHPqXw==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      chalk: 4.1.2
-      glob: 8.1.0
-      yargs: 17.7.2
     dev: true
 
   /require-directory@2.1.1:
