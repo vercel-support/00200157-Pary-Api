@@ -3,6 +3,8 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { Location } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { del, put } from "@vercel/blob";
+import { ChatRoom } from "app/src/pusher/dto/Chat.dto";
+import { PusherService } from "app/src/pusher/services/pusher.service";
 import { UpdateUser } from "app/src/user/dto/UpdateUser";
 import { randomUUID } from "crypto";
 import { PrismaService } from "../../db/services/prisma.service";
@@ -12,8 +14,6 @@ import { DeleteUserProfilePictureDto } from "../../party/dto/DeleteUserProfilePi
 import { UtilsService } from "../../utils/services/utils.service";
 import { ConsumableItemDto, CreateConsumableDto } from "../dto/CreateConsumableDto";
 import { CreateTicketDto, TicketBaseDto } from "../dto/CreateTicketDto";
-import { ChatRoom } from "app/src/pusher/dto/Chat.dto";
-import { PusherService } from "app/src/pusher/services/pusher.service";
 
 @Injectable()
 export class UserService {
@@ -1097,9 +1097,7 @@ export class UserService {
 		});
 
 		if (ticketOwnerships > 0) {
-			throw new InternalServerErrorException(
-				"Hay usuarios que tienen asignado este ticket, no puedes borrarlo."
-			);
+			throw new InternalServerErrorException("Hay usuarios que tienen asignado este ticket, no puedes borrarlo.");
 		}
 
 		const ticketRelatedToParties = await this.prisma.party.findMany({
@@ -1108,14 +1106,12 @@ export class UserService {
 					some: {
 						id: ticketId
 					}
-				}			
+				}
 			}
-		})
+		});
 
 		if (ticketRelatedToParties.length > 0) {
-			throw new InternalServerErrorException(
-				"Este ticket está relacionado a un carrete, no puedes borrarlo."
-			);
+			throw new InternalServerErrorException("Este ticket está relacionado a un carrete, no puedes borrarlo.");
 		}
 
 		await this.prisma.ticket.delete({
