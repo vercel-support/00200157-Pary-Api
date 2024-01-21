@@ -43,7 +43,7 @@ module.exports = {
 			}
 		],
 		[
-			"@google/semantic-release-replace-plugin",
+			"semantic-release-replace-plugin",
 			{
 				replacements: [
 					{
@@ -53,8 +53,13 @@ module.exports = {
 					},
 					{
 						files: ["app/main.ts"],
-						from: '.setVersion(".*")',
-						to: '.setVersion("${nextRelease.version}")'
+						from: /(\.setVersion\(")([^"]*)("\))/,
+						to: "$1${nextRelease.version}$3"
+					},
+					{
+						files: ["dist/main.js"],
+						from: /(\.setVersion\(")([^"]*)("\))/,
+						to: "$1${nextRelease.version}$3"
 					}
 				]
 			}
@@ -62,8 +67,8 @@ module.exports = {
 		[
 			"@semantic-release/git",
 			{
-				assets: ["package.json", "app/main.ts", "yarn.lock", "CHANGELOG.md"],
-				message: "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
+				assets: ["package.json", "app/main.ts", "dist/main.js", "yarn.lock", "CHANGELOG.md"],
+				message: "chore(release): ${nextRelease.version}"
 			}
 		],
 		"@semantic-release/github"

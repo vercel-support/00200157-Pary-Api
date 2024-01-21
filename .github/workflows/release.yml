@@ -1,18 +1,14 @@
-name: Release
-
+name: Check if new version is available
 on:
   push:
     branches:
       - main
+      - beta
   workflow_dispatch:
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
-  release:
-    name: Bump Version and Release
+  check_for_new_versions:
+    name: Check if new version is available
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,33 +17,25 @@ jobs:
       issues: write
     steps:
       - name: Setup Repo
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Pnpm
-        run: corepack enable |
-          corepack prepare pnpm@8.12.1 --activate
-
-      # Pnpm dependencies cannot be cached until pnpm is installed
-      # WORKAROUND: https://github.com/actions/setup-node/issues/531
-      - name: Extract Cached Dependencies
-        uses: actions/setup-node@v3
-        with:
-          cache: pnpm
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        uses: actions/checkout@v3
 
       - name: Set Git user to Actions Bot
         run: |
           git config --local user.name 'github-actions[bot]'
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Semantic release
+      - name: Semantic Release
+        id: semantic_release
+        uses: cycjimmy/semantic-release-action@v4
+        with: 
+          semantic_version: "23.0.0"
+          extra_plugins: |
+            conventional-changelog-conventionalcommits
+            @semantic-release/changelog
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/release-notes-generator
+            @semantic-release/commit-analyzer
+            semantic-release-replace-plugin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm semantic-release
