@@ -20,13 +20,15 @@ const payment_module_1 = require("./payment/payment.module");
 const pusher_module_1 = require("./pusher/pusher.module");
 const user_module_1 = require("./user/user.module");
 const utils_service_1 = require("./utils/services/utils.service");
+const mail_module_1 = require("./mail/mail.module");
+const Mail_service_1 = require("./Mail/services/Mail.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, feed_module_1.FeedModule, group_module_1.GroupModule, party_module_1.PartyModule, user_module_1.UserModule, payment_module_1.PaymentModule, pusher_module_1.PusherModule],
-        providers: [prisma_service_1.PrismaService, utils_service_1.UtilsService, expo_service_1.ExpoService, notifications_service_1.NotificationsService, auth_service_1.AuthService]
+        imports: [auth_module_1.AuthModule, feed_module_1.FeedModule, group_module_1.GroupModule, party_module_1.PartyModule, user_module_1.UserModule, payment_module_1.PaymentModule, pusher_module_1.PusherModule, mail_module_1.MailModule],
+        providers: [prisma_service_1.PrismaService, utils_service_1.UtilsService, expo_service_1.ExpoService, notifications_service_1.NotificationsService, auth_service_1.AuthService, Mail_service_1.MailService]
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

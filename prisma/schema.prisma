@@ -9,9 +9,10 @@ datasource db {
 
 model User {
   id                      String                   @id @default(auto()) @map("_id") @db.ObjectId
-  assignedGoogleID        String                   @unique
+  assignedGoogleID        String
   username                String                   @unique
   email                   String                   @unique
+  password                String
   name                    String                   @default("")
   lastName                String                   @default("")
   signedIn                Boolean                  @default(false)

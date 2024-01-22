@@ -164,7 +164,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 200, type: Boolean }),
     __param(0, (0, common_1.Param)("username")),
@@ -177,7 +177,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201, type: Object }),
     __param(0, (0, common_1.Body)()),
@@ -245,7 +245,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 200 }),
     __param(0, (0, common_1.Query)()),
@@ -295,7 +295,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -309,7 +309,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -339,7 +339,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -362,7 +362,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -376,7 +376,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -390,7 +390,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -429,7 +429,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
@@ -452,7 +452,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe({
         transform: true,
         forbidNonWhitelisted: true,
-        disableErrorMessages: false,
+        disableErrorMessages: false
     })),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),

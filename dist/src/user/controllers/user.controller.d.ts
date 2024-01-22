@@ -1153,6 +1153,7 @@ export declare class UserController {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;
@@ -2549,6 +2550,7 @@ export declare class UserController {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;
@@ -3767,6 +3769,7 @@ export declare class UserController {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;

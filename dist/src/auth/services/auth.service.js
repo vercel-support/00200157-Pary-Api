@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const main_1 = require("../../../main");
+const argon2_1 = require("argon2");
 const google_auth_library_1 = require("google-auth-library");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const prisma_service_1 = require("../../db/services/prisma.service");
@@ -31,7 +32,7 @@ let AuthService = class AuthService {
         const payload = ticket.getPayload();
         if (!payload)
             throw new common_1.InternalServerErrorException("Invalid access token.");
-        let user = await this.prisma.user.findUnique({
+        let user = await this.prisma.user.findFirst({
             where: {
                 assignedGoogleID: googleUser.user.id
             },
@@ -55,6 +56,7 @@ let AuthService = class AuthService {
                     data: {
                         username: generatedUsername,
                         name: googleUser.user.givenName ?? "",
+                        password: "",
                         email: googleUser.user.email,
                         lastName: googleUser.user.familyName ?? "",
                         assignedGoogleID: googleUser.user.id,
@@ -70,11 +72,11 @@ let AuthService = class AuthService {
                 })
             ]);
         }
-        const accessToken = (0, jsonwebtoken_1.sign)({ id: user.id }, main_1.JWT_SECRET, { expiresIn: "1d" });
         const refreshToken = (0, jsonwebtoken_1.sign)({ id: user.id }, main_1.JWT_REFRESH_SECRET, {
             expiresIn: "4weeks"
         });
-        user = await this.prisma.user.update({
+        const accessToken = (0, jsonwebtoken_1.sign)({ id: user.id, refreshToken }, main_1.JWT_SECRET, { expiresIn: "1d" });
+        this.prisma.user.update({
             where: { id: user.id },
             data: {
                 accessToken,
@@ -83,23 +85,21 @@ let AuthService = class AuthService {
             },
             include: this.utils.getUserFields()
         });
-        console.log("User: ", user);
-        return user;
+        return {
+            ...user,
+            accessToken,
+            refreshToken,
+            lastLogin: new Date()
+        };
     }
     async logoutUser(userId) {
-        const response = await this.prisma.user.update({
+        await this.prisma.user.update({
             where: { id: userId },
             data: {
                 accessToken: "",
                 refreshToken: "",
                 expoPushToken: "",
                 webSocketId: ""
-            }
-        });
-        const currentToken = await this.prisma.user.findUnique({
-            where: { id: userId },
-            select: {
-                accessToken: true
             }
         });
         return true;
@@ -121,6 +121,131 @@ let AuthService = class AuthService {
     }
     async createToken(userId) {
         return (0, jsonwebtoken_1.sign)({ id: userId }, main_1.JWT_SECRET, { expiresIn: "1d" });
+    }
+    async register(registerDto) {
+        const { email, password } = registerDto;
+        const user = await this.prisma.user.findFirst({
+            where: {
+                email
+            }
+        });
+        if (user) {
+            return {
+                errors: [
+                    {
+                        type: "mail",
+                        message: "Este email ya está registrado."
+                    }
+                ]
+            };
+        }
+        const generatedUsername = `${email.split("@")[0]}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
+        const userLocation = await this.prisma.location.create({
+            data: {
+                name: "",
+                latitude: 0,
+                longitude: 0,
+                timestamp: new Date(),
+                address: ""
+            }
+        });
+        const safePassword = await (0, argon2_1.hash)(password);
+        const newUser = await this.prisma.user.create({
+            data: {
+                username: generatedUsername,
+                name: "",
+                email,
+                password: safePassword,
+                lastName: "",
+                assignedGoogleID: "",
+                lastLogin: new Date(),
+                createdAt: new Date(),
+                birthDate: new Date(),
+                socialMedia: {
+                    instagram: ""
+                },
+                locationId: userLocation.id
+            },
+            include: this.utils.getUserFields()
+        });
+        const refreshToken = (0, jsonwebtoken_1.sign)({ id: newUser.id }, main_1.JWT_REFRESH_SECRET, {
+            expiresIn: "4weeks"
+        });
+        const accessToken = (0, jsonwebtoken_1.sign)({ id: newUser.id, refreshToken }, main_1.JWT_SECRET, { expiresIn: "1d" });
+        this.prisma.user.update({
+            where: { id: newUser.id },
+            data: {
+                accessToken,
+                refreshToken
+            },
+            include: this.utils.getUserFields()
+        });
+        return {
+            ...newUser,
+            accessToken,
+            refreshToken
+        };
+    }
+    async login(loginDto) {
+        const { email, password } = loginDto;
+        const user = await this.prisma.user.findFirst({
+            where: {
+                email
+            },
+            select: {
+                id: true,
+                password: true,
+                assignedGoogleID: true
+            }
+        });
+        if (!user) {
+            return {
+                errors: [
+                    {
+                        type: "mail",
+                        message: "Este email no está registrado"
+                    }
+                ]
+            };
+        }
+        if (user.password.length === 0 && user.assignedGoogleID.length > 0) {
+            return {
+                errors: [
+                    {
+                        type: "mail",
+                        message: "Este email ya está registrado con Google."
+                    }
+                ]
+            };
+        }
+        const safePassword = await (0, argon2_1.verify)(user.password, password);
+        if (!safePassword) {
+            return {
+                errors: [
+                    {
+                        type: "password",
+                        message: "Contraseña incorrecta"
+                    }
+                ]
+            };
+        }
+        const refreshToken = (0, jsonwebtoken_1.sign)({ id: user.id }, main_1.JWT_REFRESH_SECRET, {
+            expiresIn: "4weeks"
+        });
+        const accessToken = (0, jsonwebtoken_1.sign)({ id: user.id, refreshToken }, main_1.JWT_SECRET, { expiresIn: "1d" });
+        this.prisma.user.update({
+            where: { id: user.id },
+            data: {
+                accessToken,
+                refreshToken
+            },
+            include: this.utils.getUserFields()
+        });
+        return {
+            ...user,
+            accessToken,
+            refreshToken
+        };
     }
 };
 exports.AuthService = AuthService;

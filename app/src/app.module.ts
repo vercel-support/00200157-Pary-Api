@@ -11,9 +11,11 @@ import { PaymentModule } from "./payment/payment.module";
 import { PusherModule } from "./pusher/pusher.module";
 import { UserModule } from "./user/user.module";
 import { UtilsService } from "./utils/services/utils.service";
+import { MailModule } from "./mail/mail.module";
+import { MailService } from "./Mail/services/Mail.service";
 
 @Module({
-	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule, PusherModule],
-	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService]
+	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule, PusherModule, MailModule],
+	providers: [PrismaService, UtilsService, ExpoService, NotificationsService, AuthService, MailService]
 })
 export class AppModule {}

@@ -18,6 +18,7 @@ import { AuthService } from "app/src/auth/services/auth.service";
 import { verify } from "jsonwebtoken";
 import { User } from "../../../types";
 import { UtilsService } from "../../utils/services/utils.service";
+import { AuthDto } from "../dto/Auth.dto";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -88,5 +89,15 @@ export class AuthController {
 	@Get("create-token/:id")
 	async createToken(@Param("id") id: string): Promise<any> {
 		return this.authService.createToken(id);
+	}
+
+	@Post("register")
+	async register(@Body() registerDto: AuthDto) {
+		return this.authService.register(registerDto);
+	}
+
+	@Post("login")
+	async login(@Body() loginDto: AuthDto) {
+		return this.authService.login(loginDto);
 	}
 }

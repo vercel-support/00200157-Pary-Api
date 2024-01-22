@@ -1161,6 +1161,7 @@ export declare class UserService {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;
@@ -2559,6 +2560,7 @@ export declare class UserService {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;
@@ -3777,6 +3779,7 @@ export declare class UserService {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;
@@ -4946,6 +4949,7 @@ export declare class UserService {
         assignedGoogleID: string;
         username: string;
         email: string;
+        password: string;
         name: string;
         lastName: string;
         signedIn: boolean;

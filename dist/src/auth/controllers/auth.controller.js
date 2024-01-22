@@ -21,6 +21,7 @@ const SignIn_dto_1 = require("../dto/SignIn.dto");
 const auth_service_1 = require("../services/auth.service");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const utils_service_1 = require("../../utils/services/utils.service");
+const Auth_dto_1 = require("../dto/Auth.dto");
 let AuthController = class AuthController {
     constructor(authService, utils) {
         this.authService = authService;
@@ -69,6 +70,12 @@ let AuthController = class AuthController {
     }
     async createToken(id) {
         return this.authService.createToken(id);
+    }
+    async register(registerDto) {
+        return this.authService.register(registerDto);
+    }
+    async login(loginDto) {
+        return this.authService.login(loginDto);
     }
 };
 exports.AuthController = AuthController;
@@ -125,6 +132,22 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "createToken", null);
+__decorate([
+    (0, common_1.Post)("register"),
+    openapi.ApiResponse({ status: 201, type: Object }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Auth_dto_1.AuthDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)("login"),
+    openapi.ApiResponse({ status: 201, type: Object }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Auth_dto_1.AuthDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)("Auth"),
     (0, common_1.Controller)("auth"),
