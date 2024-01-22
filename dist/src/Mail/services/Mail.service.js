@@ -23,4 +23,4 @@ exports.MailService = MailService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], MailService);
-//# sourceMappingURL=Mail.service.js.map
+//# sourceMappingURL=mail.service.js.map

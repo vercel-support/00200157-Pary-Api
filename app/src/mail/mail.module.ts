@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { MailService } from "app/src/Mail/services/Mail.service";
+import { MailService } from "app/src/mail/services/mail.service";
 import { PrismaModule } from "../prisma/prisma.module";
 import { UtilsModule } from "../utils/utils.module";
 

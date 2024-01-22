@@ -12,7 +12,7 @@ import { PusherModule } from "./pusher/pusher.module";
 import { UserModule } from "./user/user.module";
 import { UtilsService } from "./utils/services/utils.service";
 import { MailModule } from "./mail/mail.module";
-import { MailService } from "./Mail/services/Mail.service";
+import { MailService } from "./mail/services/mail.service";
 
 @Module({
 	imports: [AuthModule, FeedModule, GroupModule, PartyModule, UserModule, PaymentModule, PusherModule, MailModule],
