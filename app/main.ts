@@ -34,7 +34,7 @@ if (FINTOC_SECRET_KEY === undefined) {
 	throw new Error("No FINTOC_SECRET_KEY env variable found.");
 }
 
-const SWAGGER_ENVS = ["local", "dev", "staging", "production"];
+const SWAGGER_ENVS = ["local", "dev"];
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(

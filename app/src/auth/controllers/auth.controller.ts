@@ -50,7 +50,7 @@ export class AuthController {
 		return await this.authService.refreshToken(request.raw.decoded.id);
 	}
 
-	@Post("test-token")
+	/* @Post("test-token")
 	async testToken(@Headers("authorization") bearerToken: string): Promise<any> {
 		if (!bearerToken) {
 			throw new ForbiddenException("No token provided.");
@@ -65,9 +65,9 @@ export class AuthController {
 		} catch (error) {
 			throw new InternalServerErrorException("Failed to authenticate token.");
 		}
-	}
+	} */
 
-	@Post("test-refresh-token")
+	/* @Post("test-refresh-token")
 	async testRefreshToken(@Headers("authorization") bearerToken: string): Promise<any> {
 		if (!bearerToken) {
 			throw new ForbiddenException("No token provided.");
@@ -84,12 +84,12 @@ export class AuthController {
 		} catch (error) {
 			throw new InternalServerErrorException("Failed to authenticate token.");
 		}
-	}
+	} */
 
-	@Get("create-token/:id")
+	/* @Get("create-token/:id")
 	async createToken(@Param("id") id: string): Promise<any> {
 		return this.authService.createToken(id);
-	}
+	} */
 
 	@Post("verify-email/:email")
 	async verifyEmail(@Param("email") email: string, @Body("token") token: string): Promise<any> {
