@@ -43,7 +43,7 @@ async function bootstrap() {
 	);
 	await app.register(multiPart);
 	app.enableCors();
-	app.setGlobalPrefix("api/v1");
+	app.setGlobalPrefix("v1");
 
 	const config = new DocumentBuilder()
 		.setTitle("Pary Api")

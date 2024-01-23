@@ -30,21 +30,14 @@ export class PaymentController {
 	}
 
 	@Post("webhook")
-	async webhook(@Body() body: any) {
+	async webhook(@Body() body: any, @Req() request: any) {
 		if (body.type) {
-			console.log("Nuevo WebHook", body.type, body.data?.metadata);
 			switch (body.type) {
 				case "payment_intent.succeeded": {
 					const { id: paymentId, metadata } = body.data;
 					const { userId, partyId, ticketId, groupId } = metadata;
-					const user = await this.prisma.user.findUnique({
-						where: {
-							id: userId
-						},
-						select: {
-							webSocketId: true
-						}
-					});
+
+					if (!userId || !partyId || !ticketId) return;
 
 					await this.partyService.joinUserOrGroupToParty(partyId, userId, ticketId, groupId);
 					await this.prisma.paymentIntent.update({
