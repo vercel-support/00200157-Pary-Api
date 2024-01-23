@@ -33,4 +33,6 @@ export class CreatePartyDto {
 	@IsOptional()
 	@IsArray()
 	tickets: Ticket[];
+	@IsBoolean()
+	isPrivate: boolean;
 }

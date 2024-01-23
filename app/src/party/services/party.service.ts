@@ -44,7 +44,8 @@ export class PartyService {
 			ageRange,
 			consumables,
 			covers,
-			tickets
+			tickets,
+			isPrivate
 		} = partyBody;
 
 		const inviter = await this.prisma.user.findUnique({
@@ -159,6 +160,7 @@ export class PartyService {
 					image: {
 						url: image
 					},
+					private: isPrivate,
 					showAddressInFeed,
 					ageRange,
 					locationId: partyLocation.id,
@@ -273,7 +275,8 @@ export class PartyService {
 			ageRange,
 			consumables,
 			covers,
-			tickets
+			tickets,
+			isPrivate
 		} = partyBody;
 
 		const currentParty = await this.prisma.party.findUnique({
@@ -346,6 +349,7 @@ export class PartyService {
 				image,
 				showAddressInFeed,
 				ageRange,
+				private: isPrivate,
 				consumables: {
 					connect: newConsumables.map(consumable => ({ id: consumable.id })),
 					disconnect: consumablesToDelete.map(consumable => ({ id: consumable.id }))

@@ -37,4 +37,6 @@ export class UpdatePartyDto {
 	@IsOptional()
 	@IsArray()
 	tickets: Ticket[];
+	@IsBoolean()
+	isPrivate: boolean;
 }
