@@ -91,7 +91,7 @@ export class UserService {
 					expoPushToken: expoPushToken ?? "",
 					socialMedia
 				},
-				include: this.utils.getUserFields()
+				select: this.utils.getSafePersonalUserFields()
 			})
 			.catch(error => {
 				if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
@@ -455,7 +455,7 @@ export class UserService {
 
 		return this.prisma.user.findUnique({
 			where: { id: userId },
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
 	}
 
@@ -638,7 +638,7 @@ export class UserService {
 	async getUserById(id: string) {
 		return this.prisma.user.findFirst({
 			where: { id },
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
 	}
 
@@ -792,7 +792,7 @@ export class UserService {
 			data: {
 				expoPushToken
 			},
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
 	}
 
@@ -1003,8 +1003,6 @@ export class UserService {
 				}
 			};
 		}
-
-		console.log("Creando ticket:", createTicketDto, userId);
 
 		return this.prisma.ticket.create({
 			data: ticketData
@@ -1266,7 +1264,6 @@ export class UserService {
 				createdAt: "desc"
 			}
 		});
-		console.log(messages);
 
 		return messages.map(message => {
 			return {

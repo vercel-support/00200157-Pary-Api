@@ -69,33 +69,28 @@ export class AuthService {
 							instagram: ""
 						}
 					},
-					include: this.utils.getUserFields()
+					select: {
+						id: true
+					}
 				})
 			]);
 		}
+
+		const accessToken = sign({ id: user.id }, JWT_SECRET, { expiresIn: "1d" });
 
 		const refreshToken = sign({ id: user.id }, JWT_REFRESH_SECRET, {
 			expiresIn: "4weeks"
 		});
 
-		const accessToken = sign({ id: user.id, refreshToken }, JWT_SECRET, { expiresIn: "1d" });
-
-		this.prisma.user.update({
+		return this.prisma.user.update({
 			where: { id: user.id },
 			data: {
 				accessToken,
 				refreshToken,
 				lastLogin: new Date()
 			},
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
-
-		return {
-			...user,
-			accessToken,
-			refreshToken,
-			lastLogin: new Date()
-		};
 	}
 
 	async logoutUser(userId: string) {
@@ -116,16 +111,14 @@ export class AuthService {
 		const refreshToken = sign({ id: userId }, JWT_REFRESH_SECRET, {
 			expiresIn: "4weeks"
 		});
-		const user = await this.prisma.user.update({
+		return this.prisma.user.update({
 			where: { id: userId },
 			data: {
 				accessToken,
 				refreshToken
 			},
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
-
-		return user;
 	}
 
 	async createToken(userId: string) {
@@ -137,7 +130,10 @@ export class AuthService {
 			where: {
 				email
 			},
-			include: this.utils.getUserFields()
+			select: {
+				id: true,
+				verifiedEmail: true
+			}
 		});
 
 		if (user.verifiedEmail) {
