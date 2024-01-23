@@ -212,7 +212,13 @@ export class AuthService {
 			}
 		});
 
-		if (user > 0) {
+		const emailVerification = await this.prisma.mailVerification.findFirst({
+			where: {
+				email
+			}
+		});
+
+		if (user > 0 && !emailVerification) {
 			return {
 				errors: [
 					{
@@ -221,6 +227,20 @@ export class AuthService {
 					}
 				]
 			};
+		}
+
+		if (emailVerification) {
+			if (emailVerification.createdAt.getTime() + 1000 * 60 * 60 < new Date().getTime()) {
+				await this.prisma.mailVerification.delete({
+					where: {
+						id: emailVerification.id
+					}
+				});
+			} else {
+				return {
+					errors: []
+				};
+			}
 		}
 
 		const generatedUsername = `${email.split("@")[0]}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
@@ -258,8 +278,8 @@ export class AuthService {
 
 		// send the email
 		const { data, error } = await resend.emails.send({
-			from: "Pary <onboarding@resend.dev>",
-			to: ["barrar3port@gmail.com"],
+			from: "Pary <noreply@parystudio.com>",
+			to: [email],
 			subject: "Verificación de email",
 			html: `	<div style="background-color: #121212; font-family: Arial, sans-serif; color: rgba(255, 255, 255, 0.85); text-align: center; padding: 50px;">
 						<div style="max-width: 600px; margin: auto; background-color: #1e1e1e; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
