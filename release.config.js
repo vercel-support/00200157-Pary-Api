@@ -55,11 +55,6 @@ module.exports = {
 						files: ["app/main.ts"],
 						from: /(\.setVersion\(")([^"]*)("\))/,
 						to: "$1${nextRelease.version}$3"
-					},
-					{
-						files: ["dist/main.js"],
-						from: /(\.setVersion\(")([^"]*)("\))/,
-						to: "$1${nextRelease.version}$3"
 					}
 				]
 			}
@@ -67,7 +62,7 @@ module.exports = {
 		[
 			"@semantic-release/git",
 			{
-				assets: ["package.json", "app/main.ts", "dist/main.js", "yarn.lock", "CHANGELOG.md"],
+				assets: ["package.json", "app/main.ts", "yarn.lock", "CHANGELOG.md"],
 				message: "chore(release): ${nextRelease.version}"
 			}
 		],
