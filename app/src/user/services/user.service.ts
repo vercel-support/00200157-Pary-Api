@@ -636,7 +636,7 @@ export class UserService {
 	}
 
 	async getUserById(id: string) {
-		return this.prisma.user.findFirst({
+		return this.prisma.user.findUnique({
 			where: { id },
 			select: this.utils.getSafePersonalUserFields()
 		});

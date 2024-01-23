@@ -20,8 +20,6 @@ import { JoinRequestDto } from "../dto/JoinRequestDto";
 import { UpdatePartyDto } from "../dto/UpdateParty.dto";
 import { UploadImageDto } from "../dto/UploadImageDto";
 import { UsernameDto } from "../dto/User.dto";
-import { FINTOC_SECRET_KEY } from "app/main";
-import axios from "axios";
 import { MultipartFile } from "@fastify/multipart";
 
 @Injectable()
@@ -133,6 +131,8 @@ export class PartyService {
 			});
 
 			tickets.push(defaultTicket);
+		} else {
+			defaultTicket = tickets[0];
 		}
 
 		const partyLocation = await this.prisma.location.create({
@@ -156,7 +156,9 @@ export class PartyService {
 					active: true,
 					date: new Date(date),
 					ownerId: userId,
-					image,
+					image: {
+						url: image
+					},
 					showAddressInFeed,
 					ageRange,
 					locationId: partyLocation.id,
@@ -178,16 +180,11 @@ export class PartyService {
 						})
 					},
 					tickets: {
-						connect: tickets.map(ticket => {
-							if (inviter.userType === "Normal" && defaultTicket.id !== ticket.id) {
-								throw new BadRequestException("No tienes permisos para crear Carretes con Tickets");
-							}
-							return { id: ticket.id };
-						})
+						connect: tickets.map(ticket => ({ id: ticket.id }))
 					}
 				}
 			})
-			.catch(async () => {
+			.catch(async err => {
 				await this.prisma.location.delete({
 					where: {
 						id: partyLocation.id
@@ -198,6 +195,7 @@ export class PartyService {
 						id: partyChat.id
 					}
 				});
+				console.log(err);
 				throw new InternalServerErrorException("Error al crear el carrete.");
 			});
 

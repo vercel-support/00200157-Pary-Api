@@ -125,6 +125,7 @@ model Party {
   type               PartyType
   date               DateTime
   advertisement      Boolean
+  private            Boolean                  @default(false)
   members            PartyMember[]
   moderators         UserPartyModerator[]
   ageRange           AgeRange

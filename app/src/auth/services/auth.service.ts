@@ -43,37 +43,35 @@ export class AuthService {
 				googleUser.user.familyName ?? ""
 			}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
 
-			user = await this.prisma.$transaction([
-				this.prisma.user.create({
-					data: {
-						username: generatedUsername,
-						name: googleUser.user.givenName ?? "",
-						password: "",
-						email: googleUser.user.email,
-						lastName: googleUser.user.familyName ?? "",
-						assignedGoogleID: googleUser.user.id,
-						lastLogin: new Date(),
-						createdAt: new Date(),
-						birthDate: new Date(),
-						verifiedEmail: true,
-						location: {
-							create: {
-								name: "",
-								latitude: 0,
-								longitude: 0,
-								timestamp: new Date(),
-								address: ""
-							}
-						},
-						socialMedia: {
-							instagram: ""
+			user = await this.prisma.user.create({
+				data: {
+					username: generatedUsername,
+					name: googleUser.user.givenName ?? "",
+					password: "",
+					email: googleUser.user.email,
+					lastName: googleUser.user.familyName ?? "",
+					assignedGoogleID: googleUser.user.id,
+					lastLogin: new Date(),
+					createdAt: new Date(),
+					birthDate: new Date(),
+					verifiedEmail: true,
+					location: {
+						create: {
+							name: "",
+							latitude: 0,
+							longitude: 0,
+							timestamp: new Date(),
+							address: ""
 						}
 					},
-					select: {
-						id: true
+					socialMedia: {
+						instagram: ""
 					}
-				})
-			]);
+				},
+				select: {
+					id: true
+				}
+			});
 		}
 
 		const accessToken = sign({ id: user.id }, JWT_SECRET, { expiresIn: "1d" });

@@ -17,7 +17,7 @@ export class CreatePartyDto {
 	@IsArray()
 	participants: string[];
 	@IsNotEmpty()
-	image: PartyPicture;
+	image: string;
 	@IsBoolean()
 	showAddressInFeed: boolean;
 	@IsNotEmpty()
