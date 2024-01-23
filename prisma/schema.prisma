@@ -34,6 +34,7 @@ model User {
   isCompany               Boolean                  @default(false)
   expoPushToken           String                   @default("")
   webSocketId             String                   @default("")
+  verifiedEmail           Boolean                  @default(false)
   followingUserList       UserFollows[]            @relation("FollowerToFollowed")
   followerUserList        UserFollows[]            @relation("FollowedToFollower")
   parties                 PartyMember[]            @relation("PartyMembershipToUser")
@@ -488,4 +489,11 @@ model Chat {
   groups    Group[]   @relation(fields: [groupIds], references: [id])
   groupIds  String[]  @db.ObjectId
   parties   Party[]
+}
+
+model MailVerification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  token     String
+  createdAt DateTime @default(now())
 }

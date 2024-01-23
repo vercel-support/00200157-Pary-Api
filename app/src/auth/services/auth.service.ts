@@ -4,11 +4,13 @@ import { GoogleUser } from "app/types";
 import { hash, verify } from "argon2";
 import { OAuth2Client } from "google-auth-library";
 import { sign } from "jsonwebtoken";
+import { Resend } from "resend";
 import { PrismaService } from "../../db/services/prisma.service";
 import { UtilsService } from "../../utils/services/utils.service";
 import { AuthDto } from "../dto/Auth.dto";
 
 const client = new OAuth2Client();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 @Injectable()
 export class AuthService {
@@ -41,16 +43,6 @@ export class AuthService {
 				googleUser.user.familyName ?? ""
 			}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
 
-			const userLocation = await this.prisma.location.create({
-				data: {
-					name: "",
-					latitude: 0,
-					longitude: 0,
-					timestamp: new Date(),
-					address: ""
-				}
-			});
-
 			user = await this.prisma.$transaction([
 				this.prisma.user.create({
 					data: {
@@ -63,10 +55,19 @@ export class AuthService {
 						lastLogin: new Date(),
 						createdAt: new Date(),
 						birthDate: new Date(),
+						verifiedEmail: true,
+						location: {
+							create: {
+								name: "",
+								latitude: 0,
+								longitude: 0,
+								timestamp: new Date(),
+								address: ""
+							}
+						},
 						socialMedia: {
 							instagram: ""
-						},
-						locationId: userLocation.id
+						}
 					},
 					include: this.utils.getUserFields()
 				})
@@ -131,15 +132,87 @@ export class AuthService {
 		return sign({ id: userId }, JWT_SECRET, { expiresIn: "1d" });
 	}
 
+	async verifyEmail(email: string, token: string) {
+		const user = await this.prisma.user.findFirst({
+			where: {
+				email
+			},
+			include: this.utils.getUserFields()
+		});
+
+		if (user.verifiedEmail) {
+			return {
+				errors: [
+					{
+						type: "mail",
+						message: "Este email ya está registrado."
+					}
+				]
+			};
+		}
+
+		const emailVerification = await this.prisma.mailVerification.findFirst({
+			where: {
+				token,
+				email
+			}
+		});
+
+		if (!emailVerification) {
+			return {
+				errors: [
+					{
+						type: "token",
+						message: "Token inválido."
+					}
+				]
+			};
+		}
+
+		if (emailVerification.createdAt.getTime() + 1000 * 60 * 60 < new Date().getTime()) {
+			return {
+				errors: [
+					{
+						type: "token",
+						message: "Token expirado (1hr)."
+					}
+				]
+			};
+		}
+
+		await this.prisma.mailVerification.delete({
+			where: {
+				id: emailVerification.id
+			}
+		});
+
+		const refreshToken = sign({ id: user.id }, JWT_REFRESH_SECRET, {
+			expiresIn: "4weeks"
+		});
+
+		const accessToken = sign({ id: user.id, refreshToken }, JWT_SECRET, { expiresIn: "1d" });
+
+		return await this.prisma.user.update({
+			where: { id: user.id },
+			data: {
+				accessToken,
+				refreshToken,
+				verifiedEmail: true,
+				lastLogin: new Date()
+			},
+			select: this.utils.getSafePersonalUserFields()
+		});
+	}
+
 	async register(registerDto: AuthDto) {
 		const { email, password } = registerDto;
-		const user = await this.prisma.user.findFirst({
+		const user = await this.prisma.user.count({
 			where: {
 				email
 			}
 		});
 
-		if (user) {
+		if (user > 0) {
 			return {
 				errors: [
 					{
@@ -152,19 +225,9 @@ export class AuthService {
 
 		const generatedUsername = `${email.split("@")[0]}${Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)}`;
 
-		const userLocation = await this.prisma.location.create({
-			data: {
-				name: "",
-				latitude: 0,
-				longitude: 0,
-				timestamp: new Date(),
-				address: ""
-			}
-		});
-
 		const safePassword = await hash(password);
 
-		const newUser = await this.prisma.user.create({
+		await this.prisma.user.create({
 			data: {
 				username: generatedUsername,
 				name: "",
@@ -175,33 +238,62 @@ export class AuthService {
 				lastLogin: new Date(),
 				createdAt: new Date(),
 				birthDate: new Date(),
+				verifiedEmail: false,
+				location: {
+					create: {
+						name: "",
+						latitude: 0,
+						longitude: 0,
+						timestamp: new Date(),
+						address: ""
+					}
+				},
 				socialMedia: {
 					instagram: ""
-				},
-				locationId: userLocation.id
-			},
-			include: this.utils.getUserFields()
+				}
+			}
 		});
 
-		const refreshToken = sign({ id: newUser.id }, JWT_REFRESH_SECRET, {
-			expiresIn: "4weeks"
+		const token = this.utils.generatePassword(6);
+
+		// send the email
+		const { data, error } = await resend.emails.send({
+			from: "Pary <onboarding@resend.dev>",
+			to: ["barrar3port@gmail.com"],
+			subject: "Verificación de email",
+			html: `	<div style="background-color: #121212; font-family: Arial, sans-serif; color: rgba(255, 255, 255, 0.85); text-align: center; padding: 50px;">
+						<div style="max-width: 600px; margin: auto; background-color: #1e1e1e; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
+							<h2>¡Bienvenid@ a Pary!</h2>
+							<div style="background-color: #272727; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0px 0px 5px rgba(0,0,0,0.1);">
+								<h3>Tu clave de verificación</h3>
+								<p style="color: rgba(255, 255, 255, 0.65);">Por favor, utiliza la siguiente clave para verificar tu dirección de correo electrónico. Si no la solicitaste, puedes ignorar este correo de manera segura.</p>
+								<kbd style="display: block; margin: 20px auto; padding: 10px; border: 1px solid #424242; background-color: #272727; color: rgba(255, 255, 255, 0.65); border-radius: 8px; font-family: monospace;">
+									${token}
+								</kbd>
+							</div>
+						</div>
+					</div>`
 		});
 
-		const accessToken = sign({ id: newUser.id, refreshToken }, JWT_SECRET, { expiresIn: "1d" });
+		if (error) {
+			console.log(error);
+			await this.prisma.user.delete({
+				where: {
+					email
+				}
+			});
+			throw new InternalServerErrorException("Error al enviar el correo de verificación.");
+		}
 
-		this.prisma.user.update({
-			where: { id: newUser.id },
+		await this.prisma.mailVerification.create({
 			data: {
-				accessToken,
-				refreshToken
-			},
-			include: this.utils.getUserFields()
+				email,
+				token
+			}
 		});
 
 		return {
-			...newUser,
-			accessToken,
-			refreshToken
+			errors: []
 		};
 	}
 
@@ -212,8 +304,8 @@ export class AuthService {
 				email
 			},
 			select: {
-				id: true,
 				password: true,
+				id: true,
 				assignedGoogleID: true
 			}
 		});
@@ -259,19 +351,15 @@ export class AuthService {
 
 		const accessToken = sign({ id: user.id, refreshToken }, JWT_SECRET, { expiresIn: "1d" });
 
-		this.prisma.user.update({
+		return this.prisma.user.update({
 			where: { id: user.id },
 			data: {
 				accessToken,
-				refreshToken
+				refreshToken,
+				signedIn: true,
+				lastLogin: new Date()
 			},
-			include: this.utils.getUserFields()
+			select: this.utils.getSafePersonalUserFields()
 		});
-
-		return {
-			...user,
-			accessToken,
-			refreshToken
-		};
 	}
 }

@@ -91,6 +91,11 @@ export class AuthController {
 		return this.authService.createToken(id);
 	}
 
+	@Post("verify-email/:email")
+	async verifyEmail(@Param("email") email: string, @Body("token") token: string): Promise<any> {
+		return this.authService.verifyEmail(email, token);
+	}
+
 	@Post("register")
 	async register(@Body() registerDto: AuthDto) {
 		return this.authService.register(registerDto);
