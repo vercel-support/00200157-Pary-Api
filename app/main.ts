@@ -49,7 +49,7 @@ async function bootstrap() {
 		.setTitle("Pary Api")
 		.setDescription("La api oficial de Pary.")
 		.addBearerAuth()
-		.setVersion("1.5.1")
+		.setVersion("1.6.0")
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	if (SWAGGER_ENVS.includes(process.env.NODE_ENV)) {
