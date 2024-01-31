@@ -224,10 +224,11 @@ export class PartyController {
 	)
 	async requestJoin(
 		@Param("partyId") partyId: string,
+		@Param("ticketId") ticketId: string,
 		@Req() request: any,
 		@Body() optionalGroupIdDto: OptionalGroupIdDto
 	) {
-		return this.partyService.requestJoin(partyId, request.raw.decoded.id, optionalGroupIdDto);
+		return this.partyService.requestJoin(partyId, ticketId, request.raw.decoded.id, optionalGroupIdDto);
 	}
 
 	@Post(":partyId/replace-party-image")

@@ -479,7 +479,7 @@ export class UserService {
 		});
 
 		if (!followedUser) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		const followedUserId = followedUser.id; // usuario que es seguido
 		const expoPushToken = followedUser.expoPushToken;
@@ -521,7 +521,7 @@ export class UserService {
 			where: { username: unFollowedUsername }
 		});
 		if (!unFollowedUser) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 
 		const followedUserId = unFollowedUser.id;
@@ -652,7 +652,7 @@ export class UserService {
 			}
 		});
 		if (!user) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 
 		// Delete all profile pictures
@@ -1292,7 +1292,7 @@ export class UserService {
 			}
 		});
 		if (!user) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 
 		let chat = await this.prisma.chat.findFirst({

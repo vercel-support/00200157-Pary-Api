@@ -77,7 +77,7 @@ export class UserController {
 	@Post("/follow/:username")
 	async followUser(@Param("username") username: string, @Req() request: any) {
 		if (!username) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		return await this.userService.followUser(username, request.raw.decoded.id);
 	}
@@ -85,7 +85,7 @@ export class UserController {
 	@Delete("/unfollow/:username")
 	async unFollowUser(@Param("username") username: string, @Req() request: any) {
 		if (!username) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		return await this.userService.unFollowUser(username, request.raw.decoded.id);
 	}
@@ -93,7 +93,7 @@ export class UserController {
 	@Get("follower-user-info/:username")
 	async getFollowerUserInfo(@Param("username") username: string) {
 		if (!username) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		return await this.userService.getFollowerUserInfo(username);
 	}
@@ -117,13 +117,12 @@ export class UserController {
 		@Query("expoPushToken") expoPushToken: string
 	) {
 		if (!id) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 
 		if (location && expoPushToken) {
 			const locationDecoded = decodeURIComponent(location);
 			const newLocation: Location = JSON.parse(locationDecoded);
-			console.log(newLocation, expoPushToken);
 			return await this.userService.updateAndGetUserById(id, newLocation, expoPushToken);
 		}
 		return await this.userService.getUserById(id);
@@ -132,7 +131,7 @@ export class UserController {
 	@Delete(":id/purge")
 	async purgeUserById(@Param("id") id: string) {
 		if (!id) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		return await this.userService.purgeUserById(id);
 	}

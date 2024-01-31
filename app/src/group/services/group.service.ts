@@ -30,7 +30,7 @@ export class GroupService {
 		});
 
 		if (!inviter) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 
 		const userGroupsSize = await this.prisma.group.count({

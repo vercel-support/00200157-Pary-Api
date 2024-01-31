@@ -999,7 +999,7 @@ export class PartyService {
 				return party;
 			})
 			.catch(() => {
-				throw new NotFoundException("User not found");
+				throw new NotFoundException("Carrete no econtrado");
 			});
 	}
 
@@ -1409,7 +1409,7 @@ export class PartyService {
 			await this.prisma.ticketOwnership.create({
 				data: {
 					userId: requesterUserId,
-					ticketId: party.tickets[0].id,
+					ticketId: joinRequest.ticketId,
 					partyId: party.id
 				}
 			});
@@ -1460,7 +1460,7 @@ export class PartyService {
 			await this.prisma.ticketOwnership.create({
 				data: {
 					groupId,
-					ticketId: party.tickets[0].id,
+					ticketId: joinRequest.ticketId,
 					partyId
 				}
 			});
@@ -1616,7 +1616,7 @@ export class PartyService {
 		return true;
 	}
 
-	async requestJoin(partyId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
+	async requestJoin(partyId: string, ticketId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
 		const { groupId } = optionalGroupIdDto;
 		// Obtenemos la información del party.
 		const party = await this.prisma.party.findUnique({
@@ -1705,6 +1705,7 @@ export class PartyService {
 					groupId,
 					partyId,
 					userId,
+					ticketId,
 					type: "GROUP"
 				}
 			});
@@ -1727,6 +1728,7 @@ export class PartyService {
 				data: {
 					userId,
 					partyId,
+					ticketId,
 					type: "SOLO"
 				}
 			});

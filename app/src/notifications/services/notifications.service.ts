@@ -261,36 +261,20 @@ export class NotificationsService {
 		const messageToGroup: ExpoPushMessage = {
 			to: group.members.map(member => member.user.expoPushToken),
 			sound: "default",
-			title: "Nuevo ingreso a un carrete como grupo!",
+			title: "Se aceptó la solicitud de tu grupo a un carrete!",
 			body: `Tu grupo ${group.name} se ha unido al carrete ${party.name}.`,
 			priority: "normal",
 			data: {
-				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
 				params: {
 					partyId: party.id
 				},
-				type: "partyNewMember"
-			}
-		};
-		const messageToMods: ExpoPushMessage = {
-			to: party.moderators.map(moderator => moderator.expoPushToken),
-			sound: "default",
-			title: "Solicitud aceptada a un grupo",
-			body: `Se ha aceptado la solicitud de ${group.name} para unirse al carrete ${party.name}.`,
-			priority: "normal",
-			data: {
-				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
-				params: {
-					partyId: party.id
-				},
-				type: "partyNewMember"
+				type: "PartyRequestAccepted"
 			}
 		};
 
-		// Envía la notificación
 		try {
-			const receipts = await this.expo.sendPushNotificationsAsync([messageToGroup, messageToMods]);
-			console.log(receipts);
+			const receipts = await this.expo.sendPushNotificationsAsync([messageToGroup]);
+			console.log("Notification Sent to group members", receipts);
 		} catch (error) {
 			console.error("Error sending push notification:", error);
 			return false;

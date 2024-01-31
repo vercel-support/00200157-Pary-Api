@@ -384,7 +384,7 @@ export class FeedService {
 			}
 		});
 		if (user === null) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		const followers = user?.followerUserList.map(follower => follower.followerUserId);
 
@@ -426,7 +426,7 @@ export class FeedService {
 			}
 		});
 		if (user === null) {
-			throw new NotFoundException("User not found");
+			throw new NotFoundException("Usuario no encontrado");
 		}
 		const followers = user?.followingUserList.map(follower => follower.followedUserId);
 
