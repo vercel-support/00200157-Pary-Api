@@ -30,7 +30,7 @@ export class GroupService {
 		});
 
 		if (!inviter) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 
 		const userGroupsSize = await this.prisma.group.count({
@@ -861,7 +861,7 @@ export class GroupService {
 		});
 
 		if (!group) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException(".");
 		}
 
 		// If the user is the owner of the group

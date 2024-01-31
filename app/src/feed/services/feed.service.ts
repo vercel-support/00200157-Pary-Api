@@ -224,7 +224,7 @@ export class FeedService {
 		});
 
 		if (!currentUser) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 
 		const followedUsers = currentUser.followingUserList.map(follow => follow.followedUserId);
@@ -384,7 +384,7 @@ export class FeedService {
 			}
 		});
 		if (user === null) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 		const followers = user?.followerUserList.map(follower => follower.followerUserId);
 
@@ -426,7 +426,7 @@ export class FeedService {
 			}
 		});
 		if (user === null) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 		const followers = user?.followingUserList.map(follower => follower.followedUserId);
 

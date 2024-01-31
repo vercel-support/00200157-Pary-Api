@@ -479,7 +479,7 @@ export class UserService {
 		});
 
 		if (!followedUser) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 		const followedUserId = followedUser.id; // usuario que es seguido
 		const expoPushToken = followedUser.expoPushToken;
@@ -521,7 +521,7 @@ export class UserService {
 			where: { username: unFollowedUsername }
 		});
 		if (!unFollowedUser) {
-			throw new NotFoundException("User not found.");
+			throw new NotFoundException("User not found");
 		}
 
 		const followedUserId = unFollowedUser.id;
@@ -784,7 +784,8 @@ export class UserService {
 				longitude: location.longitude,
 				name: location.name,
 				timestamp: location.timestamp,
-				address: location.address
+				address: location.address,
+				longName: location.longName
 			}
 		});
 		return this.prisma.user.update({

@@ -123,6 +123,7 @@ export class UserController {
 		if (location && expoPushToken) {
 			const locationDecoded = decodeURIComponent(location);
 			const newLocation: Location = JSON.parse(locationDecoded);
+			console.log(newLocation, expoPushToken);
 			return await this.userService.updateAndGetUserById(id, newLocation, expoPushToken);
 		}
 		return await this.userService.getUserById(id);

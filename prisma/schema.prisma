@@ -310,6 +310,7 @@ enum InvitationStatus {
 model Location {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
+  longName  String   @default("")
   latitude  Float
   longitude Float
   timestamp DateTime
