@@ -5,3 +5,11 @@ export class OptionalGroupIdDto {
 	@IsString()
 	groupId?: string;
 }
+
+export class RequestJoinPartyDto {
+	@IsString()
+	ticketId: string;
+	@IsOptional()
+	@IsString()
+	groupId?: string;
+}

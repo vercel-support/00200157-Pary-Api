@@ -27,7 +27,7 @@ export class AuthService {
 			audience: process.env.GOOGLE_AUTH_WEB_TOKEN
 		});
 		const payload = ticket.getPayload();
-		if (!payload) throw new InternalServerErrorException("Invalid access token.");
+		if (!payload) throw new InternalServerErrorException("Token de acceso invalido.");
 
 		let user: any = await this.prisma.user.findFirst({
 			where: {
@@ -80,7 +80,7 @@ export class AuthService {
 			expiresIn: "4weeks"
 		});
 
-		return this.prisma.user.update({
+		return await this.prisma.user.update({
 			where: { id: user.id },
 			data: {
 				accessToken,

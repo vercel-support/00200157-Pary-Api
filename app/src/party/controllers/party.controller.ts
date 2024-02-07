@@ -5,7 +5,7 @@ import { CreatePartyDto } from "app/src/party/dto/CreateParty.dto";
 import { PartyService } from "app/src/party/services/party.service";
 import { File } from "../../decorators/file.decorator";
 import { PaginationDto } from "../../group/dto/Pagination.dto";
-import { OptionalGroupIdDto } from "../dto/Group.dto";
+import { OptionalGroupIdDto, RequestJoinPartyDto } from "../dto/Group.dto";
 import { JoinRequestDto } from "../dto/JoinRequestDto";
 import { UpdatePartyDto } from "../dto/UpdateParty.dto";
 import { UploadImageDto } from "../dto/UploadImageDto";
@@ -224,11 +224,10 @@ export class PartyController {
 	)
 	async requestJoin(
 		@Param("partyId") partyId: string,
-		@Param("ticketId") ticketId: string,
 		@Req() request: any,
-		@Body() optionalGroupIdDto: OptionalGroupIdDto
+		@Body() requestjoinPartyDto: RequestJoinPartyDto
 	) {
-		return this.partyService.requestJoin(partyId, ticketId, request.raw.decoded.id, optionalGroupIdDto);
+		return this.partyService.requestJoin(partyId, request.raw.decoded.id, requestjoinPartyDto);
 	}
 
 	@Post(":partyId/replace-party-image")

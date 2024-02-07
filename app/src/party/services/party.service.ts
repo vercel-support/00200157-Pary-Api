@@ -15,7 +15,7 @@ import { PrismaService } from "../../db/services/prisma.service";
 import { PaginationDto } from "../../group/dto/Pagination.dto";
 import { NotificationsService } from "../../notifications/services/notifications.service";
 import { UtilsService } from "../../utils/services/utils.service";
-import { OptionalGroupIdDto } from "../dto/Group.dto";
+import { OptionalGroupIdDto, RequestJoinPartyDto } from "../dto/Group.dto";
 import { JoinRequestDto } from "../dto/JoinRequestDto";
 import { UpdatePartyDto } from "../dto/UpdateParty.dto";
 import { UploadImageDto } from "../dto/UploadImageDto";
@@ -1616,8 +1616,8 @@ export class PartyService {
 		return true;
 	}
 
-	async requestJoin(partyId: string, ticketId: string, userId: string, optionalGroupIdDto: OptionalGroupIdDto) {
-		const { groupId } = optionalGroupIdDto;
+	async requestJoin(partyId: string, userId: string, requestJoinPartyDto: RequestJoinPartyDto) {
+		const { groupId, ticketId } = requestJoinPartyDto;
 		// Obtenemos la información del party.
 		const party = await this.prisma.party.findUnique({
 			where: { id: partyId },
