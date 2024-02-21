@@ -1690,12 +1690,21 @@ export class PartyService {
 				throw new BadRequestException("No hay tickets suficientes para este grupo");
 			}
 
-			await this.prisma.partyGroup.create({
-				data: {
+			const partyGroup = await this.prisma.partyGroup.findFirst({
+				where: {
 					partyId,
 					groupId
 				}
 			});
+
+			if (!partyGroup) {
+				await this.prisma.partyGroup.create({
+					data: {
+						partyId,
+						groupId
+					}
+				});
+			}
 
 			const groupNonPartyMembers = groupMembers.filter(member =>
 				party.members.every(partyMember => partyMember.userId !== member.userId)
