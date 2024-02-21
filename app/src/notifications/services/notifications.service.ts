@@ -197,41 +197,39 @@ export class NotificationsService {
 		}
 	}
 
-	async sendPartyJoinAcceptedSoloNotification(userId: string, party) {
+	async sendPartyJoinAcceptedSoloNotification(userId: string, party, free: boolean) {
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
 			select: { expoPushToken: true, username: true }
 		});
 		if (user === null || !party.moderators) return;
-		const pushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
+		const modPushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
 		const userMessage: ExpoPushMessage = {
-			to: [user.expoPushToken, ...pushTokens],
+			to: user.expoPushToken,
 			sound: "default",
-			title: "Solicitud aceptada",
-			body: "Tu solicitud para unirte al carrete ha sido aceptada.",
+			title: "Te aceptaron en un nuevo Carrete!",
+			body: free ? `Ahora eres miembro de ${party.name}` : "Solo queda pagar el ticket para unirte al carrete!",
 			priority: "normal",
+			channelId: "party-join-accepted",
 			data: {
-				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
-				params: {
-					partyId: party.id
-				},
-				type: "partyNewMember"
+				partyId: party.id,
+				type: free ? "PartyRequestAcceptedFree" : "PartyRequestAccepted"
 			}
 		};
-		const modMessage: ExpoPushMessage = {
-			to: [user.expoPushToken, ...pushTokens],
-			sound: "default",
-			title: "Nuevo miembr@ en el Carrete!",
-			body: `@${user.username} se ha unido al carrete.`,
-			priority: "normal",
-			data: {
-				url: `/news/party/${party.id}`, // Aquí puedes poner la URL o la ruta en la que el usuario puede ver la invitación al grupo
-				params: {
-					partyId: party.id
-				},
-				type: "partyNewMember"
-			}
-		};
+		const modMessage: ExpoPushMessage = free
+			? {
+					to: modPushTokens,
+					sound: "default",
+					title: "Nuevo miembr@ en el Carrete!",
+					body: `@${user.username} se ha unido al carrete.`,
+					priority: "normal",
+					channelId: "party-join-accepted-mod",
+					data: {
+						partyId: party.id,
+						type: free ? "ModPartyRequestAcceptedFree" : "ModPartyRequestAccepted"
+					}
+			  }
+			: undefined;
 
 		try {
 			await this.expo.sendPushNotificationsAsync([userMessage, modMessage]);
@@ -241,7 +239,7 @@ export class NotificationsService {
 		}
 	}
 
-	async sendPartyJoinAcceptedGroupNotification(groupId: string, party) {
+	async sendPartyJoinAcceptedGroupNotification(groupId: string, party, free: boolean) {
 		const group = await this.prisma.group.findUnique({
 			where: { id: groupId },
 			select: {
@@ -258,22 +256,38 @@ export class NotificationsService {
 			}
 		});
 		if (group === null) return;
+		const modPushTokens: string[] = party.moderators.map(moderator => moderator.expoPushToken);
+
 		const messageToGroup: ExpoPushMessage = {
 			to: group.members.map(member => member.user.expoPushToken),
 			sound: "default",
-			title: "Se aceptó la solicitud de tu grupo a un carrete!",
-			body: `Tu grupo ${group.name} se ha unido al carrete ${party.name}.`,
+			title: "Tu grupo fue aceptado en un carrete!",
+			body: free
+				? `Tu grupo ${group.name} se ha unido al carrete ${party.name}.`
+				: `Ahora solo falta pagar el ticket para unir a tu grupo al carrete ${party.name}.`,
 			priority: "normal",
 			data: {
-				params: {
-					partyId: party.id
-				},
-				type: "PartyRequestAccepted"
+				partyId: party.id,
+				type: free ? "GroupPartyRequestAcceptedFree" : "GroupPartyRequestAccepted"
 			}
 		};
+		const modMessage: ExpoPushMessage = free
+			? {
+					to: modPushTokens,
+					sound: "default",
+					title: "Nuevo grupo en el carrete!",
+					body: `${group.name} se ha unido al carrete.`,
+					priority: "normal",
+					channelId: "party-group-join-accepted-mod",
+					data: {
+						partyId: party.id,
+						type: free ? "GroupPartyRequestAcceptedFree" : "GroupPartyRequestAccepted"
+					}
+			  }
+			: null;
 
 		try {
-			const receipts = await this.expo.sendPushNotificationsAsync([messageToGroup]);
+			const receipts = await this.expo.sendPushNotificationsAsync([messageToGroup, modMessage]);
 			console.log("Notification Sent to group members", receipts);
 		} catch (error) {
 			console.error("Error sending push notification:", error);

@@ -119,7 +119,7 @@ export const PARTY_REQUEST = {
 	membershipRequests: {
 		include: {
 			group: {
-				select: {
+				include: {
 					leader: {
 						select: {
 							username: true,
@@ -211,10 +211,25 @@ export const PARTY_REQUEST = {
 	groups: {
 		include: {
 			group: {
-				select: {
-					id: true,
-					leaderId: true,
-					name: true,
+				include: {
+					tickets: {
+						include: {
+							ticket: {
+								include: {
+									base: true,
+									consumables: {
+										include: {
+											consumable: {
+												include: {
+													item: true
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					leader: {
 						select: {
 							username: true,

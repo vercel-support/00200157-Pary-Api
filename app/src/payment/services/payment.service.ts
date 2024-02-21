@@ -1,21 +1,14 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { PrismaService } from "../../db/services/prisma.service";
-import { NotificationsService } from "../../notifications/services/notifications.service";
-import { UtilsService } from "../../utils/services/utils.service";
-import { GetPreferenceIdDto } from "../dto/GetPreferenceId.dto";
-import { InitPaymentDto } from "../dto/InitPayment.dto";
-import axios from "axios";
 import { FINTOC_SECRET_KEY } from "app/main";
+import axios from "axios";
+import { PrismaService } from "../../db/services/prisma.service";
+import { InitPaymentDto } from "../dto/InitPayment.dto";
 
 @Injectable()
 export class PaymentService {
-	constructor(
-		private prisma: PrismaService,
-		private utils: UtilsService,
-		private notifications: NotificationsService
-	) {}
+	constructor(private readonly prisma: PrismaService) {}
 	async initPayment(initPaymentDto: InitPaymentDto, userId: string) {
-		const { partyId, ticketId, groupId } = initPaymentDto;
+		const { partyId, ticketId, groupId, selectedGroupMembers } = initPaymentDto;
 		const party = await this.prisma.party.findUnique({
 			where: {
 				id: partyId,
@@ -62,17 +55,33 @@ export class PaymentService {
 			};
 		}
 
+		const parsedSelectedGroupMembers: string[] | undefined = groupId ? Array.from(selectedGroupMembers) : undefined;
+		const price = parsedSelectedGroupMembers ? ticket.price * parsedSelectedGroupMembers.length : ticket.price;
+		console.log(
+			"Price: ",
+			price,
+			"Parsed: ",
+			parsedSelectedGroupMembers,
+			"Selected: ",
+			selectedGroupMembers,
+			"Group: ",
+			groupId,
+			ticket.price,
+			parsedSelectedGroupMembers.length,
+			ticket.price * parsedSelectedGroupMembers.length
+		);
 		const response = await axios
 			.post(
 				"https://api.fintoc.com/v1/payment_intents",
 				{
-					amount: ticket.price,
+					amount: price,
 					currency: "clp",
 					metadata: {
 						partyId,
 						ticketId,
 						groupId,
-						userId
+						userId,
+						selectedGroupMembers: JSON.stringify(parsedSelectedGroupMembers)
 					}
 				},
 				{
@@ -96,6 +105,7 @@ export class PaymentService {
 					amount: response.amount,
 					paymentIntentId: response.id,
 					widgetToken: response.widget_token,
+					selectedGroupMembers: [...parsedSelectedGroupMembers],
 					party: {
 						connect: {
 							id: partyId

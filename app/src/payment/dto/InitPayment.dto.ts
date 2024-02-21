@@ -10,4 +10,7 @@ export class InitPaymentDto {
 	@IsOptional()
 	@IsString()
 	groupId: string;
+	@IsOptional()
+	@IsArray()
+	selectedGroupMembers: string[];
 }

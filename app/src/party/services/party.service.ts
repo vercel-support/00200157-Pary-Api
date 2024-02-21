@@ -211,11 +211,21 @@ export class PartyService {
 			}
 		});
 
+		const qrImageBase64 = await this.utils.generateQrCodeData({
+			ticketId: defaultTicket.id,
+			userId,
+			partyId: party.id,
+			price: defaultTicket.price,
+			type
+		});
+
 		await this.prisma.ticketOwnership.create({
 			data: {
 				userId,
 				ticketId: defaultTicket.id,
-				partyId: party.id
+				partyId: party.id,
+				status: "PAID",
+				qrImageBase64
 			}
 		});
 
@@ -782,7 +792,7 @@ export class PartyService {
 					}
 				},
 				group: {
-					select: {
+					include: {
 						leader: {
 							select: {
 								username: true,
@@ -1300,11 +1310,21 @@ export class PartyService {
 			}
 		});
 
+		const qrImageBase64 = await this.utils.generateQrCodeData({
+			ticketId: invitation.ticketId,
+			userId,
+			partyId: invitation.partyId,
+			price: invitation.ticket.price,
+			type: "SOLO"
+		});
+
 		await this.prisma.ticketOwnership.create({
 			data: {
 				userId,
 				ticketId: invitation.ticketId,
-				partyId: invitation.partyId
+				partyId: invitation.partyId,
+				status: "PAID",
+				qrImageBase64
 			}
 		});
 
@@ -1372,6 +1392,11 @@ export class PartyService {
 					select: {
 						id: true
 					}
+				},
+				members: {
+					select: {
+						userId: true
+					}
 				}
 			}
 		});
@@ -1383,37 +1408,51 @@ export class PartyService {
 				where: {
 					partyId,
 					userId: requesterUserId
+				},
+				include: {
+					ticket: true
 				}
 			});
 
 			if (!joinRequest) {
-				throw new NotFoundException("Join request not found");
+				throw new NotFoundException("Solicitud de ingreso no encontrada");
 			}
 
-			await this.prisma.partyMembershipRequest.update({
-				where: {
-					id: joinRequest.id
-				},
-				data: {
-					status: "ACCEPTED"
-				}
+			if (!joinRequest.ticketId || !joinRequest.ticket) {
+				throw new NotFoundException("Ticket no encontrado");
+			}
+
+			const qrImageBase64 = await this.utils.generateQrCodeData({
+				ticketId: joinRequest.ticketId,
+				userId: requesterUserId,
+				partyId,
+				price: joinRequest.ticket.price,
+				type
 			});
 
-			await this.prisma.partyMember.create({
+			const isFree = joinRequest.ticket.price === 0;
+
+			await this.prisma.partyMembershipRequest.delete({
+				where: {
+					id: joinRequest.id
+				}
+			});
+			/* await this.prisma.partyMember.create({
 				data: {
 					partyId,
 					userId: requesterUserId
 				}
-			});
-
+			}); */
 			await this.prisma.ticketOwnership.create({
 				data: {
 					userId: requesterUserId,
 					ticketId: joinRequest.ticketId,
-					partyId: party.id
+					partyId: party.id,
+					status: isFree ? "PAID" : "WAITING_PAYMENT",
+					qrImageBase64: isFree ? qrImageBase64 : ""
 				}
 			});
-			this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party);
+			this.notifications.sendPartyJoinAcceptedSoloNotification(requesterUserId, party, isFree);
 		} else {
 			const joinRequest = await this.prisma.partyMembershipRequest.findFirst({
 				where: {
@@ -1421,6 +1460,7 @@ export class PartyService {
 					groupId
 				},
 				include: {
+					ticket: true,
 					group: {
 						select: {
 							members: {
@@ -1439,37 +1479,90 @@ export class PartyService {
 			});
 
 			if (!joinRequest) {
-				throw new NotFoundException("Join request not found");
+				throw new NotFoundException("Solicitud de ingreso no encontrada");
 			}
 
-			await this.prisma.partyMembershipRequest.update({
+			if (!joinRequest.ticketId || !joinRequest.ticket) {
+				throw new NotFoundException("Ticket no encontrado");
+			}
+
+			const qrImageBase64 = await this.utils.generateQrCodeData({
+				ticketId: joinRequest.ticketId,
+				userId: requesterUserId,
+				partyId,
+				price: joinRequest.ticket.price,
+				type
+			});
+
+			const isFree = joinRequest.ticket.price === 0;
+
+			await this.prisma.partyMembershipRequest.delete({
 				where: {
 					id: joinRequest.id
-				},
-				data: {
-					status: "ACCEPTED"
 				}
 			});
 
-			await this.prisma.partyGroup.create({
+			const group = await this.prisma.group.findUnique({
+				where: { id: groupId },
+				select: {
+					members: {
+						select: {
+							userId: true
+						}
+					}
+				}
+			});
+
+			const currentTicketsOwnerships = await this.prisma.ticketOwnership.count({
+				where: {
+					partyId,
+					ticketId: joinRequest.ticketId
+				}
+			});
+
+			const availableTickets = joinRequest.ticket.stock - currentTicketsOwnerships;
+
+			if (availableTickets < group.members.length) {
+				throw new BadRequestException("No hay tickets suficientes para este grupo");
+			}
+
+			/* await this.prisma.partyGroup.create({
 				data: {
 					partyId,
 					groupId
 				}
+			}); */
+
+			const groupNonPartyMembers = group.members.filter(member =>
+				party.members.every(partyMember => partyMember.userId !== member.userId)
+			);
+
+			await this.prisma.ticketOwnership.createMany({
+				data: groupNonPartyMembers.map(member => {
+					return {
+						userId: member.userId,
+						ticketId: joinRequest.ticketId,
+						partyId,
+						groupId,
+						type: "GROUP",
+						status: isFree ? "PAID" : "WAITING_PAYMENT",
+						qrImageBase64: isFree ? qrImageBase64 : ""
+					};
+				})
 			});
-			await this.prisma.ticketOwnership.create({
-				data: {
-					groupId,
-					ticketId: joinRequest.ticketId,
-					partyId
-				}
-			});
-			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
+
+			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party, isFree);
 		}
 		return true;
 	}
 
-	async joinUserOrGroupToParty(partyId: string, userId: string, ticketId: string, groupId?: string) {
+	async joinUserOrGroupToParty(
+		partyId: string,
+		userId: string,
+		ticketId: string,
+		groupId?: string,
+		selectedGroupMembers?: string[]
+	) {
 		const party = await this.prisma.party.findUnique({
 			where: {
 				id: partyId
@@ -1480,6 +1573,16 @@ export class PartyService {
 						user: {
 							select: {
 								expoPushToken: true
+							}
+						}
+					}
+				},
+				members: {
+					select: {
+						userId: true,
+						user: {
+							select: {
+								username: true
 							}
 						}
 					}
@@ -1495,14 +1598,26 @@ export class PartyService {
 				id: ticketId
 			},
 			select: {
-				id: true
+				id: true,
+				price: true,
+				stock: true
 			}
 		});
+
 		if (!ticket) {
-			throw new NotFoundException("No default ticket found");
+			throw new NotFoundException("Ticket no encontrado");
 		}
 
 		if (!groupId) {
+			const qrImageBase64 = await this.utils.generateQrCodeData({
+				ticketId,
+				userId,
+				partyId,
+				groupId,
+				price: ticket.price,
+				type: "SOLO"
+			});
+
 			await this.prisma.partyMember.create({
 				data: {
 					partyId,
@@ -1510,30 +1625,124 @@ export class PartyService {
 				}
 			});
 
-			await this.prisma.ticketOwnership.create({
-				data: {
+			const ticketOwnership = await this.prisma.ticketOwnership.findFirst({
+				where: {
 					userId,
-					ticketId,
-					partyId
+					partyId,
+					ticketId
 				}
 			});
 
-			this.notifications.sendPartyJoinAcceptedSoloNotification(userId, party);
+			if (ticketOwnership) {
+				await this.prisma.ticketOwnership.update({
+					where: {
+						id: ticketOwnership.id
+					},
+					data: {
+						status: "PAID",
+						qrImageBase64
+					}
+				});
+			} else {
+				await this.prisma.ticketOwnership.create({
+					data: {
+						userId,
+						ticketId,
+						partyId,
+						type: "SOLO",
+						status: "PAID",
+						qrImageBase64
+					}
+				});
+			}
+
+			this.notifications.sendPartyJoinAcceptedSoloNotification(userId, party, false);
 		} else {
+			// Chequeamos que existant tickets disponibles para todos los miembros
+			const group = await this.prisma.group.findUnique({
+				where: { id: groupId },
+				select: {
+					members: {
+						select: {
+							userId: true
+						}
+					}
+				}
+			});
+
+			const groupMembers =
+				selectedGroupMembers.map(userId => {
+					return {
+						userId
+					};
+				}) ?? group.members;
+
+			const currentTicketsOwnerships = await this.prisma.ticketOwnership.count({
+				where: {
+					partyId,
+					ticketId
+				}
+			});
+
+			const availableTickets = ticket.stock - currentTicketsOwnerships;
+
+			if (availableTickets < groupMembers.length) {
+				throw new BadRequestException("No hay tickets suficientes para este grupo");
+			}
+
 			await this.prisma.partyGroup.create({
 				data: {
 					partyId,
 					groupId
 				}
 			});
-			await this.prisma.ticketOwnership.create({
-				data: {
-					groupId,
+
+			const groupNonPartyMembers = groupMembers.filter(member =>
+				party.members.every(partyMember => partyMember.userId !== member.userId)
+			);
+
+			groupNonPartyMembers.forEach(async member => {
+				const qrImageBase64 = await this.utils.generateQrCodeData({
 					ticketId,
-					partyId
+					userId: member.userId,
+					partyId,
+					groupId,
+					price: ticket.price,
+					type: "GROUP"
+				});
+				const ticketOwnership = await this.prisma.ticketOwnership.findFirst({
+					where: {
+						userId: member.userId,
+						partyId,
+						ticketId
+					}
+				});
+
+				if (ticketOwnership) {
+					await this.prisma.ticketOwnership.update({
+						where: {
+							id: ticketOwnership.id
+						},
+						data: {
+							status: "PAID",
+							qrImageBase64
+						}
+					});
+				} else {
+					await this.prisma.ticketOwnership.create({
+						data: {
+							userId: member.userId,
+							ticketId,
+							partyId,
+							groupId,
+							type: "GROUP",
+							status: "PAID",
+							qrImageBase64
+						}
+					});
 				}
 			});
-			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party);
+			this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party, false);
 		}
 		return true;
 	}
@@ -1622,7 +1831,21 @@ export class PartyService {
 		const party = await this.prisma.party.findUnique({
 			where: { id: partyId },
 			include: {
-				tickets: true
+				tickets: true,
+				moderators: {
+					select: {
+						user: {
+							select: {
+								expoPushToken: true
+							}
+						}
+					}
+				},
+				members: {
+					select: {
+						userId: true
+					}
+				}
 			}
 		});
 
@@ -1677,12 +1900,128 @@ export class PartyService {
 			}
 		}
 
+		const ticket = await this.prisma.ticket.findUnique({
+			where: {
+				id: ticketId
+			},
+			select: {
+				id: true,
+				price: true,
+				stock: true
+			}
+		});
+
+		if (!ticket) {
+			throw new NotFoundException("Ticket no encontrado");
+		}
+
+		//Si el carrete es publico y el precio del ticket es 0, se acepta la solicitud de inmediato.
+
+		if (!party.private) {
+			const qrImageBase64 = await this.utils.generateQrCodeData({
+				ticketId,
+				userId,
+				partyId,
+				groupId,
+				price: ticket.price,
+				type: groupId ? "GROUP" : "SOLO"
+			});
+
+			if (!groupId) {
+				const currentTicketsOwnerships = await this.prisma.ticketOwnership.count({
+					where: {
+						partyId,
+						ticketId
+					}
+				});
+
+				const availableTickets = ticket.stock - currentTicketsOwnerships;
+
+				if (availableTickets <= 0) {
+					throw new BadRequestException("No hay tickets suficientes para este grupo");
+				}
+
+				await this.prisma.partyMember.create({
+					data: {
+						partyId,
+						userId
+					}
+				});
+
+				await this.prisma.ticketOwnership.create({
+					data: {
+						userId,
+						ticketId,
+						partyId,
+						status: "PAID",
+						qrImageBase64
+					}
+				});
+
+				this.notifications.sendPartyJoinAcceptedSoloNotification(userId, party, true);
+			} else {
+				// Chequeamos que existant tickets disponibles para todos los miembros
+				const group = await this.prisma.group.findUnique({
+					where: { id: groupId },
+					select: {
+						members: {
+							select: {
+								userId: true
+							}
+						}
+					}
+				});
+
+				const currentTicketsOwnerships = await this.prisma.ticketOwnership.count({
+					where: {
+						partyId,
+						ticketId
+					}
+				});
+
+				const availableTickets = ticket.stock - currentTicketsOwnerships;
+
+				if (availableTickets < group.members.length) {
+					throw new BadRequestException("No hay tickets suficientes para este grupo");
+				}
+
+				await this.prisma.partyGroup.create({
+					data: {
+						partyId,
+						groupId
+					}
+				});
+
+				const groupNonPartyMembers = group.members.filter(member =>
+					party.members.every(partyMember => partyMember.userId !== member.userId)
+				);
+
+				await this.prisma.ticketOwnership.createMany({
+					data: groupNonPartyMembers.map(member => {
+						return {
+							userId: member.userId,
+							ticketId,
+							partyId,
+							groupId,
+							type: "GROUP",
+							status: "PAID",
+							qrImageBase64
+						};
+					})
+				});
+
+				this.notifications.sendPartyJoinAcceptedGroupNotification(groupId, party, true);
+			}
+			return true;
+		}
+
 		if (groupId) {
 			const existingRequest = await this.prisma.partyMembershipRequest.findUnique({
 				where: {
-					groupId_partyId: {
+					groupId_partyId_ticketId: {
 						groupId,
-						partyId
+						partyId,
+						ticketId
 					}
 				},
 				select: {
@@ -1693,9 +2032,6 @@ export class PartyService {
 			if (existingRequest) {
 				if (existingRequest.status === "PENDING") {
 					throw new ForbiddenException("El grupo ya ha solicitado unirse al party");
-				}
-				if (existingRequest.status === "ACCEPTED") {
-					throw new ForbiddenException("El grupo ya es miembro de este party");
 				}
 			}
 
@@ -1713,9 +2049,10 @@ export class PartyService {
 			// Verificar si el usuario o grupo ya ha solicitado unirse al party.
 			const existingRequest = await this.prisma.partyMembershipRequest.findUnique({
 				where: {
-					userId_partyId: {
+					userId_partyId_ticketId: {
 						userId,
-						partyId
+						partyId,
+						ticketId
 					}
 				}
 			});

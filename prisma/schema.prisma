@@ -281,9 +281,9 @@ model PartyMembershipRequest {
   user      User?            @relation(fields: [userId], references: [id])
   ticket    Ticket           @relation(fields: [ticketId], references: [id])
 
-  @@unique([userId, partyId])
-  @@unique([userId, groupId])
-  @@unique([groupId, partyId])
+  @@unique([userId, partyId, ticketId])
+  @@unique([userId, groupId, ticketId])
+  @@unique([groupId, partyId, ticketId])
 }
 
 model GroupMembershipRequest {
@@ -418,39 +418,48 @@ model TicketBase {
 }
 
 model TicketOwnership {
-  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
-  validated            Boolean        @default(false)
-  paid                 Boolean        @default(false)
-  validatedConsumables String[]       @default([])
-  ticket               Ticket         @relation(fields: [ticketId], references: [id])
-  ticketId             String         @map("ticketId") @db.ObjectId
-  party                Party          @relation(fields: [partyId], references: [id])
-  partyId              String         @map("partyId") @db.ObjectId
-  user                 User?          @relation(fields: [userId], references: [id])
-  userId               String?        @map("userId") @db.ObjectId
-  group                Group?         @relation(fields: [groupId], references: [id])
-  groupId              String?        @map("groupId") @db.ObjectId
-  type                 MembershipType @default(SOLO)
-  createdAt            DateTime       @default(now())
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  status               TicketOwnershipStatus
+  validatedConsumables String[]              @default([])
+  qrImageBase64        String
+  ticket               Ticket                @relation(fields: [ticketId], references: [id])
+  ticketId             String                @map("ticketId") @db.ObjectId
+  party                Party                 @relation(fields: [partyId], references: [id])
+  partyId              String                @map("partyId") @db.ObjectId
+  user                 User?                 @relation(fields: [userId], references: [id])
+  userId               String?               @map("userId") @db.ObjectId
+  group                Group?                @relation(fields: [groupId], references: [id])
+  groupId              String?               @map("groupId") @db.ObjectId
+  type                 MembershipType        @default(SOLO)
+  createdAt            DateTime              @default(now())
+}
+
+enum TicketOwnershipStatus {
+  PAID
+  SCANNED
+  PENDING
+  WAITING_PAYMENT
+  REJECTED
 }
 
 model PaymentIntent {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  amount          Int
-  currency        String
-  status          PaymentStatus @default(pending)
-  type            PaymentType   @default(FINTOC)
-  widgetToken     String?
-  paymentIntentId String
-  createdAt       DateTime      @default(now())
-  partyId         String        @map("partyId") @db.ObjectId
-  party           Party         @relation("PartyToPayment", fields: [partyId], references: [id])
-  userId          String        @map("userId") @db.ObjectId
-  user            User          @relation("UserToPayment", fields: [userId], references: [id])
-  ticketId        String        @map("ticketId") @db.ObjectId
-  ticket          Ticket        @relation("TicketToPayment", fields: [ticketId], references: [id])
-  groupId         String?       @map("groupId") @db.ObjectId
-  group           Group?        @relation("GroupToPayment", fields: [groupId], references: [id])
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  amount               Int
+  currency             String
+  status               PaymentStatus @default(pending)
+  type                 PaymentType   @default(FINTOC)
+  widgetToken          String?
+  paymentIntentId      String
+  selectedGroupMembers String[]      @default([])
+  createdAt            DateTime      @default(now())
+  partyId              String        @map("partyId") @db.ObjectId
+  party                Party         @relation("PartyToPayment", fields: [partyId], references: [id])
+  userId               String        @map("userId") @db.ObjectId
+  user                 User          @relation("UserToPayment", fields: [userId], references: [id])
+  ticketId             String        @map("ticketId") @db.ObjectId
+  ticket               Ticket        @relation("TicketToPayment", fields: [ticketId], references: [id])
+  groupId              String?       @map("groupId") @db.ObjectId
+  group                Group?        @relation("GroupToPayment", fields: [groupId], references: [id])
 
   @@unique([paymentIntentId])
 }

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { Location, MercadoPagoPreferenceId } from "app/types";
+import { Location } from "app/types";
+import * as qrcode from "qrcode";
 import * as crypto from "crypto";
 
 @Injectable()
@@ -24,6 +25,10 @@ export class UtilsService {
 		return bearerToken.split(" ")[1];
 	}
 
+	async generateQrCodeData(...data: any[]) {
+		return await qrcode.toDataURL(JSON.stringify(data));
+	}
+
 	getUserFields() {
 		return {
 			profilePictures: true,
@@ -39,6 +44,76 @@ export class UtilsService {
 									consumable: {
 										include: {
 											item: true
+										}
+									}
+								}
+							}
+						}
+					},
+					groupId: true,
+					group: {
+						include: {
+							leader: {
+								select: {
+									username: true,
+									socialMedia: true,
+									name: true,
+									lastName: true,
+									profilePictures: {
+										take: 1,
+										select: {
+											url: true,
+											id: true
+										}
+									},
+									verified: true,
+									isCompany: true,
+									gender: true,
+									userType: true
+								}
+							},
+							members: {
+								include: {
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
+										}
+									}
+								}
+							},
+							moderators: {
+								include: {
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
 										}
 									}
 								}
@@ -922,6 +997,75 @@ export class UtilsService {
 									consumable: {
 										include: {
 											item: true
+										}
+									}
+								}
+							}
+						}
+					},
+					group: {
+						include: {
+							leader: {
+								select: {
+									username: true,
+									socialMedia: true,
+									name: true,
+									lastName: true,
+									profilePictures: {
+										take: 1,
+										select: {
+											url: true,
+											id: true
+										}
+									},
+									verified: true,
+									isCompany: true,
+									gender: true,
+									userType: true
+								}
+							},
+							members: {
+								include: {
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
+										}
+									}
+								}
+							},
+							moderators: {
+								include: {
+									user: {
+										select: {
+											username: true,
+											socialMedia: true,
+											name: true,
+											lastName: true,
+											profilePictures: {
+												take: 1,
+												select: {
+													url: true,
+													id: true
+												}
+											},
+											verified: true,
+											isCompany: true,
+											gender: true,
+											userType: true
 										}
 									}
 								}

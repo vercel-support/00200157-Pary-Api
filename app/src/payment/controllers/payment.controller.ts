@@ -35,11 +35,21 @@ export class PaymentController {
 			switch (body.type) {
 				case "payment_intent.succeeded": {
 					const { id: paymentId, metadata } = body.data;
-					const { userId, partyId, ticketId, groupId } = metadata;
+					const { userId, partyId, ticketId, groupId, selectedGroupMembers } = metadata;
 
 					if (!userId || !partyId || !ticketId) return;
+					console.log("Not parsed", selectedGroupMembers);
 
-					await this.partyService.joinUserOrGroupToParty(partyId, userId, ticketId, groupId);
+					const parsedSelectedGroupMembers = JSON.parse(selectedGroupMembers);
+					console.log("Parsed: ", parsedSelectedGroupMembers);
+
+					await this.partyService.joinUserOrGroupToParty(
+						partyId,
+						userId,
+						ticketId,
+						groupId,
+						parsedSelectedGroupMembers
+					);
 					await this.prisma.paymentIntent.update({
 						where: {
 							paymentIntentId: paymentId
