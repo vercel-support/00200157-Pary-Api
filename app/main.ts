@@ -64,7 +64,11 @@ async function bootstrap() {
 			customCssUrl: ["https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.1/swagger-ui.css"]
 		});
 	}
-	await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
+	if (PUBLIC_API_URL) {
+		await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
+	} else {
+		await app.listen(PUBLIC_API_PORT || 3000);
+	}
 }
 
 bootstrap();
