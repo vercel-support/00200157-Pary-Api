@@ -10,7 +10,7 @@
 		"lint": "biome check --apply ./app",
 		"lint:fix": "biome check --apply-unsafe ./app",
 		"format": "biome format --write ./app",
-		"start": "nest start",
+		"start": "node dist/main",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
