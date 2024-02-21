@@ -9,7 +9,7 @@ export const {
 	JWT_REFRESH_SECRET,
 	EXPO_ACCESS_TOKEN,
 	PUBLIC_API_URL,
-	PUBLIC_API_PORT,
+	PORT,
 	FINTOC_PUBLIC_KEY,
 	FINTOC_SECRET_KEY
 } = process.env;
@@ -65,9 +65,9 @@ async function bootstrap() {
 		});
 	}
 	if (PUBLIC_API_URL) {
-		await app.listen(PUBLIC_API_PORT || 3000, PUBLIC_API_URL);
+		await app.listen(PORT || 3000, PUBLIC_API_URL);
 	} else {
-		await app.listen(PUBLIC_API_PORT || 3000);
+		await app.listen(PORT || 3000);
 	}
 }
 
