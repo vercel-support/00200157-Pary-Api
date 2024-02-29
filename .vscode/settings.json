@@ -13,8 +13,8 @@
 		"amplify/#current-cloud-backend": false,
 		"amplify/backend/amplify-meta.json": false,
 		"amplify/backend/awscloudformation": false,
-		"**/node_modules": true,
-		"**/dist": true,
+		// "**/node_modules": true,
+		// "**/dist": true,
 		"**/.idea": true
 	},
 	"explorerExclude.backup": {}
