@@ -1,10 +1,5 @@
 {
     "version": 2,
-    "git": {
-        "deploymentEnabled": {
-            "main": false
-        }
-    },
     "builds": [
         {
             "src": "dist/main.js",
